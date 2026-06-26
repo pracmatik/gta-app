@@ -1,0 +1,670 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Pressupostos · GTA Europa · Pracmatik</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --primary:#0F172A; --secondary:#334155; --accent:#0369A1; --accent-2:#0EA5E9;
+    --bg:#F8FAFC; --fg:#020617; --muted:#E8ECF1; --border:#E2E8F0; --danger:#DC2626;
+    --ok:#059669; --warn:#B45309; --warn-bg:#FEF3C7; --warn-bd:#FCD34D;
+    --radius:16px; --shadow:0 1px 2px rgba(2,6,23,.04),0 8px 24px rgba(2,6,23,.06);
+    --shadow-lg:0 24px 60px rgba(2,6,23,.16);
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:'Plus Jakarta Sans',system-ui,sans-serif;background:
+    radial-gradient(1200px 500px at 50% -200px,#eaf2fb 0,rgba(248,250,252,0) 60%),var(--bg);
+    color:var(--fg);line-height:1.5;-webkit-font-smoothing:antialiased;min-height:100dvh}
+  .hidden{display:none!important}
+  .topbar{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:14px 26px;
+    background:rgba(255,255,255,.85);backdrop-filter:blur(10px);border-bottom:1px solid var(--border);position:sticky;top:0;z-index:30}
+  .logo-gta{height:32px;width:auto;display:block}
+  .brand-right{font-size:13px;color:var(--secondary);font-weight:500;display:flex;align-items:center;gap:12px}
+  .pracmatik{font-weight:800;color:var(--primary);letter-spacing:-.5px}.pracmatik .dot{color:var(--accent)}
+  .userchip{display:flex;align-items:center;gap:9px;background:#fff;border:1px solid var(--border);border-radius:999px;padding:5px 6px 5px 13px}
+  .userchip .nm{font-weight:700;color:var(--primary);font-size:13px;line-height:1}.userchip .rl{font-size:11px;color:var(--secondary)}
+  .badge-rol{font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.4px;padding:2px 7px;border-radius:999px}
+  .badge-rol.admin{background:#fae8ff;color:#a21caf}.badge-rol.tecnico{background:#dbeafe;color:#1d4ed8}
+  .avatar{width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,#0F172A,#0369A1);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:13px}
+  .langtog{display:flex;border:1px solid var(--border);border-radius:9px;overflow:hidden;background:#fff}
+  .langtog button{border:none;background:#fff;font-family:inherit;font-weight:700;font-size:12px;padding:6px 10px;cursor:pointer;color:var(--secondary)}
+  .langtog button.on{background:var(--accent);color:#fff}
+  .btn{font-family:inherit;font-weight:600;font-size:13.5px;border-radius:10px;padding:9px 14px;cursor:pointer;border:1px solid var(--border);background:#fff;color:var(--primary);display:inline-flex;align-items:center;gap:7px;transition:.14s}
+  .btn:hover{background:var(--muted)}.btn svg{width:16px;height:16px}
+  .btn.accent{border-color:#cfe3f5;background:#eef5fc;color:var(--accent)}.btn.accent:hover{background:#e0eefa}
+  .btn.primary{border:none;color:#fff;background:linear-gradient(135deg,#0F172A,#0369A1);box-shadow:0 8px 18px rgba(3,105,161,.22);font-weight:700;padding:10px 18px}
+  .btn.primary:hover{box-shadow:0 12px 24px rgba(3,105,161,.30)}
+  .btn.ok{border:none;color:#fff;background:linear-gradient(135deg,#047857,#059669);box-shadow:0 8px 18px rgba(5,150,105,.25);font-weight:700;padding:10px 18px}
+  .btn.ghost-danger{color:var(--danger);border-color:#f0d4d4}.btn.ghost-danger:hover{background:#fdf0f0}
+  .btn:disabled{opacity:.55;cursor:not-allowed}.spacer{flex:1}
+
+  #vLogin{min-height:100dvh;display:flex;align-items:center;justify-content:center;padding:24px}
+  .login-card{width:100%;max-width:404px;background:#fff;border:1px solid var(--border);border-radius:20px;box-shadow:var(--shadow-lg);padding:34px 32px;animation:rise .5s ease both}
+  @keyframes rise{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+  .login-card .logo{display:flex;justify-content:center;margin-bottom:8px}.login-card .logo img{height:40px}
+  .login-card h1{text-align:center;font-size:21px;font-weight:800;color:var(--primary);margin-top:14px}
+  .login-card .sub{text-align:center;color:var(--secondary);font-size:14px;margin-top:5px;margin-bottom:22px}
+  .login-card label{display:block;font-size:13px;font-weight:600;color:var(--primary);margin:14px 0 6px}
+  .login-card input{width:100%;font-family:inherit;font-size:15px;border:1px solid var(--border);border-radius:11px;padding:12px 13px;transition:.15s}
+  .login-card input:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 3px rgba(3,105,161,.15)}
+  .login-card .btn.primary{width:100%;justify-content:center;margin-top:22px;font-size:15px;padding:13px}
+  .login-err{display:none;margin-top:14px;color:var(--danger);font-size:13.5px;font-weight:600;text-align:center}
+  .login-foot{text-align:center;margin-top:20px;font-size:12px;color:#94a3b8}
+  .demo-hint{margin-top:16px;background:#f1f7fc;border:1px dashed #cfe3f5;border-radius:12px;padding:11px 13px;font-size:12px;color:var(--secondary);line-height:1.5}.demo-hint b{color:var(--primary)}
+
+  main{max-width:1200px;margin:0 auto;padding:28px 20px 90px}
+  .pagehead{display:flex;align-items:flex-end;justify-content:space-between;gap:16px;flex-wrap:wrap;margin-bottom:18px}
+  .pagehead h1{font-size:25px;font-weight:800;letter-spacing:-.6px;color:var(--primary)}
+  .pagehead .sub{color:var(--secondary);font-size:14px;margin-top:3px}
+
+  .filterbar{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:14px}
+  .filterbar input,.filterbar select{font-family:inherit;font-size:14px;border:1px solid var(--border);border-radius:10px;padding:9px 12px;background:#fff}
+  .hist-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:14px}
+  .pcard{background:#fff;border:1px solid var(--border);border-radius:14px;box-shadow:var(--shadow);padding:16px 17px;cursor:pointer;transition:.15s;position:relative}
+  .pcard:hover{transform:translateY(-2px);box-shadow:var(--shadow-lg);border-color:#cfe3f5}
+  .pcard .obra{font-weight:800;color:var(--primary);font-size:16px;letter-spacing:-.3px;padding-right:84px}
+  .pcard .meta{color:var(--secondary);font-size:12.5px;margin-top:5px;display:flex;flex-wrap:wrap;gap:4px 10px}
+  .pcard .tot{margin-top:12px;font-size:20px;font-weight:800;color:var(--accent);font-variant-numeric:tabular-nums}
+  .estado{position:absolute;top:14px;right:15px;font-size:10.5px;font-weight:800;text-transform:uppercase;letter-spacing:.4px;padding:4px 9px;border-radius:999px;display:flex;align-items:center;gap:4px}
+  .estado.borrador{background:#fef3c7;color:#b45309}.estado.firmado{background:#d1fae5;color:#047857}.estado svg{width:11px;height:11px}
+  .pcard .by{display:inline-flex;align-items:center;gap:5px;font-weight:600;color:var(--primary)}
+  .pcard-del{position:absolute;bottom:13px;right:13px;border:none;background:transparent;color:#cbd5e1;cursor:pointer;width:30px;height:30px;border-radius:8px;display:flex;align-items:center;justify-content:center}
+  .pcard-del:hover{background:#fbe9e9;color:var(--danger)}.pcard-del svg{width:16px;height:16px}
+  .empty{text-align:center;padding:54px 20px;color:var(--secondary)}
+  .empty .ic{width:60px;height:60px;margin:0 auto 14px;background:#eef5fc;color:var(--accent);border-radius:18px;display:flex;align-items:center;justify-content:center}
+  .empty .ic svg{width:30px;height:30px}.empty h3{color:var(--primary);font-size:18px;font-weight:800}.empty p{margin-top:6px;font-size:14px}
+
+  .obra-tag{display:inline-flex;align-items:center;gap:7px;background:#eef5fc;border:1px solid #d6e6f4;color:var(--accent);font-weight:700;font-size:13px;padding:5px 12px;border-radius:999px}
+  /* header block obra */
+  .hdrcard{background:#fff;border:1px solid var(--border);border-radius:14px;box-shadow:var(--shadow);padding:16px 18px;margin-bottom:14px}
+  .hdrcard .grid{display:grid;grid-template-columns:1.4fr 1fr;gap:12px 16px}
+  .hdrcard .f{display:flex;flex-direction:column;gap:5px}
+  .hdrcard label{font-size:12px;font-weight:700;color:var(--secondary);text-transform:uppercase;letter-spacing:.3px}
+  .hdrcard input{font-family:inherit;font-size:14.5px;border:1px solid var(--border);border-radius:10px;padding:9px 11px;background:#fff}
+  .hdrcard input:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 3px rgba(3,105,161,.13)}
+  .hdrcard .row3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px 16px;margin-top:12px}
+
+  .summary{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:14px}
+  .sc{background:#fff;border:1px solid var(--border);border-radius:14px;box-shadow:var(--shadow);padding:13px 16px}
+  .sc .lbl{font-size:12px;font-weight:600;color:var(--secondary);text-transform:uppercase;letter-spacing:.4px}
+  .sc .val{font-size:22px;font-weight:800;color:var(--primary);margin-top:5px;font-variant-numeric:tabular-nums}
+  .sc.coef{background:linear-gradient(180deg,#f0f7fd,#fff);border-color:#cfe3f5}
+  .sc.coef input{width:90px;font-family:inherit;font-weight:800;font-size:20px;color:var(--accent);border:1px solid #cfe3f5;border-radius:9px;padding:5px 9px;background:#fff;margin-top:3px}
+  .sc.coef input:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 3px rgba(3,105,161,.15)}
+  .sc.flags .val{color:var(--warn)}.sc.total{background:linear-gradient(135deg,#0F172A,#0369A1);border:none;color:#fff}
+  .sc.total .lbl{color:#cfe3f5}.sc.total .val{color:#fff;font-size:24px}
+
+  .struct{display:flex;align-items:center;gap:10px;flex-wrap:wrap;background:#fff;border:1px solid var(--border);border-radius:13px;box-shadow:var(--shadow);padding:11px 14px;margin-bottom:12px}
+  .struct .t{font-weight:700;color:var(--primary);font-size:13.5px;display:flex;align-items:center;gap:8px}.struct .t svg{width:17px;height:17px;color:var(--accent)}
+  .struct .big{font-weight:700;padding:9px 15px}
+
+  .tablewrap{background:#fff;border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden}
+  table{width:100%;border-collapse:collapse;font-size:13.5px}
+  thead th{background:#f3f7fb;color:var(--secondary);font-weight:700;font-size:11.5px;text-transform:uppercase;letter-spacing:.4px;text-align:left;padding:11px 10px;border-bottom:1px solid var(--border);white-space:nowrap}
+  th.num,td.num{width:72px}th.r,td.r{text-align:right;font-variant-numeric:tabular-nums}
+  th.ut,td.ut{width:56px}th.amid,td.amid{width:92px}th.preu,td.preu{width:106px}th.fcol,td.fcol{width:100px}th.imp,td.imp{width:118px}th.act,td.act{width:128px}
+  tbody td{padding:6px 10px;border-bottom:1px solid #eef2f7;vertical-align:middle}
+  td input{font-family:inherit;font-size:13.5px;color:var(--fg);background:transparent;border:1px solid transparent;border-radius:7px;padding:6px 7px;width:100%;transition:.12s}
+  td input:hover{background:#f6f9fc;border-color:#e6edf4}
+  td input:focus{outline:none;background:#fff;border-color:var(--accent);box-shadow:0 0 0 2px rgba(3,105,161,.14)}
+  td input.r{text-align:right;font-variant-numeric:tabular-nums}
+  td.calc{color:var(--secondary);font-weight:600;font-variant-numeric:tabular-nums;text-align:right}
+  td.imp{font-weight:700;color:var(--primary);font-variant-numeric:tabular-nums;text-align:right}
+  tr.cap td{background:#0F172A;color:#fff;font-weight:800;letter-spacing:.2px;padding-top:11px;padding-bottom:11px}
+  tr.cap td input{color:#fff;font-weight:800}tr.cap td input:hover{background:rgba(255,255,255,.08);border-color:rgba(255,255,255,.2)}
+  tr.part td:first-child input{font-weight:700;color:var(--primary)}tr.part .desc input{font-weight:600}
+  tr.sub td{background:#fbfdff}tr.sub .desc{padding-left:30px;position:relative}
+  tr.sub .desc::before{content:"";position:absolute;left:14px;top:50%;width:8px;height:8px;border-left:1.5px solid #c3d3e2;border-bottom:1.5px solid #c3d3e2;transform:translateY(-70%)}
+  tr.sub .desc input{color:var(--secondary)}tr.sub .num{color:#94a3b8;text-align:center;font-weight:700}
+  tr.flagged td{background:var(--warn-bg)!important}tr.flagged.sub td{background:#fdf6e3!important}
+  .flag-badge{display:inline-flex;align-items:center;gap:4px;background:#fff;border:1px solid var(--warn-bd);color:var(--warn);font-size:11px;font-weight:700;padding:2px 7px;border-radius:999px;margin-left:7px;cursor:help}.flag-badge svg{width:12px;height:12px}
+  tr.subtotal td{background:#f0f5fa;font-weight:700;color:var(--primary)}tr.subtotal .imp{color:var(--accent)}
+  tr.grand td{background:#0F172A;color:#fff;font-weight:800}tr.grand .imp{color:#fff;font-size:15px}
+  tr.iva td{background:#f8fafc;color:var(--secondary);font-weight:600;font-style:italic}
+  .act{display:flex;gap:4px;justify-content:flex-end;align-items:center}
+  .mini{border:1px solid var(--border);background:#fff;cursor:pointer;height:30px;padding:0 9px;border-radius:8px;display:inline-flex;align-items:center;gap:5px;color:var(--accent);font-size:12px;font-weight:700;transition:.12s}
+  .mini:hover{background:#eef5fc;border-color:#cfe3f5}.mini svg{width:14px;height:14px}
+  .mini.del{color:var(--secondary)}.mini.del:hover{background:#fbe9e9;color:var(--danger);border-color:#f0d4d4}
+  tr.cap .mini{background:rgba(255,255,255,.12);border-color:rgba(255,255,255,.25);color:#fff}tr.cap .mini:hover{background:rgba(255,255,255,.22)}
+
+  /* RESUM + notes */
+  .twocol{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:14px}
+  .panel{background:#fff;border:1px solid var(--border);border-radius:14px;box-shadow:var(--shadow);padding:16px 18px}
+  .panel h3{font-size:13px;font-weight:800;color:var(--primary);text-transform:uppercase;letter-spacing:.5px;display:flex;align-items:center;gap:8px;margin-bottom:10px}
+  .panel h3 svg{width:16px;height:16px;color:var(--accent)}
+  .resum-row{display:flex;justify-content:space-between;padding:7px 0;border-bottom:1px solid #eef2f7;font-size:13.5px}
+  .resum-row:last-child{border-bottom:none}.resum-row .c{color:var(--secondary)}.resum-row .v{font-weight:700;font-variant-numeric:tabular-nums;color:var(--primary)}
+  .resum-row.tot{margin-top:6px;border-top:2px solid var(--primary);padding-top:10px}.resum-row.tot .v{color:var(--accent);font-size:17px}
+  .note{display:flex;gap:8px;align-items:flex-start;margin-bottom:8px}
+  .note textarea{flex:1;font-family:inherit;font-size:13px;border:1px solid var(--border);border-radius:9px;padding:8px 10px;resize:vertical;min-height:46px;color:var(--secondary);line-height:1.5}
+  .note textarea:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 2px rgba(3,105,161,.13)}
+  .note .rm{border:none;background:transparent;color:#cbd5e1;cursor:pointer;padding:6px;border-radius:7px}.note .rm:hover{background:#fbe9e9;color:var(--danger)}.note .rm svg{width:15px;height:15px}
+
+  .hint{display:flex;gap:10px;align-items:flex-start;background:#eef5fc;border:1px solid #d6e6f4;border-radius:12px;padding:12px 15px;margin-bottom:14px;font-size:13.5px;color:var(--secondary)}
+  .hint svg{width:18px;height:18px;color:var(--accent);flex:0 0 18px;margin-top:1px}.hint b{color:var(--primary)}
+  .signed-banner{display:none;align-items:center;gap:12px;background:linear-gradient(180deg,#ecfdf5,#fff);border:1px solid #a7f3d0;border-radius:13px;padding:13px 16px;margin-bottom:14px}
+  .signed-banner .ic{width:42px;height:42px;border-radius:11px;background:#d1fae5;color:#047857;display:flex;align-items:center;justify-content:center;flex:0 0 42px}.signed-banner .ic svg{width:22px;height:22px}
+  .signed-banner .tx{flex:1}.signed-banner .tx b{color:var(--primary)}.signed-banner .tx span{color:var(--secondary);font-size:13px}
+  .signed-banner img{height:46px;background:#fff;border:1px solid var(--border);border-radius:8px;padding:3px}
+
+  .actionbar{position:sticky;bottom:0;margin-top:16px;background:rgba(255,255,255,.93);backdrop-filter:blur(8px);border:1px solid var(--border);border-radius:14px;box-shadow:0 -6px 24px rgba(2,6,23,.07);padding:12px 16px;display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+  .actionbar .tot{font-weight:800;color:var(--primary);font-size:15px}.actionbar .tot b{color:var(--accent);font-size:18px}
+
+  /* CHAT */
+  .chat-fab{position:fixed;right:24px;bottom:24px;z-index:45;border:none;cursor:pointer;width:60px;height:60px;border-radius:50%;background:linear-gradient(135deg,#0369A1,#0EA5E9);box-shadow:0 12px 30px rgba(3,105,161,.4);color:#fff;display:flex;align-items:center;justify-content:center;transition:.18s}
+  .chat-fab:hover{transform:scale(1.06)}.chat-fab svg{width:27px;height:27px}
+  .chat-panel{position:fixed;right:0;top:0;height:100dvh;width:400px;max-width:92vw;background:#fff;box-shadow:-12px 0 40px rgba(2,6,23,.18);z-index:55;display:flex;flex-direction:column;transform:translateX(100%);transition:transform .26s cubic-bezier(.4,0,.2,1)}
+  .chat-panel.open{transform:none}
+  .chat-head{display:flex;align-items:center;gap:11px;padding:16px 18px;border-bottom:1px solid var(--border);background:linear-gradient(135deg,#0F172A,#0369A1);color:#fff}
+  .chat-head .ic{width:36px;height:36px;border-radius:10px;background:rgba(255,255,255,.15);display:flex;align-items:center;justify-content:center}.chat-head .ic svg{width:20px;height:20px}
+  .chat-head .t b{font-weight:800;font-size:15px}.chat-head .t span{display:block;font-size:12px;color:#cfe3f5}
+  .chat-head .x{margin-left:auto;border:none;background:rgba(255,255,255,.12);color:#fff;cursor:pointer;width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center}.chat-head .x svg{width:17px;height:17px}
+  .chat-body{flex:1;overflow-y:auto;padding:16px;display:flex;flex-direction:column;gap:12px;background:#f8fafc}
+  .msg{max-width:88%;padding:10px 13px;border-radius:13px;font-size:13.5px;line-height:1.5}
+  .msg.u{align-self:flex-end;background:var(--accent);color:#fff;border-bottom-right-radius:4px}
+  .msg.a{align-self:flex-start;background:#fff;border:1px solid var(--border);color:var(--fg);border-bottom-left-radius:4px}
+  .msg.a.err{border-color:#f0d4d4;background:#fdf0f0;color:var(--danger)}
+  .preview{align-self:flex-start;width:100%;background:#fff;border:1px solid #cfe3f5;border-radius:13px;padding:13px;box-shadow:var(--shadow)}
+  .preview .pt{font-weight:800;color:var(--primary);font-size:13px;display:flex;align-items:center;gap:7px;margin-bottom:8px}.preview .pt svg{width:15px;height:15px;color:var(--accent)}
+  .preview .delta{font-size:13px;color:var(--secondary);margin-bottom:4px}.preview .delta b{color:var(--primary)}
+  .preview .totd{font-size:15px;font-weight:800;margin:8px 0;font-variant-numeric:tabular-nums}
+  .preview .totd .old{color:var(--secondary);text-decoration:line-through;font-weight:600;margin-right:8px}.preview .totd .new{color:var(--accent)}
+  .preview .pb{display:flex;gap:8px;margin-top:10px}.preview .pb .btn{flex:1;justify-content:center;padding:9px}
+  .chat-foot{border-top:1px solid var(--border);padding:12px;background:#fff}
+  .chat-suggest{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:9px}
+  .chip{font-size:11.5px;border:1px solid var(--border);background:#f8fafc;border-radius:999px;padding:5px 10px;cursor:pointer;color:var(--secondary)}.chip:hover{background:#eef5fc;border-color:#cfe3f5;color:var(--accent)}
+  .chat-in{display:flex;gap:8px;align-items:flex-end}
+  .chat-in textarea{flex:1;font-family:inherit;font-size:14px;border:1px solid var(--border);border-radius:11px;padding:10px 12px;resize:none;max-height:120px;line-height:1.4}
+  .chat-in textarea:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 3px rgba(3,105,161,.13)}
+  .chat-in button{border:none;cursor:pointer;width:42px;height:42px;border-radius:11px;background:linear-gradient(135deg,#0369A1,#0EA5E9);color:#fff;display:flex;align-items:center;justify-content:center;flex:0 0 42px}.chat-in button:disabled{opacity:.5}.chat-in button svg{width:19px;height:19px}
+  .typing{align-self:flex-start;color:var(--secondary);font-size:13px;display:flex;gap:4px;align-items:center}
+  .typing .d{width:6px;height:6px;border-radius:50%;background:var(--accent);animation:bl 1s infinite}.typing .d:nth-child(2){animation-delay:.2s}.typing .d:nth-child(3){animation-delay:.4s}
+  @keyframes bl{0%,60%,100%{opacity:.3}30%{opacity:1}}
+
+  .modal-bg{position:fixed;inset:0;background:rgba(2,6,23,.55);backdrop-filter:blur(3px);display:none;align-items:center;justify-content:center;z-index:60;padding:20px}.modal-bg.show{display:flex}
+  .modal{width:100%;max-width:460px;background:#fff;border-radius:20px;box-shadow:var(--shadow-lg);padding:26px;animation:rise .3s ease both}
+  .modal h2{font-size:19px;font-weight:800;color:var(--primary)}.modal p{color:var(--secondary);font-size:14px;margin-top:6px}
+  .sigpad{margin-top:16px;border:2px dashed #c7d2e0;border-radius:12px;background:#fbfdff;touch-action:none;width:100%;height:170px;display:block;cursor:crosshair}
+  .modal-actions{display:flex;gap:10px;margin-top:16px}.modal-actions .btn{flex:1;justify-content:center}
+
+  .toast{position:fixed;left:50%;bottom:26px;transform:translateX(-50%) translateY(20px);background:#0F172A;color:#fff;padding:13px 20px;border-radius:12px;font-weight:600;font-size:14px;box-shadow:0 12px 30px rgba(2,6,23,.3);opacity:0;pointer-events:none;transition:.25s;z-index:70;display:flex;align-items:center;gap:9px}
+  .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}.toast svg{width:18px;height:18px;color:#34d399}.toast.err svg{color:#f87171}
+  footer{text-align:center;margin-top:30px;font-size:12.5px;color:#94a3b8}
+  @media(max-width:980px){.summary{grid-template-columns:repeat(2,1fr)}.hdrcard .grid,.hdrcard .row3{grid-template-columns:1fr}.twocol{grid-template-columns:1fr}main{padding:20px 12px 90px}}
+  @media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+
+<!-- LOGIN -->
+<div id="vLogin">
+  <div class="login-card">
+    <div class="logo"><img src="https://gtaeuropa.com/wp-content/uploads/2025/08/logo-gta-europa-empresa-rehabilitacion-fachadas-barcelona-300x118.webp" alt="GTA Europa"></div>
+    <h1 data-i18n="login_title">Pressupostos GTA</h1>
+    <div class="sub" data-i18n="login_sub">Inicia sessió per accedir als teus pressupostos</div>
+    <label for="lemail" data-i18n="email">Correu</label>
+    <input id="lemail" type="email" autocomplete="username" placeholder="nom@gtaeuropa.com">
+    <label for="lpass" data-i18n="pass">Contrasenya</label>
+    <input id="lpass" type="password" autocomplete="current-password" placeholder="••••••••">
+    <button class="btn primary" id="loginBtn" data-i18n="enter">Entrar</button>
+    <div class="login-err" id="loginErr"></div>
+    <div class="demo-hint"><b>Demo:</b> marc@gta-demo.cat · yolanda@gta-demo.cat · contrasenya <b>pracmatik2026</b></div>
+    <div class="login-foot">Sistema de <span class="pracmatik">pracmatik<span class="dot">.</span></span> per a GTA Europa</div>
+  </div>
+</div>
+
+<!-- APP -->
+<div id="vApp" class="hidden">
+  <header class="topbar">
+    <img class="logo-gta" src="https://gtaeuropa.com/wp-content/uploads/2025/08/logo-gta-europa-empresa-rehabilitacion-fachadas-barcelona-300x118.webp" alt="GTA Europa">
+    <div class="brand-right">
+      <div class="langtog"><button id="langCa" class="on">CA</button><button id="langEs">ES</button></div>
+      <div class="userchip"><div><div class="nm" id="uName">—</div><div class="rl"><span class="badge-rol" id="uRol">—</span></div></div><div class="avatar" id="uAvatar">–</div></div>
+      <button class="btn" id="logoutBtn" title="Sortir"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg></button>
+    </div>
+  </header>
+
+  <main>
+    <!-- HISTORIAL -->
+    <section id="vHist">
+      <div class="pagehead">
+        <div><h1 id="histTitle">Els meus pressupostos</h1><div class="sub" id="histSub" data-i18n="hist_sub">Recupera, continua o consulta qualsevol pressupost.</div></div>
+        <button class="btn primary" id="newBtn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg><span data-i18n="new_budget">Nou pressupost</span></button>
+      </div>
+      <div class="filterbar">
+        <input id="qSearch" type="search" data-i18n-ph="search" placeholder="Cerca per obra…" style="min-width:220px">
+        <select id="qEstado"><option value="" data-i18n="all_states">Tots els estats</option><option value="borrador" data-i18n="draft">Esborrany</option><option value="firmado" data-i18n="signed">Signat</option></select>
+        <select id="qAutor" class="hidden"></select>
+      </div>
+      <div id="histGrid" class="hist-grid"></div>
+      <div id="histEmpty" class="empty hidden">
+        <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg></div>
+        <h3 data-i18n="empty_h">Encara no hi ha pressupostos</h3><p data-i18n="empty_p">Crea el primer amb el botó de dalt.</p>
+      </div>
+    </section>
+
+    <!-- EDITOR -->
+    <section id="vEdit" class="hidden">
+      <div class="pagehead">
+        <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap">
+          <button class="btn" id="backBtn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg><span data-i18n="back">Historial</span></button>
+          <div><h1 style="font-size:22px" data-i18n="editor_title">Editor de pressupost</h1><div class="sub" data-i18n="editor_sub">Revisa, ajusta l'estructura, parla amb l'IA i signa.</div></div>
+        </div>
+        <span class="obra-tag" id="obraTag">●</span>
+      </div>
+
+      <div class="signed-banner" id="signedBanner">
+        <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M9 12l2 2 4-4"/><circle cx="12" cy="12" r="10"/></svg></div>
+        <div class="tx"><b data-i18n="signed_b">Pressupost signat</b><br><span id="signedMeta">—</span></div>
+        <img id="signedImg" alt="firma" class="hidden">
+        <button class="btn" id="reopenBtn" data-i18n="reopen">Reobrir (admin)</button>
+      </div>
+
+      <!-- cabecera obra -->
+      <div class="hdrcard" id="hdrCard">
+        <div class="grid">
+          <div class="f"><label data-i18n="h_obra">Títol de l'obra</label><input id="h_obra" placeholder="ACTUACIÓ A FAÇANES, C/ ..."></div>
+          <div class="f"><label data-i18n="h_client">Comunitat / Client</label><input id="h_client" placeholder="Comunitat de Propietaris ..."></div>
+        </div>
+        <div class="row3">
+          <div class="f"><label data-i18n="h_ref">Referència</label><input id="h_ref" placeholder="G26.0001"></div>
+          <div class="f"><label data-i18n="h_coac">Núm. col·legiat COAC</label><input id="h_coac" placeholder="55487/1"></div>
+          <div class="f"><label data-i18n="h_tec">Tècnics</label><input id="h_tec" placeholder="Mr/Mr/Yo"></div>
+        </div>
+      </div>
+
+      <div class="hint" id="editHint">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+        <div data-i18n="edit_hint">Edita qualsevol cel·la. Afegeix <b>capítols</b>, <b>partides</b> i <b>subelements</b> (els subelements sumen i marquen el preu de la partida). O obre l'<b>assistent IA</b> (botó blau) i digues què vols canviar. Quan estigui a gust → <b>Desa</b> i <b>Signa</b>.</div>
+      </div>
+
+      <div class="summary">
+        <div class="sc"><div class="lbl" data-i18n="s_base">Base (sense coef)</div><div class="val" id="sBase">—</div></div>
+        <div class="sc coef"><div class="lbl" data-i18n="s_coef">Coef. regulador</div><input id="coef" type="number" step="0.01" min="0" value="1"></div>
+        <div class="sc flags"><div class="lbl" data-i18n="s_rev">A revisar</div><div class="val" id="sFlags">—</div></div>
+        <div class="sc total"><div class="lbl" data-i18n="s_total">Total pressupost</div><div class="val" id="sTotal">—</div></div>
+      </div>
+
+      <div class="struct" id="structBar">
+        <span class="t"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg><span data-i18n="structure">Estructura:</span></span>
+        <button class="btn accent big" id="addCap"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg><span data-i18n="add_cap">Afegir capítol</span></button>
+        <button class="btn accent big" id="addPart"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg><span data-i18n="add_part">Afegir partida</span></button>
+        <div class="spacer"></div>
+        <button class="btn" id="expCsv"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg><span data-i18n="csv">CSV intranet</span></button>
+      </div>
+
+      <div class="tablewrap"><table><thead><tr>
+        <th class="num" data-i18n="c_num">Núm.</th><th class="desc" data-i18n="c_desc">Descripció</th><th class="ut" id="thUt">Ut.</th>
+        <th class="amid r" data-i18n="c_amid">Amidament</th><th class="preu r" data-i18n="c_preu">Valor unitari</th>
+        <th class="fcol r" data-i18n="c_coef">Amb coef</th><th class="imp r" data-i18n="c_imp">Import</th><th class="act" data-i18n="c_act">Accions</th>
+      </tr></thead><tbody id="tb"></tbody></table></div>
+
+      <div class="twocol">
+        <div class="panel">
+          <h3><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg><span data-i18n="resum">RESUM</span></h3>
+          <div id="resumBox"></div>
+        </div>
+        <div class="panel">
+          <h3><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg><span data-i18n="notes">Notes a la comunitat</span></h3>
+          <div id="notesBox"></div>
+          <button class="btn accent" id="addNote" style="margin-top:8px"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg><span data-i18n="add_note">Afegir nota</span></button>
+        </div>
+      </div>
+
+      <div class="actionbar">
+        <div class="tot"><span data-i18n="total_w">Total</span>: <b id="barTotal">—</b></div>
+        <div class="spacer"></div>
+        <button class="btn" id="undoBtn" disabled><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 14 4 9 9 4"/><path d="M20 20v-7a4 4 0 0 0-4-4H4"/></svg><span data-i18n="undo">Desfer</span></button>
+        <button class="btn primary" id="saveBtn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg><span data-i18n="save">Desar</span></button>
+        <button class="btn ok" id="signBtn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19l7-7 3 3-7 7-3-3z"/><path d="M18 13l-1.5-7.5L2 2l3.5 14.5L13 18l5-5z"/><circle cx="11" cy="11" r="2"/></svg><span data-i18n="sign">Signar</span></button>
+      </div>
+      <footer>Pressupostos · <span class="pracmatik">pracmatik<span class="dot">.</span></span> per a GTA Europa</footer>
+    </section>
+  </main>
+
+  <!-- CHAT -->
+  <button class="chat-fab" id="chatFab" title="Assistent IA"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg></button>
+  <div class="chat-panel" id="chatPanel">
+    <div class="chat-head">
+      <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2z"/><path d="M8 13a4 4 0 0 0 8 0"/><line x1="9" y1="9" x2="9.01" y2="9"/><line x1="15" y1="9" x2="15.01" y2="9"/></svg></div>
+      <div class="t"><b data-i18n="chat_title">Assistent IA</b><span data-i18n="chat_sub">Digues què vols canviar del pressupost</span></div>
+      <button class="x" id="chatClose"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+    </div>
+    <div class="chat-body" id="chatBody"></div>
+    <div class="chat-foot">
+      <div class="chat-suggest" id="chatSuggest"></div>
+      <div class="chat-in">
+        <textarea id="chatInput" rows="1" data-i18n-ph="chat_ph" placeholder="Ex: aplica un 10% de descompte comercial"></textarea>
+        <button id="chatSend"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg></button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal-bg" id="sigModal"><div class="modal">
+  <h2 data-i18n="sign_h">Signar pressupost</h2>
+  <p data-i18n="sign_p">Dibuixa la teva firma. En signar, el pressupost queda bloquejat i es registra qui i quan.</p>
+  <canvas class="sigpad" id="sigpad" width="408" height="170"></canvas>
+  <div class="modal-actions">
+    <button class="btn" id="sigClear" data-i18n="clear">Esborrar</button>
+    <button class="btn" id="sigCancel" data-i18n="cancel">Cancel·lar</button>
+    <button class="btn ok" id="sigConfirm" data-i18n="sign_lock">Signar i bloquejar</button>
+  </div>
+</div></div>
+
+<div class="toast" id="toast"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg><span id="toastMsg"></span></div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>if(!window.supabase){document.write('<scr'+'ipt src="https://unpkg.com/@supabase/supabase-js@2"><\/scr'+'ipt>');}</script>
+<script>
+const SUPA_URL="https://tutxfdokoggbfpskvqcp.supabase.co";
+const SUPA_ANON="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InR1dHhmZG9rb2dnYmZwc2t2cWNwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODI0NjE5ODgsImV4cCI6MjA5ODAzNzk4OH0.L83F7DFXXje4GnPAujcmf24xXWzrU8Gia17p21H24VY";
+const CHAT_URL="https://pracmatikadmin.app.n8n.cloud/webhook/gta-chat";
+const sb = window.supabase ? window.supabase.createClient(SUPA_URL,SUPA_ANON) : null;
+const $=s=>document.querySelector(s);
+
+// ---------- i18n ----------
+const I18N={
+ ca:{login_title:"Pressupostos GTA",login_sub:"Inicia sessió per accedir als teus pressupostos",email:"Correu",pass:"Contrasenya",enter:"Entrar",
+   hist_sub:"Recupera, continua o consulta qualsevol pressupost.",new_budget:"Nou pressupost",search:"Cerca per obra…",all_states:"Tots els estats",draft:"Esborrany",signed:"Signat",
+   empty_h:"Encara no hi ha pressupostos",empty_p:"Crea el primer amb el botó de dalt.",my_budgets:"Els meus pressupostos",all_budgets:"Tots els pressupostos",
+   sup_sub:"Supervisa els pressupostos de tot l'equip.",by_all:"Tots els autors",
+   back:"Historial",editor_title:"Editor de pressupost",editor_sub:"Revisa, ajusta l'estructura, parla amb l'IA i signa.",
+   signed_b:"Pressupost signat",reopen:"Reobrir (admin)",
+   h_obra:"Títol de l'obra",h_client:"Comunitat / Client",h_ref:"Referència",h_coac:"Núm. col·legiat COAC",h_tec:"Tècnics",
+   edit_hint:"Edita qualsevol cel·la. Afegeix <b>capítols</b>, <b>partides</b> i <b>subelements</b> (sumen i marquen el preu de la partida). O obre l'<b>assistent IA</b> (botó blau) i digues què vols canviar. Quan estigui a gust → <b>Desa</b> i <b>Signa</b>.",
+   s_base:"Base (sense coef)",s_coef:"Coef. regulador",s_rev:"A revisar",s_total:"Total pressupost",
+   structure:"Estructura:",add_cap:"Afegir capítol",add_part:"Afegir partida",csv:"CSV intranet",
+   c_num:"Núm.",c_desc:"Descripció",c_ut:"Ut.",c_amid:"Amidament",c_preu:"Valor unitari",c_coef:"Amb coef",c_imp:"Import",c_act:"Accions",
+   resum:"RESUM",notes:"Notes a la comunitat",add_note:"Afegir nota",
+   total_w:"Total",undo:"Desfer",save:"Desar",sign:"Signar",
+   chat_title:"Assistent IA",chat_sub:"Digues què vols canviar del pressupost",chat_ph:"Ex: aplica un 10% de descompte comercial",
+   sign_h:"Signar pressupost",sign_p:"Dibuixa la teva firma. En signar, el pressupost queda bloquejat i es registra qui i quan.",clear:"Esborrar",cancel:"Cancel·lar",sign_lock:"Signar i bloquejar",
+   subtotal:"SUBTOTAL CAPÍTOL",total_doc:"TOTAL PRESSUPOST",iva:"IVA no inclòs",part_def:"Nova partida",cap_def:"NOU CAPÍTOL",sub_def:"Nou subelement",noname:"(sense nom)",
+   tecnic:"Tècnic",supervisora:"Supervisora",saved:"Pressupost desat",signed_ok:"Pressupost signat i bloquejat",reopened:"Pressupost reobert",deleted:"Pressupost eliminat",need_obra:"Posa el títol de l'obra",
+   csv_ok:"CSV intranet descarregat",applied:"Canvis aplicats",undone:"Canvi desfet",apply:"Aplicar canvis",discard:"Descartar",
+   ai_change:"Vols aplicar aquests canvis?",rows_before:"files",ai_err:"No he pogut processar la petició. Torna-ho a provar.",thinking:"Pensant…",
+   sug1:"Aplica un 10% de descompte",sug2:"Afegeix una partida de seguretat i salut",sug3:"Puja l'amidament del capítol 1 un 5%",
+   confirm_del:"Eliminar aquest pressupost? No es pot desfer.",empty_budget:"Pressupost buit",empty_budget_p:"Comença afegint un capítol o una partida.",
+   note1:"El pressupost s'ha realitzat tenint en compte els amidaments de l'arquitecte.",
+   note2:"Els preus es poden revisar segons l'evolució del cost de les matèries primeres.",
+   note3:"Preguem consulti amb els nostres tècnics per aclarir qualsevol dubte."},
+ es:{login_title:"Presupuestos GTA",login_sub:"Inicia sesión para acceder a tus presupuestos",email:"Correo",pass:"Contraseña",enter:"Entrar",
+   hist_sub:"Recupera, continúa o consulta cualquier presupuesto.",new_budget:"Nuevo presupuesto",search:"Busca por obra…",all_states:"Todos los estados",draft:"Borrador",signed:"Firmado",
+   empty_h:"Aún no hay presupuestos",empty_p:"Crea el primero con el botón de arriba.",my_budgets:"Mis presupuestos",all_budgets:"Todos los presupuestos",
+   sup_sub:"Supervisa los presupuestos de todo el equipo.",by_all:"Todos los autores",
+   back:"Historial",editor_title:"Editor de presupuesto",editor_sub:"Revisa, ajusta la estructura, habla con la IA y firma.",
+   signed_b:"Presupuesto firmado",reopen:"Reabrir (admin)",
+   h_obra:"Título de la obra",h_client:"Comunidad / Cliente",h_ref:"Referencia",h_coac:"Nº colegiado COAC",h_tec:"Técnicos",
+   edit_hint:"Edita cualquier celda. Añade <b>capítulos</b>, <b>partidas</b> y <b>subelementos</b> (suman y marcan el precio de la partida). O abre el <b>asistente IA</b> (botón azul) y di qué quieres cambiar. Cuando esté a gusto → <b>Guarda</b> y <b>Firma</b>.",
+   s_base:"Base (sin coef)",s_coef:"Coef. regulador",s_rev:"A revisar",s_total:"Total presupuesto",
+   structure:"Estructura:",add_cap:"Añadir capítulo",add_part:"Añadir partida",csv:"CSV intranet",
+   c_num:"Núm.",c_desc:"Descripción",c_ut:"Ud.",c_amid:"Medición",c_preu:"Valor unitario",c_coef:"Con coef",c_imp:"Importe",c_act:"Acciones",
+   resum:"RESUMEN",notes:"Notas a la comunidad",add_note:"Añadir nota",
+   total_w:"Total",undo:"Deshacer",save:"Guardar",sign:"Firmar",
+   chat_title:"Asistente IA",chat_sub:"Di qué quieres cambiar del presupuesto",chat_ph:"Ej: aplica un 10% de descuento comercial",
+   sign_h:"Firmar presupuesto",sign_p:"Dibuja tu firma. Al firmar, el presupuesto queda bloqueado y se registra quién y cuándo.",clear:"Borrar",cancel:"Cancelar",sign_lock:"Firmar y bloquear",
+   subtotal:"SUBTOTAL CAPÍTULO",total_doc:"TOTAL PRESUPUESTO",iva:"IVA no incluido",part_def:"Nueva partida",cap_def:"NUEVO CAPÍTULO",sub_def:"Nuevo subelemento",noname:"(sin nombre)",
+   tecnic:"Técnico",supervisora:"Supervisora",saved:"Presupuesto guardado",signed_ok:"Presupuesto firmado y bloqueado",reopened:"Presupuesto reabierto",deleted:"Presupuesto eliminado",need_obra:"Pon el título de la obra",
+   csv_ok:"CSV intranet descargado",applied:"Cambios aplicados",undone:"Cambio deshecho",apply:"Aplicar cambios",discard:"Descartar",
+   ai_change:"¿Quieres aplicar estos cambios?",rows_before:"filas",ai_err:"No he podido procesar la petición. Inténtalo de nuevo.",thinking:"Pensando…",
+   sug1:"Aplica un 10% de descuento",sug2:"Añade una partida de seguridad y salud",sug3:"Sube la medición del capítulo 1 un 5%",
+   confirm_del:"¿Eliminar este presupuesto? No se puede deshacer.",empty_budget:"Presupuesto vacío",empty_budget_p:"Empieza añadiendo un capítulo o una partida.",
+   note1:"El presupuesto se ha realizado teniendo en cuenta las mediciones del arquitecto.",
+   note2:"Los precios pueden revisarse según la evolución del coste de las materias primas.",
+   note3:"Rogamos consulte con nuestros técnicos para aclarar cualquier duda."}
+};
+const LS={get:k=>{try{return localStorage.getItem(k)}catch(e){return null}},set:(k,v)=>{try{localStorage.setItem(k,v)}catch(e){}}};
+let IDIOMA = LS.get("gta_lang")||"ca";
+const t = k => (I18N[IDIOMA][k]!==undefined?I18N[IDIOMA][k]:k);
+const UNIT = {ut:{ca:"ut",es:"ud"},ud:{ca:"ut",es:"ud"},dia:{ca:"dia",es:"día"},"día":{ca:"dia",es:"día"}};
+const unitDisp = u => { const k=(u||"").toString().toLowerCase(); return UNIT[k]?UNIT[k][IDIOMA]:u; };
+function applyI18n(){
+  document.querySelectorAll("[data-i18n]").forEach(e=>{ const k=e.getAttribute("data-i18n"); if(I18N[IDIOMA][k]!==undefined) e.innerHTML=I18N[IDIOMA][k]; });
+  document.querySelectorAll("[data-i18n-ph]").forEach(e=>{ const k=e.getAttribute("data-i18n-ph"); if(I18N[IDIOMA][k]!==undefined) e.placeholder=I18N[IDIOMA][k]; });
+  document.documentElement.lang=IDIOMA;
+  $("#langCa").classList.toggle("on",IDIOMA==="ca"); $("#langEs").classList.toggle("on",IDIOMA==="es");
+  $("#thUt").textContent=t("c_ut");
+  if(ME){ $("#uRol").textContent=ME.rol==="admin"?t("supervisora"):t("tecnic");
+    $("#histTitle").textContent=ME.rol==="admin"?t("all_budgets"):t("my_budgets");
+    $("#histSub").textContent=ME.rol==="admin"?t("sup_sub"):t("hist_sub"); }
+  renderSuggest();
+}
+function setLang(l){ IDIOMA=l; LS.set("gta_lang",l); applyI18n(); if(!$("#vEdit").classList.contains("hidden")) render(); if(!$("#vHist").classList.contains("hidden")) renderHist(); }
+$("#langCa").addEventListener("click",()=>setLang("ca")); $("#langEs").addEventListener("click",()=>setLang("es"));
+
+// ---------- estado ----------
+let ME=null, CURRENT=null, rows=[], HEADER={}, NOTES=[], undoStack=[];
+const eur=n=>(isFinite(n)?n:0).toLocaleString(IDIOMA==="es"?"es-ES":"ca-ES",{minimumFractionDigits:2,maximumFractionDigits:2})+" €";
+const num2=n=>Math.round((isFinite(n)?n:0)*100)/100;
+const esc=s=>(s==null?"":String(s)).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/"/g,"&quot;");
+function coef(){const c=parseFloat($("#coef").value);return isFinite(c)&&c>0?c:1;}
+function toast(m,e){const x=$("#toast");$("#toastMsg").textContent=m;x.classList.toggle("err",!!e);x.classList.add("show");setTimeout(()=>x.classList.remove("show"),2800);}
+function locked(){return CURRENT&&CURRENT.estado==="firmado";}
+
+// ---------- AUTH ----------
+$("#loginBtn").addEventListener("click",doLogin);
+$("#lpass").addEventListener("keydown",e=>{if(e.key==="Enter")doLogin();});
+async function doLogin(){
+  const email=$("#lemail").value.trim().toLowerCase(),pass=$("#lpass").value,errEl=$("#loginErr");errEl.style.display="none";
+  if(!sb){errEl.textContent="No s'ha pogut carregar la connexió (xarxa/CDN). Recarrega la pàgina.";errEl.style.display="block";return;}
+  if(!email||!pass){errEl.textContent="Omple correu i contrasenya.";errEl.style.display="block";return;}
+  $("#loginBtn").disabled=true;$("#loginBtn").textContent="…";
+  let error=null;
+  try{ const r=await sb.auth.signInWithPassword({email,password:pass}); error=r.error; }
+  catch(e){ error={message:(e&&e.message)||"Error de connexió"}; }
+  $("#loginBtn").disabled=false;$("#loginBtn").textContent=t("enter");
+  if(error){errEl.textContent=(error.message||"Credencials incorrectes")+".";errEl.style.display="block";return;}
+  await boot();
+}
+$("#logoutBtn").addEventListener("click",async()=>{await sb.auth.signOut();location.reload();});
+async function boot(){
+  const {data:{session}}=await sb.auth.getSession();
+  if(!session){$("#vLogin").classList.remove("hidden");$("#vApp").classList.add("hidden");return;}
+  const {data:prof}=await sb.from("profiles").select("nombre,rol,email").eq("id",session.user.id).single();
+  ME={id:session.user.id,nombre:(prof&&prof.nombre)||session.user.email,rol:(prof&&prof.rol)||"tecnico",email:session.user.email};
+  $("#vLogin").classList.add("hidden");$("#vApp").classList.remove("hidden");
+  $("#uName").textContent=ME.nombre;$("#uAvatar").textContent=(ME.nombre||"?").trim().slice(0,1).toUpperCase();
+  $("#uRol").className="badge-rol "+(ME.rol==="admin"?"admin":"tecnico");
+  if(ME.rol==="admin")$("#qAutor").classList.remove("hidden");
+  applyI18n(); showHist();
+}
+
+// ---------- HISTORIAL ----------
+let ALL=[];
+async function showHist(){
+  $("#vHist").classList.remove("hidden");$("#vEdit").classList.add("hidden");$("#chatPanel").classList.remove("open");
+  const {data,error}=await sb.from("presupuestos_app").select("*").order("actualizado_at",{ascending:false});
+  if(error){toast("Error",true);return;}
+  ALL=data||[];
+  if(ME.rol==="admin"){const a=[...new Set(ALL.map(p=>p.autor_nombre).filter(Boolean))];$("#qAutor").innerHTML=`<option value="">${t("by_all")}</option>`+a.map(x=>`<option>${esc(x)}</option>`).join("");}
+  renderHist();
+}
+["qSearch","qEstado","qAutor"].forEach(id=>$("#"+id).addEventListener("input",renderHist));
+function renderHist(){
+  const q=$("#qSearch").value.toLowerCase().trim(),est=$("#qEstado").value,aut=$("#qAutor").value;
+  const list=ALL.filter(p=>(!q||(p.obra||"").toLowerCase().includes(q))&&(!est||p.estado===est)&&(!aut||p.autor_nombre===aut));
+  $("#histEmpty").classList.toggle("hidden",list.length>0);
+  $("#histGrid").innerHTML=list.map(p=>{
+    const d=new Date(p.actualizado_at).toLocaleDateString(IDIOMA==="es"?"es-ES":"ca-ES",{day:"2-digit",month:"short",year:"numeric"});
+    const firm=p.estado==='firmado'?`<span class="estado firmado"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>${t("signed")}</span>`:`<span class="estado borrador"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.12 2.12 0 0 1 3 3L12 15l-4 1 1-4z"/></svg>${t("draft")}</span>`;
+    const by=ME.rol==="admin"?`<span class="by"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>${esc(p.autor_nombre||"—")}</span> · `:"";
+    const del=ME.rol==="admin"?`<button class="pcard-del" data-del="${p.id}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg></button>`:"";
+    return `<div class="pcard" data-open="${p.id}">${firm}<div class="obra">${esc(p.obra||t("noname"))}</div><div class="meta">${by}<span>${d}</span> · <span>coef ${p.coef}</span></div><div class="tot">${eur(p.total||0)}</div>${del}</div>`;
+  }).join("");
+}
+$("#histGrid").addEventListener("click",async e=>{
+  const del=e.target.closest("[data-del]"),open=e.target.closest("[data-open]");
+  if(del){e.stopPropagation();if(!confirm(t("confirm_del")))return;const {error}=await sb.from("presupuestos_app").delete().eq("id",del.dataset.del);if(error){toast("✕",true);return;}toast(t("deleted"));showHist();return;}
+  if(open){const p=ALL.find(x=>x.id===open.dataset.open);if(p)openEditor(p);}
+});
+
+// ---------- normalització datos ----------
+function normDatos(d){ if(Array.isArray(d))return{header:{},rows:d,notes:[]}; if(d&&typeof d==="object")return{header:d.header||{},rows:Array.isArray(d.rows)?d.rows:[],notes:Array.isArray(d.notes)?d.notes:[]}; return{header:{},rows:[],notes:[]}; }
+const SEED=()=>[
+  {tipo:"cap",desc:"FAÇANA PRINCIPAL · 1. TREBALLS PREVIS"},
+  {tipo:"part",num:"1.1.1",desc:"PROTECCIÓ PEATONAL",ut:"m²",amid:36},
+    {tipo:"sub",desc:"Muntatge/desmuntatge i portes",ut:"pa",amid:1,preu:2400},
+    {tipo:"sub",desc:"Lloguer diari",ut:"d",amid:15,preu:15},
+    {tipo:"sub",desc:"Lones",ut:"ud",amid:11,preu:90},
+  {tipo:"part",num:"1.2",desc:"TREBALLS VERTICALS",ut:"pa",amid:1,flag:"La IA no té preu base — confirma'l"},
+    {tipo:"sub",desc:"Verticals",ut:"ut",amid:13,preu:554}
+];
+
+// ---------- EDITOR ----------
+$("#newBtn").addEventListener("click",()=>openEditor(null));
+$("#backBtn").addEventListener("click",showHist);
+function openEditor(p){
+  undoStack=[]; updateUndo();
+  if(p){CURRENT={...p};const n=normDatos(p.datos);rows=JSON.parse(JSON.stringify(n.rows));HEADER=n.header||{};NOTES=n.notes||[];$("#coef").value=p.coef||1;}
+  else{CURRENT={id:null,obra:"",coef:1,estado:"borrador",autor_id:ME.id,autor_nombre:ME.nombre};rows=SEED();HEADER={};NOTES=[t("note1"),t("note2"),t("note3")];$("#coef").value=1.05;}
+  $("#h_obra").value=HEADER.obra||CURRENT.obra||"";$("#h_client").value=HEADER.client||"";$("#h_ref").value=HEADER.ref||"";$("#h_coac").value=HEADER.coac||"";$("#h_tec").value=HEADER.tec||"";
+  $("#vHist").classList.add("hidden");$("#vEdit").classList.remove("hidden");$("#chatBody").innerHTML="";
+  applyLockUI();render();window.scrollTo({top:0});
+}
+function applyLockUI(){
+  const lock=locked();
+  ["structBar","editHint","hdrCard"].forEach(id=>$("#"+id).style.display=lock?"none":(id==="structBar"?"flex":"block"));
+  $("#saveBtn").style.display=lock?"none":"inline-flex";$("#signBtn").style.display=lock?"none":"inline-flex";$("#undoBtn").style.display=lock?"none":"inline-flex";
+  $("#chatFab").style.display=lock?"none":"flex";$("#coef").disabled=lock;$("#addNote").style.display=lock?"none":"inline-flex";
+  const b=$("#signedBanner");
+  if(lock){b.style.display="flex";const d=CURRENT.firmado_at?new Date(CURRENT.firmado_at).toLocaleString(IDIOMA==="es"?"es-ES":"ca-ES"):"";$("#signedMeta").textContent=`${CURRENT.firmado_nombre||"—"} · ${d}`;if(CURRENT.firma_img){$("#signedImg").src=CURRENT.firma_img;$("#signedImg").classList.remove("hidden");}else $("#signedImg").classList.add("hidden");$("#reopenBtn").style.display=ME.rol==="admin"?"inline-flex":"none";}
+  else b.style.display="none";
+}
+$("#reopenBtn").addEventListener("click",async()=>{if(ME.rol!=="admin")return;const {error}=await sb.from("presupuestos_app").update({estado:"borrador"}).eq("id",CURRENT.id);if(error){toast("✕",true);return;}CURRENT.estado="borrador";await logHist(CURRENT.id,"reobert");applyLockUI();render();toast(t("reopened"));});
+["h_obra","h_client","h_ref","h_coac","h_tec"].forEach(id=>$("#"+id).addEventListener("input",e=>{HEADER[id.slice(2)]=e.target.value;if(id==="h_obra")$("#obraTag").textContent="● "+(e.target.value||t("noname"));}));
+
+function subsOf(arr,i){const o=[];for(let j=i+1;j<arr.length;j++){if(arr[j].tipo!=="sub")break;o.push(j);}return o;}
+function unitPrice(arr,i){const r=arr[i],s=subsOf(arr,i);if(s.length){const x=s.reduce((a,j)=>a+(arr[j].amid||0)*(arr[j].preu||0),0);return(r.amid&&r.amid!=0)?x/r.amid:0;}return r.preu||0;}
+function computeTotal(arr){const c=coef();let tt=0;for(let i=0;i<arr.length;i++)if(arr[i].tipo==="part")tt+=num2(num2(unitPrice(arr,i)*c)*(arr[i].amid||0));return num2(tt);}
+function chapterTotals(arr){const c=coef();const out=[];let cur=null;for(let i=0;i<arr.length;i++){const r=arr[i];if(r.tipo==="cap"){if(cur)out.push(cur);cur={name:r.desc.split("·")[0].trim()||r.desc,sum:0};}else if(r.tipo==="part"&&cur)cur.sum+=num2(num2(unitPrice(arr,i)*c)*(r.amid||0));}if(cur)out.push(cur);return out;}
+
+function render(){
+  const c=coef(),lock=locked();let html="",base=0,total=0,flags=0,chapBuf=null,chapSum=0;const ro=lock?" disabled":"";
+  const flush=()=>{if(chapBuf!==null)html+=`<tr class="subtotal"><td></td><td colspan="5">${t("subtotal")} — ${esc(chapBuf)}</td><td class="imp">${eur(chapSum)}</td><td></td></tr>`;chapBuf=null;chapSum=0;};
+  const trash=i=>`<button class="mini del" data-del="${i}"${ro}><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"/></svg></button>`;
+  for(let i=0;i<rows.length;i++){const r=rows[i];
+    if(r.tipo==="cap"){flush();chapBuf=r.desc.split("·")[0].trim()||r.desc;
+      html+=`<tr class="cap"><td class="num"></td><td class="desc" colspan="6"><input value="${esc(r.desc)}" data-f="desc" data-i="${i}"${ro}></td><td class="act">${trash(i)}</td></tr>`;
+    }else if(r.tipo==="part"){const E=unitPrice(rows,i),F=num2(E*c),G=num2(F*(r.amid||0));base+=num2(E*(r.amid||0));total+=G;chapSum+=G;const composed=subsOf(rows,i).length>0;if(r.flag)flags++;
+      const badge=r.flag?`<span class="flag-badge" title="${esc(r.flag)}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>!</span>`:"";
+      html+=`<tr class="part${r.flag?" flagged":""}"><td class="num"><input value="${esc(r.num||"")}" data-f="num" data-i="${i}"${ro}></td><td class="desc"><input value="${esc(r.desc)}" data-f="desc" data-i="${i}"${ro}>${badge}</td><td class="ut"><input value="${esc(unitDisp(r.ut))}" data-f="ut" data-i="${i}"${ro}></td><td class="amid"><input class="r" type="number" step="any" value="${r.amid??""}" data-f="amid" data-i="${i}"${ro}></td><td class="preu">${composed?`<span class="calc" style="display:block;padding:6px 7px">${eur(E).replace(" €","")}</span>`:`<input class="r" type="number" step="any" value="${r.preu??""}" data-f="preu" data-i="${i}"${ro}>`}</td><td class="calc fcol">${F.toLocaleString(IDIOMA==="es"?"es-ES":"ca-ES",{minimumFractionDigits:2,maximumFractionDigits:2})}</td><td class="imp">${eur(G)}</td><td class="act">${lock?"":`<button class="mini" data-addsub="${i}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>sub</button>`}${trash(i)}</td></tr>`;
+    }else{const imp=num2((r.amid||0)*(r.preu||0));
+      html+=`<tr class="sub"><td class="num">·</td><td class="desc"><input value="${esc(r.desc)}" data-f="desc" data-i="${i}"${ro}></td><td class="ut"><input value="${esc(unitDisp(r.ut))}" data-f="ut" data-i="${i}"${ro}></td><td class="amid"><input class="r" type="number" step="any" value="${r.amid??""}" data-f="amid" data-i="${i}"${ro}></td><td class="preu"><input class="r" type="number" step="any" value="${r.preu??""}" data-f="preu" data-i="${i}"${ro}></td><td class="calc fcol"></td><td class="imp">${eur(imp)}</td><td class="act">${trash(i)}</td></tr>`;
+    }
+  }
+  flush();
+  if(rows.length) html+=`<tr class="grand"><td></td><td colspan="5">${t("total_doc")}</td><td class="imp">${eur(total)}</td><td></td></tr><tr class="iva"><td></td><td colspan="7">${t("iva")}</td></tr>`;
+  $("#tb").innerHTML=html||`<tr><td colspan="8"><div class="empty" style="padding:40px"><h3>${t("empty_budget")}</h3><p>${t("empty_budget_p")}</p></div></td></tr>`;
+  $("#sBase").textContent=eur(base);$("#sTotal").textContent=eur(total);$("#barTotal").textContent=eur(total);
+  $("#sFlags").textContent=flags;$("#obraTag").textContent="● "+($("#h_obra").value||t("noname"));
+  renderResum();renderNotes();
+}
+function renderResum(){
+  const cts=chapterTotals(rows),total=computeTotal(rows);
+  $("#resumBox").innerHTML=cts.map(c=>`<div class="resum-row"><span class="c">${esc(c.name)}</span><span class="v">${eur(c.sum)}</span></div>`).join("")
+    +`<div class="resum-row tot"><span class="c">${t("total_doc")}</span><span class="v">${eur(total)}</span></div>`
+    +`<div class="resum-row"><span class="c" style="font-style:italic">${t("iva")}</span><span class="v"></span></div>`;
+}
+function renderNotes(){
+  const lock=locked();
+  $("#notesBox").innerHTML=NOTES.map((n,i)=>`<div class="note"><textarea data-note="${i}" ${lock?"disabled":""}>${esc(n)}</textarea>${lock?"":`<button class="rm" data-noterm="${i}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>`}</div>`).join("");
+}
+$("#notesBox").addEventListener("input",e=>{if(e.target.dataset.note!==undefined)NOTES[+e.target.dataset.note]=e.target.value;});
+$("#notesBox").addEventListener("click",e=>{const rm=e.target.closest("[data-noterm]");if(rm){NOTES.splice(+rm.dataset.noterm,1);renderNotes();}});
+$("#addNote").addEventListener("click",()=>{NOTES.push("");renderNotes();});
+
+$("#tb").addEventListener("input",e=>{const t2=e.target;if(t2.tagName!=="INPUT"||locked())return;const i=+t2.dataset.i,f=t2.dataset.f;if(f==="amid"||f==="preu")rows[i][f]=t2.value===""?"":parseFloat(t2.value);else rows[i][f]=t2.value;render();});
+$("#coef").addEventListener("input",render);
+$("#tb").addEventListener("click",e=>{if(locked())return;const del=e.target.closest("[data-del]"),add=e.target.closest("[data-addsub]");
+  if(del){pushUndo();const i=+del.dataset.del,r=rows[i];if(r.tipo==="part")rows.splice(i,1+subsOf(rows,i).length);else rows.splice(i,1);render();}
+  if(add){pushUndo();const i=+add.dataset.addsub,s=subsOf(rows,i),at=s.length?s[s.length-1]+1:i+1;rows.splice(at,0,{tipo:"sub",desc:t("sub_def"),ut:"ut",amid:1,preu:0});render();}});
+$("#addCap").addEventListener("click",()=>{pushUndo();rows.push({tipo:"cap",desc:t("cap_def")});render();window.scrollTo({top:document.body.scrollHeight,behavior:"smooth"});});
+$("#addPart").addEventListener("click",()=>{pushUndo();rows.push({tipo:"part",num:"",desc:t("part_def"),ut:"m²",amid:1,preu:0});render();window.scrollTo({top:document.body.scrollHeight,behavior:"smooth"});});
+
+// ---------- undo ----------
+function pushUndo(){undoStack.push(JSON.stringify(rows));if(undoStack.length>30)undoStack.shift();updateUndo();}
+function updateUndo(){$("#undoBtn").disabled=undoStack.length===0;}
+$("#undoBtn").addEventListener("click",()=>{if(!undoStack.length)return;rows=JSON.parse(undoStack.pop());updateUndo();render();toast(t("undone"));});
+
+// ---------- DESAR ----------
+async function logHist(pid,accion){try{await sb.from("presupuestos_historial").insert({presupuesto_id:pid,accion,usuario_id:ME.id,usuario_nombre:ME.nombre,snapshot:{rows,header:HEADER,coef:coef(),total:computeTotal(rows)}});}catch(_){}}
+async function saveCurrent(silent){
+  const obra=$("#h_obra").value.trim();if(!obra){toast(t("need_obra"),true);$("#h_obra").focus();return null;}
+  const payload={obra,idioma:IDIOMA,coef:coef(),datos:{header:HEADER,rows,notes:NOTES},total:computeTotal(rows)};
+  let pid=CURRENT.id;
+  if(!pid){payload.autor_id=ME.id;payload.autor_nombre=ME.nombre;const {data,error}=await sb.from("presupuestos_app").insert(payload).select().single();if(error){toast("✕ "+error.message,true);return null;}CURRENT=data;pid=data.id;await logHist(pid,"creat");}
+  else{const {data,error}=await sb.from("presupuestos_app").update(payload).eq("id",pid).select().single();if(error){toast("✕ "+error.message,true);return null;}CURRENT={...CURRENT,...data};await logHist(pid,"desat");}
+  if(!silent)toast(t("saved"));return pid;
+}
+$("#saveBtn").addEventListener("click",()=>saveCurrent(false));
+
+// ---------- CSV ----------
+function comma(n){return(Math.round((isFinite(n)?n:0)*100)/100).toFixed(2).replace(".",",");}
+$("#expCsv").addEventListener("click",()=>{
+  const c=coef();let lines=[["IDOBRA","",$("#h_obra").value||"obra","","","",""].join(";")];
+  for(let i=0;i<rows.length;i++){const r=rows[i];if(r.tipo==="cap")lines.push(["T","",r.desc,"","","",""].join(";"));else if(r.tipo==="part"){const E=unitPrice(rows,i),F=num2(E*c),G=num2(F*(r.amid||0));lines.push([(r.num||""),"",r.desc,(r.ut||""),comma(r.amid||0),comma(F),comma(G)].join(";"));}}
+  const b=new Blob(["﻿"+lines.join("\r\n")+"\r\n"],{type:"text/csv;charset=utf-8"});const a=document.createElement("a");a.href=URL.createObjectURL(b);a.download=(($("#h_obra").value||"obra").replace(/[^\w]+/g,"_"))+"_intranet.csv";a.click();toast(t("csv_ok"));
+});
+
+// ---------- CHAT IA ----------
+const panel=$("#chatPanel");
+$("#chatFab").addEventListener("click",()=>{panel.classList.add("open");$("#chatInput").focus();});
+$("#chatClose").addEventListener("click",()=>panel.classList.remove("open"));
+function renderSuggest(){$("#chatSuggest").innerHTML=["sug1","sug2","sug3"].map(k=>`<span class="chip" data-sug="${t(k)}">${t(k)}</span>`).join("");}
+$("#chatSuggest").addEventListener("click",e=>{const c=e.target.closest("[data-sug]");if(c){$("#chatInput").value=c.dataset.sug;$("#chatInput").focus();}});
+$("#chatInput").addEventListener("keydown",e=>{if(e.key==="Enter"&&!e.shiftKey){e.preventDefault();chatSend();}});
+function addMsg(cls,html){const d=document.createElement("div");d.className="msg "+cls;d.innerHTML=html;$("#chatBody").appendChild(d);$("#chatBody").scrollTop=$("#chatBody").scrollHeight;return d;}
+let PENDING=null;
+async function chatSend(){
+  const txt=$("#chatInput").value.trim();if(!txt||locked())return;
+  $("#chatInput").value="";addMsg("u",esc(txt));
+  const typing=document.createElement("div");typing.className="typing";typing.innerHTML=`<span class="d"></span><span class="d"></span><span class="d"></span> ${t("thinking")}`;$("#chatBody").appendChild(typing);$("#chatBody").scrollTop=$("#chatBody").scrollHeight;
+  $("#chatSend").disabled=true;
+  try{
+    const res=await fetch(CHAT_URL,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({rows,instruccio:txt,idioma:IDIOMA})});
+    const data=await res.json();typing.remove();
+    if(data.error||!Array.isArray(data.rows)){addMsg("a err",t("ai_err"));}
+    else{
+      PENDING=data.rows;const oldT=computeTotal(rows),newT=computeTotal(data.rows);
+      const dn=data.rows.length-rows.length;const dtxt=dn===0?"":(dn>0?` · +${dn} ${t("rows_before")}`:` · ${dn} ${t("rows_before")}`);
+      const pv=document.createElement("div");pv.className="preview";
+      pv.innerHTML=`<div class="pt"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>${esc(data.resum||t("ai_change"))}</div><div class="delta">${rows.length} → <b>${data.rows.length}</b> ${t("rows_before")}${dtxt}</div><div class="totd"><span class="old">${eur(oldT)}</span><span class="new">${eur(newT)}</span></div><div class="pb"><button class="btn ok" id="pvApply">${t("apply")}</button><button class="btn" id="pvDiscard">${t("discard")}</button></div>`;
+      $("#chatBody").appendChild(pv);$("#chatBody").scrollTop=$("#chatBody").scrollHeight;
+      pv.querySelector("#pvApply").addEventListener("click",()=>{pushUndo();rows=PENDING;PENDING=null;render();pv.querySelector(".pb").innerHTML=`<span style="color:var(--ok);font-weight:700">✓ ${t("applied")}</span>`;toast(t("applied"));});
+      pv.querySelector("#pvDiscard").addEventListener("click",()=>{PENDING=null;pv.querySelector(".pb").innerHTML=`<span style="color:var(--secondary)">✕</span>`;});
+    }
+  }catch(e){typing.remove();addMsg("a err",t("ai_err"));}
+  $("#chatSend").disabled=false;
+}
+$("#chatSend").addEventListener("click",chatSend);
+
+// ---------- FIRMA ----------
+const pad=$("#sigpad"),pctx=pad.getContext("2d");let drawing=false,hasInk=false;
+function pos(e){const r=pad.getBoundingClientRect();const tt=e.touches?e.touches[0]:e;return{x:(tt.clientX-r.left)*(pad.width/r.width),y:(tt.clientY-r.top)*(pad.height/r.height)};}
+function sStart(e){drawing=true;const p=pos(e);pctx.beginPath();pctx.moveTo(p.x,p.y);e.preventDefault();}
+function sMove(e){if(!drawing)return;const p=pos(e);pctx.lineTo(p.x,p.y);pctx.strokeStyle="#0F172A";pctx.lineWidth=2.4;pctx.lineCap="round";pctx.stroke();hasInk=true;e.preventDefault();}
+function sEnd(){drawing=false;}
+["mousedown","touchstart"].forEach(ev=>pad.addEventListener(ev,sStart));["mousemove","touchmove"].forEach(ev=>pad.addEventListener(ev,sMove));["mouseup","mouseleave","touchend"].forEach(ev=>pad.addEventListener(ev,sEnd));
+$("#sigClear").addEventListener("click",()=>{pctx.clearRect(0,0,pad.width,pad.height);hasInk=false;});
+$("#sigCancel").addEventListener("click",()=>$("#sigModal").classList.remove("show"));
+$("#signBtn").addEventListener("click",()=>{pctx.clearRect(0,0,pad.width,pad.height);hasInk=false;$("#sigModal").classList.add("show");});
+$("#sigConfirm").addEventListener("click",async()=>{
+  const pid=await saveCurrent(true);if(!pid)return;
+  const firma=hasInk?pad.toDataURL("image/png"):null;
+  const {data,error}=await sb.from("presupuestos_app").update({estado:"firmado",firmado_por:ME.id,firmado_nombre:ME.nombre,firmado_at:new Date().toISOString(),firma_img:firma}).eq("id",pid).select().single();
+  if(error){toast("✕ "+error.message,true);return;}
+  CURRENT={...CURRENT,...data};await logHist(pid,"signat");$("#sigModal").classList.remove("show");applyLockUI();render();toast(t("signed_ok"));
+});
+
+// arrencada
+applyI18n();
+if(sb) boot();
+else { const e=$("#loginErr"); if(e){e.textContent="No s'ha pogut carregar la connexió (xarxa/CDN). Recarrega la pàgina.";e.style.display="block";} }
+</script>
+</body>
+</html>
