@@ -545,7 +545,7 @@ function chapterTotals(arr){const c=coef();const out=[];let cur=null;for(let i=0
 
 function render(){
   const c=coef(),lock=locked();let html="",base=0,total=0,flags=0,chapBuf=null,chapSum=0;const ro=lock?" disabled":"";
-  const flush=()=>{if(chapBuf!==null)html+=`<tr class="subtotal"><td></td><td colspan="5">${t("subtotal")} — ${esc(chapBuf)}</td><td class="imp">${eur(chapSum)}</td><td></td></tr>`;chapBuf=null;chapSum=0;};
+  const flush=()=>{if(chapBuf!==null&&chapSum>0)html+=`<tr class="subtotal"><td></td><td colspan="5">${t("subtotal")} — ${esc(chapBuf)}</td><td class="imp">${eur(chapSum)}</td><td></td></tr>`;chapBuf=null;chapSum=0;};
   const trash=i=>`<button class="mini del" data-del="${i}"${ro}><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"/></svg></button>`;
   for(let i=0;i<rows.length;i++){const r=rows[i];
     if(r.tipo==="cap"){flush();chapBuf=r.desc.split("·")[0].trim()||r.desc;
@@ -565,7 +565,7 @@ function render(){
   renderResum();renderNotes();
 }
 function renderResum(){
-  const cts=chapterTotals(rows),total=computeTotal(rows);
+  const cts=chapterTotals(rows).filter(c=>c.sum>0),total=computeTotal(rows);
   $("#resumBox").innerHTML=cts.map(c=>`<div class="resum-row"><span class="c">${esc(c.name)}</span><span class="v">${eur(c.sum)}</span></div>`).join("")
     +`<div class="resum-row tot"><span class="c">${t("total_doc")}</span><span class="v">${eur(total)}</span></div>`
     +`<div class="resum-row"><span class="c" style="font-style:italic">${t("iva")}</span><span class="v"></span></div>`;
