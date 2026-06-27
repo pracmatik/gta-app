@@ -627,7 +627,8 @@ async function chatSend(){
   const typing=document.createElement("div");typing.className="typing";typing.innerHTML=`<span class="d"></span><span class="d"></span><span class="d"></span> ${t("thinking")}`;$("#chatBody").appendChild(typing);$("#chatBody").scrollTop=$("#chatBody").scrollHeight;
   $("#chatSend").disabled=true;
   try{
-    const res=await fetch(CHAT_URL,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({rows,instruccio:txt,idioma:IDIOMA})});
+    const {data:{session}}=await sb.auth.getSession();
+    const res=await fetch(CHAT_URL,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({token:(session&&session.access_token)||"",rows,instruccio:txt,idioma:IDIOMA})});
     const data=await res.json();typing.remove();
     if(data.error||!Array.isArray(data.rows)){addMsg("a err",t("ai_err"));}
     else{
