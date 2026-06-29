@@ -114,6 +114,10 @@
   td input.r{text-align:right;font-variant-numeric:tabular-nums}
   td.calc{color:var(--secondary);font-weight:600;font-variant-numeric:tabular-nums;text-align:right}
   td.imp{font-weight:700;color:var(--primary);font-variant-numeric:tabular-nums;text-align:right}
+  tr.sec td{background:linear-gradient(135deg,#0369A1,#0EA5E9);color:#fff;font-weight:800;font-size:14px;letter-spacing:.5px;text-transform:uppercase;padding:13px 10px}
+  tr.sec td input{color:#fff;font-weight:800;text-transform:uppercase}tr.sec td input:hover{background:rgba(255,255,255,.12);border-color:rgba(255,255,255,.25)}
+  tr.sec .mini{background:rgba(255,255,255,.14);border-color:rgba(255,255,255,.3);color:#fff}tr.sec .mini:hover{background:rgba(255,255,255,.24)}
+  tr.sectotal td{background:#0c4a6e;color:#fff;font-weight:800;letter-spacing:.3px}tr.sectotal .imp{color:#fff;font-size:14.5px}
   tr.cap td{background:#0F172A;color:#fff;font-weight:800;letter-spacing:.2px;padding-top:11px;padding-bottom:11px}
   tr.cap td input{color:#fff;font-weight:800}tr.cap td input:hover{background:rgba(255,255,255,.08);border-color:rgba(255,255,255,.2)}
   tr.part td:first-child input{font-weight:700;color:var(--primary)}tr.part .desc input{font-weight:600}
@@ -291,6 +295,7 @@
 
       <div class="struct" id="structBar">
         <span class="t"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg><span data-i18n="structure">Estructura:</span></span>
+        <button class="btn accent big" id="addSec"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg><span data-i18n="add_sec">Afegir secció</span></button>
         <button class="btn accent big" id="addCap"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg><span data-i18n="add_cap">Afegir capítol</span></button>
         <button class="btn accent big" id="addPart"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg><span data-i18n="add_part">Afegir partida</span></button>
         <div class="spacer"></div>
@@ -378,21 +383,22 @@ const I18N={
    h_obra:"Títol de l'obra",h_client:"Comunitat / Client",h_ref:"Referència",h_coac:"Núm. col·legiat COAC",h_tec:"Tècnics",
    edit_hint:"Edita qualsevol cel·la. Afegeix <b>capítols</b>, <b>partides</b> i <b>subelements</b> (sumen i marquen el preu de la partida). O obre l'<b>assistent IA</b> (botó blau) i digues què vols canviar. Quan estigui a gust → <b>Desa</b> i <b>Signa</b>.",
    s_base:"Base (sense coef)",s_coef:"Coef. regulador",s_rev:"A revisar",s_total:"Total pressupost",
-   structure:"Estructura:",add_cap:"Afegir capítol",add_part:"Afegir partida",csv:"CSV intranet",
+   structure:"Estructura:",add_sec:"Afegir secció",add_cap:"Afegir capítol",add_part:"Afegir partida",csv:"CSV intranet",
    c_num:"Núm.",c_desc:"Descripció",c_ut:"Ut.",c_amid:"Amidament",c_preu:"Valor unitari",c_coef:"Amb coef",c_imp:"Import",c_act:"Accions",
    resum:"RESUM",notes:"Notes a la comunitat",add_note:"Afegir nota",
    total_w:"Total",undo:"Desfer",save:"Desar",sign:"Signar",
    chat_title:"Assistent IA",chat_sub:"Digues què vols canviar del pressupost",chat_ph:"Ex: aplica un 10% de descompte comercial",
    sign_h:"Signar pressupost",sign_p:"Dibuixa la teva firma. En signar, el pressupost queda bloquejat i es registra qui i quan.",clear:"Esborrar",cancel:"Cancel·lar",sign_lock:"Signar i bloquejar",
-   subtotal:"SUBTOTAL CAPÍTOL",total_doc:"TOTAL PRESSUPOST",iva:"IVA no inclòs",part_def:"Nova partida",cap_def:"NOU CAPÍTOL",sub_def:"Nou subelement",noname:"(sense nom)",
+   subtotal:"SUBTOTAL CAPÍTOL",total_sec:"TOTAL",total_doc:"TOTAL PRESSUPOST",iva:"IVA NO INCLÒS",part_def:"Nova partida",cap_def:"NOU CAPÍTOL",sec_def:"NOVA SECCIÓ",sub_def:"Nou subelement",pendent:"Pendent de valoració",noname:"(sense nom)",
    tecnic:"Tècnic",supervisora:"Supervisora",saved:"Pressupost desat",signed_ok:"Pressupost signat i bloquejat",reopened:"Pressupost reobert",deleted:"Pressupost eliminat",need_obra:"Posa el títol de l'obra",
    csv_ok:"CSV intranet descarregat",applied:"Canvis aplicats",undone:"Canvi desfet",apply:"Aplicar canvis",discard:"Descartar",
    ai_change:"Vols aplicar aquests canvis?",rows_before:"files",ai_err:"No he pogut processar la petició. Torna-ho a provar.",thinking:"Pensant…",
    sug1:"Aplica un 10% de descompte",sug2:"Afegeix una partida de seguretat i salut",sug3:"Puja l'amidament del capítol 1 un 5%",
    confirm_del:"Eliminar aquest pressupost? No es pot desfer.",empty_budget:"Pressupost buit",empty_budget_p:"Comença afegint un capítol o una partida.",
-   note1:"El pressupost s'ha realitzat tenint en compte els amidaments de l'arquitecte.",
-   note2:"Els preus es poden revisar segons l'evolució del cost de les matèries primeres.",
-   note3:"Preguem consulti amb els nostres tècnics per aclarir qualsevol dubte."},
+   note1:"EL PRESSUPOST S'HA REALITZAT TENINT EN COMPTE ELS AMIDAMENTS DE L'ARQUITECTE, ............., EN CAS DE MODIFICACIÓ DURANT L'EXECUCIÓ DE LES OBRES, ES FACTURARÀ LA DIFERÈNCIA.",
+   note2:"EN EL CAS QUE QUALSEVOL ENTITAT PÚBLICA (AJUNTAMENT O CONSORCI DEL HABITATGE DE BARCELONA) CONSIDERI NECESSARI AFEGIR ALTRES PARTIDES NO INCLOSES EN EL PRESSUPOST ACCEPTAT PER LA COMUNITAT, ES VALORARAN EN UN PRESSUPOST ANNEX.",
+   note3:"Nota GTA: Degut al gran increment als preus que s'està produint a les matèries primeres utilitzades per a la realització de les partides, el preu de les mateixes s'haurà de revisar abans de la seva acceptació.",
+   note4:"PREGUEM CONSULTI AMB ELS NOSTRES TÈCNICS PER ACLARIR QUALSEVOL DUBTE QUE ELS PUGUI SORGIR."},
  es:{login_title:"Presupuestos GTA",login_sub:"Inicia sesión para acceder a tus presupuestos",email:"Correo",pass:"Contraseña",enter:"Entrar",
    hist_sub:"Recupera, continúa o consulta cualquier presupuesto.",new_budget:"Nuevo presupuesto",search:"Busca por obra…",all_states:"Todos los estados",draft:"Borrador",signed:"Firmado",
    empty_h:"Aún no hay presupuestos",empty_p:"Crea el primero con el botón de arriba.",my_budgets:"Mis presupuestos",all_budgets:"Todos los presupuestos",
@@ -402,27 +408,28 @@ const I18N={
    h_obra:"Título de la obra",h_client:"Comunidad / Cliente",h_ref:"Referencia",h_coac:"Nº colegiado COAC",h_tec:"Técnicos",
    edit_hint:"Edita cualquier celda. Añade <b>capítulos</b>, <b>partidas</b> y <b>subelementos</b> (suman y marcan el precio de la partida). O abre el <b>asistente IA</b> (botón azul) y di qué quieres cambiar. Cuando esté a gusto → <b>Guarda</b> y <b>Firma</b>.",
    s_base:"Base (sin coef)",s_coef:"Coef. regulador",s_rev:"A revisar",s_total:"Total presupuesto",
-   structure:"Estructura:",add_cap:"Añadir capítulo",add_part:"Añadir partida",csv:"CSV intranet",
+   structure:"Estructura:",add_sec:"Añadir sección",add_cap:"Añadir capítulo",add_part:"Añadir partida",csv:"CSV intranet",
    c_num:"Núm.",c_desc:"Descripción",c_ut:"Ud.",c_amid:"Medición",c_preu:"Valor unitario",c_coef:"Con coef",c_imp:"Importe",c_act:"Acciones",
    resum:"RESUMEN",notes:"Notas a la comunidad",add_note:"Añadir nota",
    total_w:"Total",undo:"Deshacer",save:"Guardar",sign:"Firmar",
    chat_title:"Asistente IA",chat_sub:"Di qué quieres cambiar del presupuesto",chat_ph:"Ej: aplica un 10% de descuento comercial",
    sign_h:"Firmar presupuesto",sign_p:"Dibuja tu firma. Al firmar, el presupuesto queda bloqueado y se registra quién y cuándo.",clear:"Borrar",cancel:"Cancelar",sign_lock:"Firmar y bloquear",
-   subtotal:"SUBTOTAL CAPÍTULO",total_doc:"TOTAL PRESUPUESTO",iva:"IVA no incluido",part_def:"Nueva partida",cap_def:"NUEVO CAPÍTULO",sub_def:"Nuevo subelemento",noname:"(sin nombre)",
+   subtotal:"SUBTOTAL CAPÍTULO",total_sec:"TOTAL",total_doc:"TOTAL PRESUPUESTO",iva:"IVA NO INCLUIDO",part_def:"Nueva partida",cap_def:"NUEVO CAPÍTULO",sec_def:"NUEVA SECCIÓN",sub_def:"Nuevo subelemento",pendent:"Pendiente de valoración",noname:"(sin nombre)",
    tecnic:"Técnico",supervisora:"Supervisora",saved:"Presupuesto guardado",signed_ok:"Presupuesto firmado y bloqueado",reopened:"Presupuesto reabierto",deleted:"Presupuesto eliminado",need_obra:"Pon el título de la obra",
    csv_ok:"CSV intranet descargado",applied:"Cambios aplicados",undone:"Cambio deshecho",apply:"Aplicar cambios",discard:"Descartar",
    ai_change:"¿Quieres aplicar estos cambios?",rows_before:"filas",ai_err:"No he podido procesar la petición. Inténtalo de nuevo.",thinking:"Pensando…",
    sug1:"Aplica un 10% de descuento",sug2:"Añade una partida de seguridad y salud",sug3:"Sube la medición del capítulo 1 un 5%",
    confirm_del:"¿Eliminar este presupuesto? No se puede deshacer.",empty_budget:"Presupuesto vacío",empty_budget_p:"Empieza añadiendo un capítulo o una partida.",
-   note1:"El presupuesto se ha realizado teniendo en cuenta las mediciones del arquitecto.",
-   note2:"Los precios pueden revisarse según la evolución del coste de las materias primas.",
-   note3:"Rogamos consulte con nuestros técnicos para aclarar cualquier duda."}
+   note1:"EL PRESUPUESTO SE HA REALIZADO TENIENDO EN CUENTA LAS MEDICIONES DEL ARQUITECTO TÉCNICO, ............., EN CASO DE MODIFICACIÓN DURANTE LA EJECUCIÓN DE LAS OBRAS, SE FACTURARÁ LA DIFERENCIA.",
+   note2:"EN EL CASO DE QUE CUALQUIER ENTIDAD PÚBLICA (AJUNTAMENT O CONSORCI DE L'HABITATGE DE BARCELONA) CONSIDERE NECESARIO AGREGAR OTRAS PARTIDAS NO INCLUIDAS EN EL PRESUPUESTO ACEPTADO POR LA COMUNIDAD, SE VALORARÁ EN UN PRESUPUESTO ANEXO.",
+   note3:"Nota GTA: Debido al gran incremento en los precios que se está produciendo en las materias primas utilizadas para la realización de las partidas, el precio de las mismas se deberá revisar antes de su aceptación.",
+   note4:"ROGAMOS CONSULTEN CON NUESTROS TÉCNICOS PARA ACLARAR CUALQUIER DUDA QUE LES PUEDA SURGIR."}
 };
 const LS={get:k=>{try{return localStorage.getItem(k)}catch(e){return null}},set:(k,v)=>{try{localStorage.setItem(k,v)}catch(e){}}};
 let IDIOMA = LS.get("gta_lang")||"ca";
 const t = k => (I18N[IDIOMA][k]!==undefined?I18N[IDIOMA][k]:k);
-const UNIT = {ut:{ca:"ut",es:"ud"},ud:{ca:"ut",es:"ud"},dia:{ca:"dia",es:"día"},"día":{ca:"dia",es:"día"}};
-const unitDisp = u => { const k=(u||"").toString().toLowerCase(); return UNIT[k]?UNIT[k][IDIOMA]:u; };
+const UNIT = {ut:{ca:"ut",es:"ud"},ud:{ca:"ut",es:"ud"},u:{ca:"ut",es:"ud"},m2:{ca:"m²",es:"m²"},m3:{ca:"m³",es:"m³"}};
+const unitDisp = u => { const k=(u==null?"":String(u)).trim().toLowerCase(); return UNIT[k]?UNIT[k][IDIOMA]:(u==null?"":String(u)); };
 function applyI18n(){
   document.querySelectorAll("[data-i18n]").forEach(e=>{ const k=e.getAttribute("data-i18n"); if(I18N[IDIOMA][k]!==undefined) e.innerHTML=I18N[IDIOMA][k]; });
   document.querySelectorAll("[data-i18n-ph]").forEach(e=>{ const k=e.getAttribute("data-i18n-ph"); if(I18N[IDIOMA][k]!==undefined) e.placeholder=I18N[IDIOMA][k]; });
@@ -506,13 +513,16 @@ $("#histGrid").addEventListener("click",async e=>{
 // ---------- normalització datos ----------
 function normDatos(d){ if(Array.isArray(d))return{header:{},rows:d,notes:[]}; if(d&&typeof d==="object")return{header:d.header||{},rows:Array.isArray(d.rows)?d.rows:[],notes:Array.isArray(d.notes)?d.notes:[]}; return{header:{},rows:[],notes:[]}; }
 const SEED=()=>[
-  {tipo:"cap",desc:"FAÇANA PRINCIPAL · 1. TREBALLS PREVIS"},
-  {tipo:"part",num:"1.1.1",desc:"PROTECCIÓ PEATONAL",ut:"m²",amid:36},
-    {tipo:"sub",desc:"Muntatge/desmuntatge i portes",ut:"pa",amid:1,preu:2400},
-    {tipo:"sub",desc:"Lloguer diari",ut:"d",amid:15,preu:15},
-    {tipo:"sub",desc:"Lones",ut:"ud",amid:11,preu:90},
-  {tipo:"part",num:"1.2",desc:"TREBALLS VERTICALS",ut:"pa",amid:1,flag:"La IA no té preu base — confirma'l"},
-    {tipo:"sub",desc:"Verticals",ut:"ut",amid:13,preu:554}
+  {tipo:"sec",desc:"FAÇANA PRINCIPAL"},
+  {tipo:"cap",desc:"1. TREBALLS PREVIS I MITJANS AUXILIARS"},
+  {tipo:"part",num:"1.1",desc:"BASTIDA TUBULAR\nMuntatge, lloguer i desmuntatge de bastida metàl·lica tubular homologada, amb xarxes de protecció, ancoratges a façana i p.p. de mitjans auxiliars segons l'Estudi de Seguretat.",ut:"m²",amid:0,preu:0,flag:"Confirma el preu base"},
+  {tipo:"cap",desc:"2. ENDERROCS I PREPARACIÓ DE SUPORTS"},
+  {tipo:"part",num:"2.1",desc:"REPICAT DE REVESTIMENTS\nRepicat de revestiment de morter o estuc en paraments verticals fins arribar al suport, amb mitjans manuals, sanejat de fissures i retirada de runa a abocador autoritzat.",ut:"m²",amid:0,preu:0},
+  {tipo:"cap",desc:"3. REVESTIMENTS I ACABATS"},
+  {tipo:"part",num:"3.1",desc:"ARREBOSSAT DE MORTER\nArrebossat reglejat amb morter de calç hidràulica sobre parament vertical exterior, inclosa malla de fibra de vidre en punts singulars.",ut:"m²",amid:0,preu:0},
+  {tipo:"part",num:"3.2",desc:"PINTAT AL SILICAT\nPintat de parament exterior amb pintura al silicat de potassa: una capa d'imprimació i dues d'acabat, color a determinar.",ut:"m²",amid:0,preu:0},
+  {tipo:"cap",desc:"4. SEGURETAT I SALUT"},
+  {tipo:"part",num:"4.1",desc:"SEGURETAT I SALUT\nMesures de seguretat i salut segons l'Estudi Bàsic: EPIS, senyalització i proteccions col·lectives.",ut:"pa",amid:1,preu:0,flag:"Valorar segons % de l'obra"}
 ];
 
 // ---------- EDITOR ----------
@@ -521,7 +531,7 @@ $("#backBtn").addEventListener("click",showHist);
 function openEditor(p){
   undoStack=[]; updateUndo();
   if(p){CURRENT={...p};const n=normDatos(p.datos);rows=JSON.parse(JSON.stringify(n.rows));HEADER=n.header||{};NOTES=n.notes||[];$("#coef").value=p.coef||1;}
-  else{CURRENT={id:null,obra:"",coef:1,estado:"borrador",autor_id:ME.id,autor_nombre:ME.nombre};rows=SEED();HEADER={};NOTES=[t("note1"),t("note2"),t("note3")];$("#coef").value=1.05;}
+  else{CURRENT={id:null,obra:"",coef:1,estado:"borrador",autor_id:ME.id,autor_nombre:ME.nombre};rows=SEED();HEADER={};NOTES=[t("note1"),t("note2"),t("note3"),t("note4")];$("#coef").value=1.05;}
   $("#h_obra").value=HEADER.obra||CURRENT.obra||"";$("#h_client").value=HEADER.client||"";$("#h_ref").value=HEADER.ref||"";$("#h_coac").value=HEADER.coac||"";$("#h_tec").value=HEADER.tec||"";
   $("#vHist").classList.add("hidden");$("#vEdit").classList.remove("hidden");$("#chatBody").innerHTML="";
   applyLockUI();render();window.scrollTo({top:0});
@@ -541,23 +551,35 @@ $("#reopenBtn").addEventListener("click",async()=>{if(ME.rol!=="admin")return;co
 function subsOf(arr,i){const o=[];for(let j=i+1;j<arr.length;j++){if(arr[j].tipo!=="sub")break;o.push(j);}return o;}
 function unitPrice(arr,i){const r=arr[i],s=subsOf(arr,i);if(s.length){const x=s.reduce((a,j)=>a+(arr[j].amid||0)*(arr[j].preu||0),0);return(r.amid&&r.amid!=0)?x/r.amid:0;}return r.preu||0;}
 function computeTotal(arr){const c=coef();let tt=0;for(let i=0;i<arr.length;i++)if(arr[i].tipo==="part")tt+=num2(num2(unitPrice(arr,i)*c)*(arr[i].amid||0));return num2(tt);}
-function chapterTotals(arr){const c=coef();const out=[];let cur=null;for(let i=0;i<arr.length;i++){const r=arr[i];if(r.tipo==="cap"){if(cur)out.push(cur);cur={name:r.desc.split("·")[0].trim()||r.desc,sum:0};}else if(r.tipo==="part"&&cur)cur.sum+=num2(num2(unitPrice(arr,i)*c)*(r.amid||0));}if(cur)out.push(cur);return out;}
+function summaryGroups(arr){const c=coef();const out=[];let curCap=null,curSec=null;
+  const closeCap=()=>{if(curCap&&curCap.sum>0)out.push(curCap);curCap=null;};
+  const closeSec=()=>{closeCap();if(curSec&&curSec.sum>0)out.push(curSec);curSec=null;};
+  for(let i=0;i<arr.length;i++){const r=arr[i];
+    if(r.tipo==="sec"){closeSec();curSec={kind:"sec",name:(r.desc||"").trim(),sum:0};}
+    else if(r.tipo==="cap"){closeCap();curCap={kind:"cap",name:((r.desc||"").trim()),sum:0};}
+    else if(r.tipo==="part"){const g=num2(num2(unitPrice(arr,i)*c)*(r.amid||0));if(curCap)curCap.sum+=g;if(curSec)curSec.sum+=g;}}
+  closeSec();return out;}
 
 function render(){
-  const c=coef(),lock=locked();let html="",base=0,total=0,flags=0,chapBuf=null,chapSum=0;const ro=lock?" disabled":"";
-  const flush=()=>{if(chapBuf!==null&&chapSum>0)html+=`<tr class="subtotal"><td></td><td colspan="5">${t("subtotal")} — ${esc(chapBuf)}</td><td class="imp">${eur(chapSum)}</td><td></td></tr>`;chapBuf=null;chapSum=0;};
+  const c=coef(),lock=locked();let html="",base=0,total=0,flags=0;
+  let chapBuf=null,chapSum=0,secBuf=null,secSum=0;const ro=lock?" disabled":"";
+  const flushCap=()=>{if(chapBuf!==null&&chapSum>0)html+=`<tr class="subtotal"><td></td><td colspan="5">${t("subtotal")} — ${esc(chapBuf)}</td><td class="imp">${eur(chapSum)}</td><td></td></tr>`;chapBuf=null;chapSum=0;};
+  const flushSec=()=>{flushCap();if(secBuf!==null&&secSum>0)html+=`<tr class="sectotal"><td></td><td colspan="5">${t("total_sec")} ${esc(secBuf)}</td><td class="imp">${eur(secSum)}</td><td></td></tr>`;secBuf=null;secSum=0;};
   const trash=i=>`<button class="mini del" data-del="${i}"${ro}><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"/></svg></button>`;
   for(let i=0;i<rows.length;i++){const r=rows[i];
-    if(r.tipo==="cap"){flush();chapBuf=r.desc.split("·")[0].trim()||r.desc;
+    if(r.tipo==="sec"){flushSec();secBuf=(r.desc||"").trim();
+      html+=`<tr class="sec"><td class="num"></td><td class="desc" colspan="6"><input value="${esc(r.desc)}" data-f="desc" data-i="${i}"${ro}></td><td class="act">${trash(i)}</td></tr>`;
+    }else if(r.tipo==="cap"){flushCap();chapBuf=(r.desc||"").trim();
       html+=`<tr class="cap"><td class="num"></td><td class="desc" colspan="6"><input value="${esc(r.desc)}" data-f="desc" data-i="${i}"${ro}></td><td class="act">${trash(i)}</td></tr>`;
-    }else if(r.tipo==="part"){const E=unitPrice(rows,i),F=num2(E*c),G=num2(F*(r.amid||0));base+=num2(E*(r.amid||0));total+=G;chapSum+=G;const composed=subsOf(rows,i).length>0;if(r.flag)flags++;
+    }else if(r.tipo==="part"){const E=unitPrice(rows,i),F=num2(E*c),G=num2(F*(r.amid||0));base+=num2(E*(r.amid||0));total+=G;chapSum+=G;secSum+=G;const composed=subsOf(rows,i).length>0;if(r.flag)flags++;
       const badge=r.flag?`<span class="flag-badge" title="${esc(r.flag)}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>!</span>`:"";
-      html+=`<tr class="part${r.flag?" flagged":""}"><td class="num"><input value="${esc(r.num||"")}" data-f="num" data-i="${i}"${ro}></td><td class="desc"><input value="${esc(r.desc)}" data-f="desc" data-i="${i}"${ro}>${badge}</td><td class="ut"><input value="${esc(unitDisp(r.ut))}" data-f="ut" data-i="${i}"${ro}></td><td class="amid"><input class="r" type="number" step="any" value="${r.amid??""}" data-f="amid" data-i="${i}"${ro}></td><td class="preu">${composed?`<span class="calc" style="display:block;padding:6px 7px">${eur(E).replace(" €","")}</span>`:`<input class="r" type="number" step="any" value="${r.preu??""}" data-f="preu" data-i="${i}"${ro}>`}</td><td class="calc fcol">${F.toLocaleString(IDIOMA==="es"?"es-ES":"ca-ES",{minimumFractionDigits:2,maximumFractionDigits:2})}</td><td class="imp">${eur(G)}</td><td class="act">${lock?"":`<button class="mini" data-addsub="${i}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>sub</button>`}${trash(i)}</td></tr>`;
+      const impCell=(G===0&&r.flag)?`<span style="color:var(--warn);font-weight:700;font-size:11.5px">${t("pendent")}</span>`:eur(G);
+      html+=`<tr class="part${r.flag?" flagged":""}"><td class="num"><input value="${esc(r.num||"")}" data-f="num" data-i="${i}"${ro}></td><td class="desc"><input value="${esc(r.desc)}" data-f="desc" data-i="${i}"${ro}>${badge}</td><td class="ut"><input value="${esc(unitDisp(r.ut))}" data-f="ut" data-i="${i}"${ro}></td><td class="amid"><input class="r" type="number" step="any" value="${r.amid??""}" data-f="amid" data-i="${i}"${ro}></td><td class="preu">${composed?`<span class="calc" style="display:block;padding:6px 7px">${eur(E).replace(" €","")}</span>`:`<input class="r" type="number" step="any" value="${r.preu??""}" data-f="preu" data-i="${i}"${ro}>`}</td><td class="calc fcol">${F.toLocaleString(IDIOMA==="es"?"es-ES":"ca-ES",{minimumFractionDigits:2,maximumFractionDigits:2})}</td><td class="imp">${impCell}</td><td class="act">${lock?"":`<button class="mini" data-addsub="${i}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>sub</button>`}${trash(i)}</td></tr>`;
     }else{const imp=num2((r.amid||0)*(r.preu||0));
       html+=`<tr class="sub"><td class="num">·</td><td class="desc"><input value="${esc(r.desc)}" data-f="desc" data-i="${i}"${ro}></td><td class="ut"><input value="${esc(unitDisp(r.ut))}" data-f="ut" data-i="${i}"${ro}></td><td class="amid"><input class="r" type="number" step="any" value="${r.amid??""}" data-f="amid" data-i="${i}"${ro}></td><td class="preu"><input class="r" type="number" step="any" value="${r.preu??""}" data-f="preu" data-i="${i}"${ro}></td><td class="calc fcol"></td><td class="imp">${eur(imp)}</td><td class="act">${trash(i)}</td></tr>`;
     }
   }
-  flush();
+  flushSec();
   if(rows.length) html+=`<tr class="grand"><td></td><td colspan="5">${t("total_doc")}</td><td class="imp">${eur(total)}</td><td></td></tr><tr class="iva"><td></td><td colspan="7">${t("iva")}</td></tr>`;
   $("#tb").innerHTML=html||`<tr><td colspan="8"><div class="empty" style="padding:40px"><h3>${t("empty_budget")}</h3><p>${t("empty_budget_p")}</p></div></td></tr>`;
   $("#sBase").textContent=eur(base);$("#sTotal").textContent=eur(total);$("#barTotal").textContent=eur(total);
@@ -565,8 +587,10 @@ function render(){
   renderResum();renderNotes();
 }
 function renderResum(){
-  const cts=chapterTotals(rows).filter(c=>c.sum>0),total=computeTotal(rows);
-  $("#resumBox").innerHTML=cts.map(c=>`<div class="resum-row"><span class="c">${esc(c.name)}</span><span class="v">${eur(c.sum)}</span></div>`).join("")
+  const groups=summaryGroups(rows),total=computeTotal(rows);
+  $("#resumBox").innerHTML=groups.map(g=>g.kind==="sec"
+    ?`<div class="resum-row" style="border-top:1.5px solid #cbd5e1;margin-top:5px"><span class="c" style="font-weight:800;color:var(--accent);text-transform:uppercase;font-size:12.5px;letter-spacing:.3px">${t("total_sec")} ${esc(g.name)}</span><span class="v" style="color:var(--accent)">${eur(g.sum)}</span></div>`
+    :`<div class="resum-row"><span class="c">${esc(g.name)}</span><span class="v">${eur(g.sum)}</span></div>`).join("")
     +`<div class="resum-row tot"><span class="c">${t("total_doc")}</span><span class="v">${eur(total)}</span></div>`
     +`<div class="resum-row"><span class="c" style="font-style:italic">${t("iva")}</span><span class="v"></span></div>`;
 }
@@ -583,6 +607,7 @@ $("#coef").addEventListener("input",render);
 $("#tb").addEventListener("click",e=>{if(locked())return;const del=e.target.closest("[data-del]"),add=e.target.closest("[data-addsub]");
   if(del){pushUndo();const i=+del.dataset.del,r=rows[i];if(r.tipo==="part")rows.splice(i,1+subsOf(rows,i).length);else rows.splice(i,1);render();}
   if(add){pushUndo();const i=+add.dataset.addsub,s=subsOf(rows,i),at=s.length?s[s.length-1]+1:i+1;rows.splice(at,0,{tipo:"sub",desc:t("sub_def"),ut:"ut",amid:1,preu:0});render();}});
+$("#addSec").addEventListener("click",()=>{pushUndo();rows.push({tipo:"sec",desc:t("sec_def")});render();window.scrollTo({top:document.body.scrollHeight,behavior:"smooth"});});
 $("#addCap").addEventListener("click",()=>{pushUndo();rows.push({tipo:"cap",desc:t("cap_def")});render();window.scrollTo({top:document.body.scrollHeight,behavior:"smooth"});});
 $("#addPart").addEventListener("click",()=>{pushUndo();rows.push({tipo:"part",num:"",desc:t("part_def"),ut:"m²",amid:1,preu:0});render();window.scrollTo({top:document.body.scrollHeight,behavior:"smooth"});});
 
@@ -604,12 +629,28 @@ async function saveCurrent(silent){
 $("#saveBtn").addEventListener("click",()=>saveCurrent(false));
 
 // ---------- CSV ----------
-function comma(n){return(Math.round((isFinite(n)?n:0)*100)/100).toFixed(2).replace(".",",");}
+function comma(n){n=Math.round((isFinite(n)?n:0)*100)/100;const neg=n<0;n=Math.abs(n);const p=n.toFixed(2).split(".");return (neg?"-":"")+p[0].replace(/\B(?=(\d{3})+(?!\d))/g,".")+","+p[1];}
+function csvUnit(u){const k=(u==null?"":String(u)).trim().toLowerCase();return(k==="ut"||k==="u"||k==="ud")?"ud":k==="m2"?"m²":k==="m3"?"m³":(u==null?"":String(u));}
 $("#expCsv").addEventListener("click",()=>{
-  const c=coef();const q=s=>{s=(s==null?"":String(s));return /[;"\n\r]/.test(s)?'"'+s.replace(/"/g,'""')+'"':s;};
-  let lines=[["IDOBRA","",$("#h_obra").value||"obra","","","",""].map(q).join(";")];
-  for(let i=0;i<rows.length;i++){const r=rows[i];if(r.tipo==="cap")lines.push(["T","",r.desc,"","","",""].map(q).join(";"));else if(r.tipo==="part"){const E=unitPrice(rows,i),F=num2(E*c),G=num2(F*(r.amid||0));lines.push([(r.num||""),"",r.desc,(r.ut||""),comma(r.amid||0),comma(F),comma(G)].map(q).join(";"));}}
-  const b=new Blob(["﻿"+lines.join("\r\n")+"\r\n"],{type:"text/csv;charset=utf-8"});const a=document.createElement("a");a.href=URL.createObjectURL(b);a.download=(($("#h_obra").value||"obra").replace(/[^\w]+/g,"_"))+"_intranet.csv";a.click();toast(t("csv_ok"));
+  const c=coef();
+  const q=s=>{s=(s==null?"":String(s));return /[;"\n\r]/.test(s)?'"'+s.replace(/"/g,'""')+'"':s;};
+  const L=[],push=a=>L.push(a.map(q).join(";")+";");
+  push(["ID1","ID2","TITULO","UNIDAD","MEDIDA","PRECIOUNITARIO","TOTAL"]);
+  const obra=$("#h_obra").value||t("noname"); push(["TP","",obra,"","","",""]);
+  if(HEADER.ref) push(["IDOBRA","",HEADER.ref,"","","",""]);
+  let secName=null,secSum=0,capName=null,capSum=0,total=0,capN=0;
+  const flushCap=()=>{if(capName!==null){push(["","",t("subtotal")+" "+capName,"","","",comma(capSum)]);capName=null;capSum=0;}};
+  const flushSec=()=>{flushCap();if(secName!==null){push(["","",t("total_sec")+" "+secName,"","","",comma(secSum)]);secName=null;secSum=0;}};
+  for(let i=0;i<rows.length;i++){const r=rows[i];
+    if(r.tipo==="sec"){flushSec();secName=(r.desc||"").trim();capN=0;push(["T","",r.desc,"","","",""]);}
+    else if(r.tipo==="cap"){flushCap();capN++;const n=((r.desc.match(/^\s*(\d+)/)||[])[1])||String(capN);capName=((r.desc||"").trim());push([n,n,r.desc,"","","",""]);}
+    else if(r.tipo==="part"){const E=unitPrice(rows,i),F=num2(E*c),G=num2(F*(r.amid||0));total+=G;capSum+=G;secSum+=G;push(["",r.num||"",r.desc,csvUnit(r.ut),comma(r.amid||0),comma(F),comma(G)]);}
+  }
+  flushSec();
+  push(["","",t("total_doc"),"","","",comma(total)]);
+  push(["","",t("iva"),"","","",""]);
+  const b=new Blob(["﻿"+L.join("\r\n")+"\r\n"],{type:"text/csv;charset=utf-8"});
+  const a=document.createElement("a");a.href=URL.createObjectURL(b);a.download=(obra.replace(/[^\w]+/g,"_"))+"_intranet.csv";a.click();toast(t("csv_ok"));
 });
 
 // ---------- CHAT IA ----------
