@@ -213,6 +213,9 @@
   .ch-card b{font-size:15px;color:var(--primary);font-weight:800}.ch-card>span{font-size:13px;color:var(--secondary)}
   .ch-card.rec{border-color:#cfe3f5;background:#f4faff}
   .ch-card .rb{position:absolute;top:12px;right:12px;background:var(--accent);color:#fff;font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.4px;padding:3px 8px;border-radius:999px}
+  .spinner{width:46px;height:46px;border-radius:50%;border:4px solid #e2e8f0;border-top-color:var(--accent);margin:6px auto 0;animation:spin .8s linear infinite}
+  @keyframes spin{to{transform:rotate(360deg)}}
+  .ch-card.up{border-color:#0EA5E9;background:linear-gradient(180deg,#eff8ff,#fff)}
 </style>
 </head>
 <body>
@@ -364,9 +367,16 @@
   </div>
 </div>
 
+<input type="file" id="amidFile" accept=".xlsx,.xls,.pdf" style="display:none">
+<div class="modal-bg" id="ingOverlay"><div class="modal" style="max-width:380px;text-align:center">
+  <div class="spinner"></div>
+  <h2 id="ingMsg" style="margin-top:14px">…</h2>
+  <p data-i18n="ing_wait">La IA llegeix l'amidament i prepara l'esborrany valorat. Pot trigar uns segons.</p>
+</div></div>
 <div class="modal-bg" id="chModal"><div class="modal" style="max-width:560px">
   <h2 data-i18n="ch_title">Com vols començar?</h2>
   <div class="chooser">
+    <button class="ch-card up" data-start="upload"><span class="rb" style="background:var(--accent)">IA</span><b data-i18n="ch_upload">Pujar amidament</b><span data-i18n="ch_upload_d">Puja el fitxer de l'arquitecte (Excel/PDF) i la IA proposa un esborrany valorat.</span></button>
     <button class="ch-card rec" data-start="tpl"><span class="rb" data-i18n="recommended">Recomanat</span><b data-i18n="ch_tpl">Plantilla façana</b><span data-i18n="ch_tpl_d">Estructura típica.</span></button>
     <button class="ch-card" data-start="demo"><b data-i18n="ch_demo">Demo real</b><span data-i18n="ch_demo_d">Exemple complet.</span></button>
     <button class="ch-card" data-start="blank"><b data-i18n="ch_blank">En blanc</b><span data-i18n="ch_blank_d">Des de zero.</span></button>
@@ -393,6 +403,7 @@
 const SUPA_URL="https://tutxfdokoggbfpskvqcp.supabase.co";
 const SUPA_ANON="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InR1dHhmZG9rb2dnYmZwc2t2cWNwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODI0NjE5ODgsImV4cCI6MjA5ODAzNzk4OH0.L83F7DFXXje4GnPAujcmf24xXWzrU8Gia17p21H24VY";
 const CHAT_URL="https://pracmatikadmin.app.n8n.cloud/webhook/gta-chat";
+const INGESTA_URL="https://pracmatikadmin.app.n8n.cloud/webhook/gta-ingesta";
 const sb = window.supabase ? window.supabase.createClient(SUPA_URL,SUPA_ANON) : null;
 const $=s=>document.querySelector(s);
 
@@ -422,7 +433,7 @@ const I18N={
    note1:"EL PRESSUPOST S'HA REALITZAT TENINT EN COMPTE ELS AMIDAMENTS DE L'ARQUITECTE, ............., EN CAS DE MODIFICACIÓ DURANT L'EXECUCIÓ DE LES OBRES, ES FACTURARÀ LA DIFERÈNCIA.",
    note2:"EN EL CAS QUE QUALSEVOL ENTITAT PÚBLICA (AJUNTAMENT O CONSORCI DEL HABITATGE DE BARCELONA) CONSIDERI NECESSARI AFEGIR ALTRES PARTIDES NO INCLOSES EN EL PRESSUPOST ACCEPTAT PER LA COMUNITAT, ES VALORARAN EN UN PRESSUPOST ANNEX.",
    note3:"Nota GTA: Degut al gran increment als preus que s'està produint a les matèries primeres utilitzades per a la realització de les partides, el preu de les mateixes s'haurà de revisar abans de la seva acceptació.",
-   note4:"PREGUEM CONSULTI AMB ELS NOSTRES TÈCNICS PER ACLARIR QUALSEVOL DUBTE QUE ELS PUGUI SORGIR.",hide_sub:"Amagar composició",show_sub:"Mostrar composició",ch_title:"Com vols començar?",ch_tpl:"Plantilla façana (catàleg)",ch_tpl_d:"Estructura típica de rehabilitació, llesta per omplir.",ch_demo:"Demo real · Casanova 220",ch_demo_d:"Pressupost real complet amb composició de preus.",ch_blank:"En blanc",ch_blank_d:"Comença de zero.",recommended:"Recomanat"},
+   note4:"PREGUEM CONSULTI AMB ELS NOSTRES TÈCNICS PER ACLARIR QUALSEVOL DUBTE QUE ELS PUGUI SORGIR.",hide_sub:"Amagar composició",show_sub:"Mostrar composició",ch_title:"Com vols començar?",ch_tpl:"Plantilla façana (catàleg)",ch_tpl_d:"Estructura típica de rehabilitació, llesta per omplir.",ch_demo:"Demo real · Casanova 220",ch_demo_d:"Pressupost real complet amb composició de preus.",ch_blank:"En blanc",ch_blank_d:"Comença de zero.",recommended:"Recomanat",ch_upload:"Pujar amidament (IA)",ch_upload_d:"Puja el fitxer de l'arquitecte (Excel/PDF) i la IA proposa un esborrany valorat.",ing_reading:"Llegint el fitxer…",ing_ai:"La IA està valorant l'amidament…",ing_wait:"La IA llegeix l'amidament i prepara l'esborrany valorat. Pot trigar uns segons.",ing_error:"No s'ha pogut processar l'amidament. Revisa el fitxer o torna-ho a provar.",ing_empty:"No s'ha trobat text llegible (si és un PDF escanejat encara no el suportem).",ing_ok:"Esborrany generat",ing_avisos:"A revisar (proposat per IA, valida abans d'usar):"},
  es:{login_title:"Presupuestos GTA",login_sub:"Inicia sesión para acceder a tus presupuestos",email:"Correo",pass:"Contraseña",enter:"Entrar",
    hist_sub:"Recupera, continúa o consulta cualquier presupuesto.",new_budget:"Nuevo presupuesto",search:"Busca por obra…",all_states:"Todos los estados",draft:"Borrador",signed:"Firmado",
    empty_h:"Aún no hay presupuestos",empty_p:"Crea el primero con el botón de arriba.",my_budgets:"Mis presupuestos",all_budgets:"Todos los presupuestos",
@@ -447,7 +458,7 @@ const I18N={
    note1:"EL PRESUPUESTO SE HA REALIZADO TENIENDO EN CUENTA LAS MEDICIONES DEL ARQUITECTO TÉCNICO, ............., EN CASO DE MODIFICACIÓN DURANTE LA EJECUCIÓN DE LAS OBRAS, SE FACTURARÁ LA DIFERENCIA.",
    note2:"EN EL CASO DE QUE CUALQUIER ENTIDAD PÚBLICA (AJUNTAMENT O CONSORCI DE L'HABITATGE DE BARCELONA) CONSIDERE NECESARIO AGREGAR OTRAS PARTIDAS NO INCLUIDAS EN EL PRESUPUESTO ACEPTADO POR LA COMUNIDAD, SE VALORARÁ EN UN PRESUPUESTO ANEXO.",
    note3:"Nota GTA: Debido al gran incremento en los precios que se está produciendo en las materias primas utilizadas para la realización de las partidas, el precio de las mismas se deberá revisar antes de su aceptación.",
-   note4:"ROGAMOS CONSULTEN CON NUESTROS TÉCNICOS PARA ACLARAR CUALQUIER DUDA QUE LES PUEDA SURGIR.",hide_sub:"Ocultar composición",show_sub:"Mostrar composición",ch_title:"¿Cómo quieres empezar?",ch_tpl:"Plantilla fachada (catálogo)",ch_tpl_d:"Estructura típica de rehabilitación, lista para rellenar.",ch_demo:"Demo real · Casanova 220",ch_demo_d:"Presupuesto real completo con composición de precios.",ch_blank:"En blanco",ch_blank_d:"Empieza de cero.",recommended:"Recomendado"}
+   note4:"ROGAMOS CONSULTEN CON NUESTROS TÉCNICOS PARA ACLARAR CUALQUIER DUDA QUE LES PUEDA SURGIR.",hide_sub:"Ocultar composición",show_sub:"Mostrar composición",ch_title:"¿Cómo quieres empezar?",ch_tpl:"Plantilla fachada (catálogo)",ch_tpl_d:"Estructura típica de rehabilitación, lista para rellenar.",ch_demo:"Demo real · Casanova 220",ch_demo_d:"Presupuesto real completo con composición de precios.",ch_blank:"En blanco",ch_blank_d:"Empieza de cero.",recommended:"Recomendado",ch_upload:"Subir medición (IA)",ch_upload_d:"Sube el archivo del arquitecto (Excel/PDF) y la IA propone un borrador valorado.",ing_reading:"Leyendo el archivo…",ing_ai:"La IA está valorando la medición…",ing_wait:"La IA lee la medición y prepara el borrador valorado. Puede tardar unos segundos.",ing_error:"No se ha podido procesar la medición. Revisa el archivo o inténtalo de nuevo.",ing_empty:"No se ha encontrado texto legible (si es un PDF escaneado aún no lo soportamos).",ing_ok:"Borrador generado",ing_avisos:"A revisar (propuesto por IA, valida antes de usar):"}
 };
 const LS={get:k=>{try{return localStorage.getItem(k)}catch(e){return null}},set:(k,v)=>{try{localStorage.setItem(k,v)}catch(e){}}};
 let IDIOMA = LS.get("gta_lang")||"ca";
@@ -607,8 +618,52 @@ function sanitizeRows(arr){
 // ---------- EDITOR ----------
 $("#newBtn").addEventListener("click",openChooser);
 function openChooser(){applyI18n();$("#chModal").classList.add("show");}
+let _libsLoaded=false;
+function loadScript(src){return new Promise((res,rej)=>{const s=document.createElement("script");s.src=src;s.onload=res;s.onerror=()=>rej(new Error("cdn"));document.head.appendChild(s);});}
+async function ensureLibs(){ if(_libsLoaded)return;
+  if(!window.XLSX) await loadScript("https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js");
+  if(!window.pdfjsLib){ await loadScript("https://cdn.jsdelivr.net/npm/pdfjs-dist@3.11.174/build/pdf.min.js"); if(window.pdfjsLib) pdfjsLib.GlobalWorkerOptions.workerSrc="https://cdn.jsdelivr.net/npm/pdfjs-dist@3.11.174/build/pdf.worker.min.js"; }
+  _libsLoaded=true;
+}
+async function extractAmidament(file){
+  const nm=file.name.toLowerCase();
+  if(nm.endsWith(".xlsx")||nm.endsWith(".xls")){
+    const buf=await file.arrayBuffer(); const wb=XLSX.read(buf,{type:"array"}); const parts=[];
+    wb.SheetNames.forEach(sh=>{ const ws=wb.Sheets[sh]; if(!ws)return;
+      const arr=XLSX.utils.sheet_to_json(ws,{header:1,blankrows:false});
+      const lines=arr.map(row=>(row||[]).filter(c=>c!==null&&c!=="").map(c=>String(c).replace(/\s+/g," ").slice(0,40)).join(" | ")).filter(l=>l.trim());
+      if(lines.length) parts.push("### ZONA: "+sh+"\n"+lines.join("\n")); });
+    return parts.join("\n\n").slice(0,55000);
+  }
+  if(nm.endsWith(".pdf")){
+    const buf=await file.arrayBuffer(); const pdf=await pdfjsLib.getDocument({data:buf}).promise; let txt="";
+    for(let p=1;p<=Math.min(pdf.numPages,60);p++){ const pg=await pdf.getPage(p); const tc=await pg.getTextContent(); txt+="\n"+tc.items.map(i=>i.str).join(" "); }
+    return txt.replace(/\s+/g," ").slice(0,55000);
+  }
+  throw new Error("format");
+}
+async function doUpload(file){
+  if(!file)return; const ov=$("#ingOverlay");
+  ov.classList.add("show"); $("#ingMsg").textContent=t("ing_reading");
+  try{
+    await ensureLibs();
+    const amidament=await extractAmidament(file);
+    if(!amidament||amidament.trim().length<20){ ov.classList.remove("show"); toast(t("ing_empty"),true); return; }
+    $("#ingMsg").textContent=t("ing_ai");
+    const {data:{session}}=await sb.auth.getSession();
+    const res=await fetch(INGESTA_URL,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({token:(session&&session.access_token)||"",amidament,filename:file.name,idioma:IDIOMA})});
+    const data=await res.json(); ov.classList.remove("show");
+    if(data.error||!data.rows){ toast(t("ing_error"),true); return; }
+    const clean=sanitizeRows(data.rows); if(!clean){ toast(t("ing_error"),true); return; }
+    openEditor(null,clean,false);
+    HEADER.obra=file.name.replace(/\.[^.]+$/,""); $("#h_obra").value=HEADER.obra;
+    if(Array.isArray(data.avisos)&&data.avisos.length){ NOTES=["⚠ "+t("ing_avisos")].concat(data.avisos.map(a=>"• "+a)).concat(NOTES); }
+    render(); toast(data.resum||t("ing_ok"));
+  }catch(e){ ov.classList.remove("show"); toast(t("ing_error"),true); }
+}
+document.addEventListener("change",e=>{ if(e.target&&e.target.id==="amidFile"){ const f=e.target.files[0]; e.target.value=""; doUpload(f); } });
 $("#chCancel").addEventListener("click",()=>$("#chModal").classList.remove("show"));
-$("#chModal").addEventListener("click",e=>{if(e.target.id==="chModal"){$("#chModal").classList.remove("show");return;}const c=e.target.closest("[data-start]");if(!c)return;$("#chModal").classList.remove("show");const s=c.dataset.start;openEditor(null,s==="demo"?DEMO():s==="blank"?BLANK():SEED(),s==="demo");});
+$("#chModal").addEventListener("click",e=>{if(e.target.id==="chModal"){$("#chModal").classList.remove("show");return;}const c=e.target.closest("[data-start]");if(!c)return;$("#chModal").classList.remove("show");const s=c.dataset.start;if(s==="upload"){$("#amidFile").click();return;}openEditor(null,s==="demo"?DEMO():s==="blank"?BLANK():SEED(),s==="demo");});
 $("#backBtn").addEventListener("click",showHist);
 function openEditor(p,starter,isDemo){
   undoStack=[]; updateUndo();
