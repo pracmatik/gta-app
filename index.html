@@ -216,6 +216,15 @@
   .spinner{width:46px;height:46px;border-radius:50%;border:4px solid #e2e8f0;border-top-color:var(--accent);margin:6px auto 0;animation:spin .8s linear infinite}
   @keyframes spin{to{transform:rotate(360deg)}}
   .ch-card.up{border-color:#0EA5E9;background:linear-gradient(180deg,#eff8ff,#fff)}
+  .fbbar{display:flex;align-items:center;gap:14px;flex-wrap:wrap;background:linear-gradient(180deg,#eff8ff,#fff);border:1.5px solid #bae0fd;border-radius:14px;padding:13px 16px;margin-bottom:14px}
+  .fbbar .fbq{display:flex;align-items:center;gap:9px;font-size:14px;color:var(--primary)}.fbbar .fbq svg{width:19px;height:19px;color:var(--accent)}.fbbar .fbq b{font-weight:700}
+  .fbbar .fbbtns{display:flex;gap:7px}.fbbar .fbbtns .btn{padding:7px 14px}
+  .fbbar .fbcomment{display:flex;gap:8px;flex:1;min-width:240px}
+  .fbbar .fbcomment input{flex:1;font-family:inherit;font-size:14px;border:1px solid var(--border);border-radius:10px;padding:9px 12px}
+  .fbbar .fbcomment input:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 3px rgba(3,105,161,.13)}
+  .aprrow{display:flex;align-items:flex-start;gap:10px;justify-content:space-between;padding:11px 12px;border:1px solid var(--border);border-radius:11px;margin-bottom:8px;background:#fff}
+  .aprrow .aprtx{display:flex;flex-direction:column;gap:2px}.aprrow .aprtx b{font-weight:600;color:var(--primary);font-size:13.5px}
+  .aprrow .aprtx span{color:var(--secondary);font-size:12.5px}.aprrow .aprtx small{color:#94a3b8;font-size:11px;margin-top:2px}
 </style>
 </head>
 <body>
@@ -244,6 +253,7 @@
     <div class="brand-right">
       <div class="langtog"><button id="langCa" class="on">CA</button><button id="langEs">ES</button></div>
       <div class="userchip"><div><div class="nm" id="uName">—</div><div class="rl"><span class="badge-rol" id="uRol">—</span></div></div><div class="avatar" id="uAvatar">–</div></div>
+      <button class="btn" id="aprBtn" title="Aprenentatge" style="display:none"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg><span data-i18n="apr_btn">Aprenentatge</span></button>
       <button class="btn" id="reglasBtn" title="Regles IA"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/></svg><span data-i18n="reglas_btn">Regles IA</span></button>
       <button class="btn" id="logoutBtn" title="Sortir"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg></button>
     </div>
@@ -303,6 +313,18 @@
         <div data-i18n="edit_hint">Edita qualsevol cel·la. Afegeix <b>capítols</b>, <b>partides</b> i <b>subelements</b> (els subelements sumen i marquen el preu de la partida). O obre l'<b>assistent IA</b> (botó blau) i digues què vols canviar. Quan estigui a gust → <b>Desa</b> i <b>Signa</b>.</div>
       </div>
 
+      <div class="fbbar" id="fbBar" style="display:none">
+        <div class="fbq"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2z"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg><b data-i18n="fb_q">L'esborrany de la IA, ha sortit bé?</b></div>
+        <div class="fbbtns">
+          <button class="btn ok" data-fb="perfecto" data-i18n="fb_ok">Perfecte</button>
+          <button class="btn" data-fb="casi" data-i18n="fb_casi">Quasi</button>
+          <button class="btn ghost-danger" data-fb="no" data-i18n="fb_no">No</button>
+        </div>
+        <div class="fbcomment" id="fbComment" style="display:none">
+          <input id="fbText" data-i18n-ph="fb_ph" placeholder="En una frase: què corregiries?">
+          <button class="btn primary" id="fbSend" data-i18n="fb_send">Enviar</button>
+        </div>
+      </div>
       <div class="summary">
         <div class="sc"><div class="lbl" data-i18n="s_base">Base (sense coef)</div><div class="val" id="sBase">—</div></div>
         <div class="sc coef"><div class="lbl" data-i18n="s_coef">Coef. regulador</div><input id="coef" type="number" step="0.01" min="0" value="1"></div>
@@ -368,10 +390,16 @@
   </div>
 </div>
 
+<div class="modal-bg" id="aprModal"><div class="modal" style="max-width:620px">
+  <h2 data-i18n="apr_title">Què ha après el sistema</h2>
+  <p style="color:var(--secondary);font-size:13.5px;margin-top:4px" data-i18n="apr_sub">Lliçons apreses del feedback dels tècnics. La IA les aplica a cada nou pressupost. Pots eliminar les que no vulguis.</p>
+  <div id="aprList" style="margin-top:14px;max-height:48vh;overflow:auto"></div>
+  <div class="modal-actions"><button class="btn" id="aprClose" data-i18n="cancel">Tancar</button></div>
+</div></div>
 <div class="modal-bg" id="reglasModal"><div class="modal" style="max-width:580px">
   <h2 data-i18n="reglas_title">Regles permanents de GTA</h2>
   <p data-i18n="reglas_hint">Regles que el sistema respectarà SEMPRE en cada pressupost que generi la IA (una per línia). Ex: "El coeficient per defecte és 1,05", "El contenidor de runa sempre 5 m³", "La marca X mai és vàlida → preu a revisar".</p>
-  <textarea id="reglasTxt" rows="9" style="width:100%;font-family:inherit;font-size:14px;color:var(--fg);border:1px solid var(--border);border-radius:11px;padding:12px;margin-top:12px;resize:vertical;line-height:1.55"></textarea>
+  <textarea id="reglasTxt" rows="9" data-i18n-ph="reglas_ph" style="width:100%;font-family:inherit;font-size:14px;color:var(--fg);border:1px solid var(--border);border-radius:11px;padding:12px;margin-top:12px;resize:vertical;line-height:1.55"></textarea>
   <div class="modal-actions"><button class="btn" id="reglasCancel" data-i18n="cancel">Cancel·lar</button><button class="btn ok" id="reglasSave" data-i18n="reglas_save">Desar regles</button></div>
 </div></div>
 <input type="file" id="amidFile" accept=".xlsx,.xls,.pdf" style="display:none">
@@ -411,6 +439,8 @@ const SUPA_URL="https://tutxfdokoggbfpskvqcp.supabase.co";
 const SUPA_ANON="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InR1dHhmZG9rb2dnYmZwc2t2cWNwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODI0NjE5ODgsImV4cCI6MjA5ODAzNzk4OH0.L83F7DFXXje4GnPAujcmf24xXWzrU8Gia17p21H24VY";
 const CHAT_URL="https://pracmatikadmin.app.n8n.cloud/webhook/gta-chat";
 const INGESTA_URL="https://pracmatikadmin.app.n8n.cloud/webhook/gta-ingesta";
+const APRENDE_URL="https://pracmatikadmin.app.n8n.cloud/webhook/gta-aprende";
+let ORIGEN_IA=null,FEEDBACK_DONE=false,FB_VAL=null;
 const sb = window.supabase ? window.supabase.createClient(SUPA_URL,SUPA_ANON) : null;
 const $=s=>document.querySelector(s);
 
@@ -440,7 +470,7 @@ const I18N={
    note1:"EL PRESSUPOST S'HA REALITZAT TENINT EN COMPTE ELS AMIDAMENTS DE L'ARQUITECTE, ............., EN CAS DE MODIFICACIÓ DURANT L'EXECUCIÓ DE LES OBRES, ES FACTURARÀ LA DIFERÈNCIA.",
    note2:"EN EL CAS QUE QUALSEVOL ENTITAT PÚBLICA (AJUNTAMENT O CONSORCI DEL HABITATGE DE BARCELONA) CONSIDERI NECESSARI AFEGIR ALTRES PARTIDES NO INCLOSES EN EL PRESSUPOST ACCEPTAT PER LA COMUNITAT, ES VALORARAN EN UN PRESSUPOST ANNEX.",
    note3:"Nota GTA: Degut al gran increment als preus que s'està produint a les matèries primeres utilitzades per a la realització de les partides, el preu de les mateixes s'haurà de revisar abans de la seva acceptació.",
-   note4:"PREGUEM CONSULTI AMB ELS NOSTRES TÈCNICS PER ACLARIR QUALSEVOL DUBTE QUE ELS PUGUI SORGIR.",hide_sub:"Amagar composició",show_sub:"Mostrar composició",ch_title:"Com vols començar?",ch_tpl:"Plantilla façana (catàleg)",ch_tpl_d:"Estructura típica de rehabilitació, llesta per omplir.",ch_demo:"Demo real · Casanova 220",ch_demo_d:"Pressupost real complet amb composició de preus.",ch_blank:"En blanc",ch_blank_d:"Comença de zero.",recommended:"Recomanat",ch_upload:"Pujar amidament (IA)",ch_upload_d:"Puja el fitxer de l'arquitecte (Excel/PDF) i la IA proposa un esborrany valorat.",ing_reading:"Llegint el fitxer…",ing_ai:"La IA està valorant l'amidament…",ing_wait:"La IA llegeix l'amidament i prepara l'esborrany valorat. Pot trigar uns segons.",ing_error:"No s'ha pogut processar l'amidament. Revisa el fitxer o torna-ho a provar.",ing_empty:"No s'ha trobat text llegible (si és un PDF escanejat encara no el suportem).",ing_ok:"Esborrany generat",ing_avisos:"A revisar (proposat per IA, valida abans d'usar):",reglas_btn:"Regles IA",reglas_title:"Regles permanents de GTA",reglas_hint:"Regles que el sistema respectarà SEMPRE en cada pressupost que generi la IA (una per línia). Ex: \"El coeficient per defecte és 1,05\", \"El contenidor de runa sempre 5 m³\", \"La marca X mai és vàlida → preu a revisar\".",reglas_save:"Desar regles",reglas_saved:"Regles desades"},
+   note4:"PREGUEM CONSULTI AMB ELS NOSTRES TÈCNICS PER ACLARIR QUALSEVOL DUBTE QUE ELS PUGUI SORGIR.",hide_sub:"Amagar composició",show_sub:"Mostrar composició",ch_title:"Com vols començar?",ch_tpl:"Plantilla façana (catàleg)",ch_tpl_d:"Estructura típica de rehabilitació, llesta per omplir.",ch_demo:"Demo real · Casanova 220",ch_demo_d:"Pressupost real complet amb composició de preus.",ch_blank:"En blanc",ch_blank_d:"Comença de zero.",recommended:"Recomanat",ch_upload:"Pujar amidament (IA)",ch_upload_d:"Puja el fitxer de l'arquitecte (Excel/PDF) i la IA proposa un esborrany valorat.",ing_reading:"Llegint el fitxer…",ing_ai:"La IA està valorant l'amidament…",ing_wait:"La IA llegeix l'amidament i prepara l'esborrany valorat. Pot trigar uns segons.",ing_error:"No s'ha pogut processar l'amidament. Revisa el fitxer o torna-ho a provar.",ing_empty:"No s'ha trobat text llegible (si és un PDF escanejat encara no el suportem).",ing_ok:"Esborrany generat",ing_avisos:"A revisar (proposat per IA, valida abans d'usar):",reglas_btn:"Regles IA",reglas_title:"Regles permanents de GTA",reglas_hint:"Regles que el sistema respectarà SEMPRE en cada pressupost que generi la IA (una per línia). Ex: \"El coeficient per defecte és 1,05\", \"El contenidor de runa sempre 5 m³\", \"La marca X mai és vàlida → preu a revisar\".",reglas_save:"Desar regles",reglas_saved:"Regles desades",reglas_ph:"Ex: El coeficient per defecte sempre és 1,05.\nEl contenidor de runa sempre és de 5 m³.\nLa marca «Sika» és vàlida; les marques premium no → preu a revisar.\nAfegeix sempre un capítol de Seguretat i Salut al final.\nTreballs en balcons en alçada → bastida penjant, no tubular.",fb_q:"L'esborrany de la IA, ha sortit bé?",fb_ok:"Perfecte",fb_casi:"Quasi",fb_no:"No",fb_ph:"En una frase: què corregiries?",fb_send:"Enviar",fb_thanks:"Gràcies pel teu feedback!",fb_learned:"Gràcies! El sistema ha après {n} lliçó/ons",apr_btn:"Aprenentatge",apr_title:"Què ha après el sistema",apr_sub:"Lliçons apreses del feedback dels tècnics. La IA les aplica a cada nou pressupost. Pots eliminar les que no vulguis.",apr_empty:"Encara no hi ha lliçons. S'aniran omplint amb el feedback dels tècnics.",apr_deleted:"Lliçó eliminada"},
  es:{login_title:"Presupuestos GTA",login_sub:"Inicia sesión para acceder a tus presupuestos",email:"Correo",pass:"Contraseña",enter:"Entrar",
    hist_sub:"Recupera, continúa o consulta cualquier presupuesto.",new_budget:"Nuevo presupuesto",search:"Busca por obra…",all_states:"Todos los estados",draft:"Borrador",signed:"Firmado",
    empty_h:"Aún no hay presupuestos",empty_p:"Crea el primero con el botón de arriba.",my_budgets:"Mis presupuestos",all_budgets:"Todos los presupuestos",
@@ -465,7 +495,7 @@ const I18N={
    note1:"EL PRESUPUESTO SE HA REALIZADO TENIENDO EN CUENTA LAS MEDICIONES DEL ARQUITECTO TÉCNICO, ............., EN CASO DE MODIFICACIÓN DURANTE LA EJECUCIÓN DE LAS OBRAS, SE FACTURARÁ LA DIFERENCIA.",
    note2:"EN EL CASO DE QUE CUALQUIER ENTIDAD PÚBLICA (AJUNTAMENT O CONSORCI DE L'HABITATGE DE BARCELONA) CONSIDERE NECESARIO AGREGAR OTRAS PARTIDAS NO INCLUIDAS EN EL PRESUPUESTO ACEPTADO POR LA COMUNIDAD, SE VALORARÁ EN UN PRESUPUESTO ANEXO.",
    note3:"Nota GTA: Debido al gran incremento en los precios que se está produciendo en las materias primas utilizadas para la realización de las partidas, el precio de las mismas se deberá revisar antes de su aceptación.",
-   note4:"ROGAMOS CONSULTEN CON NUESTROS TÉCNICOS PARA ACLARAR CUALQUIER DUDA QUE LES PUEDA SURGIR.",hide_sub:"Ocultar composición",show_sub:"Mostrar composición",ch_title:"¿Cómo quieres empezar?",ch_tpl:"Plantilla fachada (catálogo)",ch_tpl_d:"Estructura típica de rehabilitación, lista para rellenar.",ch_demo:"Demo real · Casanova 220",ch_demo_d:"Presupuesto real completo con composición de precios.",ch_blank:"En blanco",ch_blank_d:"Empieza de cero.",recommended:"Recomendado",ch_upload:"Subir medición (IA)",ch_upload_d:"Sube el archivo del arquitecto (Excel/PDF) y la IA propone un borrador valorado.",ing_reading:"Leyendo el archivo…",ing_ai:"La IA está valorando la medición…",ing_wait:"La IA lee la medición y prepara el borrador valorado. Puede tardar unos segundos.",ing_error:"No se ha podido procesar la medición. Revisa el archivo o inténtalo de nuevo.",ing_empty:"No se ha encontrado texto legible (si es un PDF escaneado aún no lo soportamos).",ing_ok:"Borrador generado",ing_avisos:"A revisar (propuesto por IA, valida antes de usar):",reglas_btn:"Reglas IA",reglas_title:"Reglas permanentes de GTA",reglas_hint:"Reglas que el sistema respetará SIEMPRE en cada presupuesto que genere la IA (una por línea). Ej: \"El coeficiente por defecto es 1,05\", \"El contenedor de escombros siempre 5 m³\", \"La marca X nunca es válida → precio a revisar\".",reglas_save:"Guardar reglas",reglas_saved:"Reglas guardadas"}
+   note4:"ROGAMOS CONSULTEN CON NUESTROS TÉCNICOS PARA ACLARAR CUALQUIER DUDA QUE LES PUEDA SURGIR.",hide_sub:"Ocultar composición",show_sub:"Mostrar composición",ch_title:"¿Cómo quieres empezar?",ch_tpl:"Plantilla fachada (catálogo)",ch_tpl_d:"Estructura típica de rehabilitación, lista para rellenar.",ch_demo:"Demo real · Casanova 220",ch_demo_d:"Presupuesto real completo con composición de precios.",ch_blank:"En blanco",ch_blank_d:"Empieza de cero.",recommended:"Recomendado",ch_upload:"Subir medición (IA)",ch_upload_d:"Sube el archivo del arquitecto (Excel/PDF) y la IA propone un borrador valorado.",ing_reading:"Leyendo el archivo…",ing_ai:"La IA está valorando la medición…",ing_wait:"La IA lee la medición y prepara el borrador valorado. Puede tardar unos segundos.",ing_error:"No se ha podido procesar la medición. Revisa el archivo o inténtalo de nuevo.",ing_empty:"No se ha encontrado texto legible (si es un PDF escaneado aún no lo soportamos).",ing_ok:"Borrador generado",ing_avisos:"A revisar (propuesto por IA, valida antes de usar):",reglas_btn:"Reglas IA",reglas_title:"Reglas permanentes de GTA",reglas_hint:"Reglas que el sistema respetará SIEMPRE en cada presupuesto que genere la IA (una por línea). Ej: \"El coeficiente por defecto es 1,05\", \"El contenedor de escombros siempre 5 m³\", \"La marca X nunca es válida → precio a revisar\".",reglas_save:"Guardar reglas",reglas_saved:"Reglas guardadas",reglas_ph:"Ej: El coeficiente por defecto siempre es 1,05.\nEl contenedor de escombros siempre 5 m³.\nLa marca «Sika» es válida; las marcas premium no → precio a revisar.\nAñade siempre un capítulo de Seguridad y Salud al final.\nTrabajos en balcones en altura → andamio colgante, no tubular.",fb_q:"El borrador de la IA, ¿ha salido bien?",fb_ok:"Perfecto",fb_casi:"Casi",fb_no:"No",fb_ph:"En una frase: ¿qué corregirías?",fb_send:"Enviar",fb_thanks:"¡Gracias por tu feedback!",fb_learned:"¡Gracias! El sistema ha aprendido {n} lección/es",apr_btn:"Aprendizaje",apr_title:"Qué ha aprendido el sistema",apr_sub:"Lecciones aprendidas del feedback de los técnicos. La IA las aplica a cada nuevo presupuesto. Puedes eliminar las que no quieras.",apr_empty:"Aún no hay lecciones. Se irán llenando con el feedback de los técnicos.",apr_deleted:"Lección eliminada"}
 };
 const LS={get:k=>{try{return localStorage.getItem(k)}catch(e){return null}},set:(k,v)=>{try{localStorage.setItem(k,v)}catch(e){}}};
 let IDIOMA = LS.get("gta_lang")||"ca";
@@ -519,7 +549,7 @@ async function boot(){
   $("#vLogin").classList.add("hidden");$("#vApp").classList.remove("hidden");
   $("#uName").textContent=ME.nombre;$("#uAvatar").textContent=(ME.nombre||"?").trim().slice(0,1).toUpperCase();
   $("#uRol").className="badge-rol "+(ME.rol==="admin"?"admin":"tecnico");
-  if(ME.rol==="admin")$("#qAutor").classList.remove("hidden");
+  if(ME.rol==="admin"){$("#qAutor").classList.remove("hidden");$("#aprBtn").style.display="inline-flex";} else $("#aprBtn").style.display="none";
   applyI18n(); showHist();
 }
 
@@ -673,15 +703,41 @@ async function doUpload(file){
     openEditor(null,clean,false);
     HEADER.obra=file.name.replace(/\.[^.]+$/,""); $("#h_obra").value=HEADER.obra;
     if(Array.isArray(data.avisos)&&data.avisos.length){ NOTES=["⚠ "+t("ing_avisos")].concat(data.avisos.map(a=>"• "+a)).concat(NOTES); }
+    ORIGEN_IA=JSON.parse(JSON.stringify(clean)); FEEDBACK_DONE=false;
     render(); toast(data.resum||t("ing_ok"));
   }catch(e){ ov.classList.remove("show"); toast(t("ing_error"),true); }
 }
 document.addEventListener("change",e=>{ if(e.target&&e.target.id==="amidFile"){ const f=e.target.files[0]; e.target.value=""; doUpload(f); } });
+function showFeedbackBar(){ const b=$("#fbBar"); if(!b)return; b.style.display=(ORIGEN_IA&&!FEEDBACK_DONE&&!locked())?"flex":"none"; if(b.style.display==="none"){const c=$("#fbComment"); if(c)c.style.display="none";} }
+$("#fbBar").addEventListener("click",async e=>{ const btn=e.target.closest("[data-fb]"); if(!btn)return; FB_VAL=btn.dataset.fb;
+  if(FB_VAL==="perfecto"){ submitFeedback("perfecto",""); } else { $("#fbComment").style.display="flex"; $("#fbText").focus(); } });
+$("#fbSend").addEventListener("click",()=>submitFeedback(FB_VAL||"casi",$("#fbText").value.trim()));
+async function submitFeedback(valoracion,comentario){
+  FEEDBACK_DONE=true; $("#fbBar").style.display="none";
+  try{
+    await sb.from("feedback_ia").insert({presupuesto_id:CURRENT.id||null,usuario_id:ME.id,usuario_nombre:ME.nombre,valoracion,comentario,draft_ia:ORIGEN_IA,final_rows:rows});
+    if(valoracion!=="perfecto" && comentario){
+      const {data:{session}}=await sb.auth.getSession();
+      const res=await fetch(APRENDE_URL,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({token:(session&&session.access_token)||"",valoracion,comentario,draft_ia:ORIGEN_IA,final_rows:rows})});
+      const data=await res.json(); const lls=(data&&data.llicons)||[];
+      if(lls.length){ await sb.from("aprendizaje").insert(lls.map(l=>({leccion:l.leccion,contexto:l.contexto||"",presupuesto_id:CURRENT.id||null,usuario_nombre:ME.nombre}))); toast(t("fb_learned").replace("{n}",lls.length)); }
+      else toast(t("fb_thanks"));
+    } else toast(t("fb_thanks"));
+  }catch(err){ toast(t("fb_thanks")); }
+}
+$("#aprBtn").addEventListener("click",openApr);
+$("#aprClose").addEventListener("click",()=>$("#aprModal").classList.remove("show"));
+async function openApr(){ $("#aprModal").classList.add("show"); const box=$("#aprList"); box.innerHTML="…";
+  let data=[]; try{ const r=await sb.from("aprendizaje").select("*").order("created_at",{ascending:false}); data=r.data||[]; }catch(e){}
+  if(!data.length){ box.innerHTML=`<div class="empty" style="padding:30px"><p>${t("apr_empty")}</p></div>`; return; }
+  box.innerHTML=data.map(l=>`<div class="aprrow"><div class="aprtx"><b>${esc(l.leccion)}</b>${l.contexto?`<span>${esc(l.contexto)}</span>`:""}<small>${esc(l.usuario_nombre||"")}</small></div><button class="mini del" data-aprdel="${l.id}" title="Eliminar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button></div>`).join("");
+}
+$("#aprList").addEventListener("click",async e=>{ const d=e.target.closest("[data-aprdel]"); if(!d)return; try{ await sb.from("aprendizaje").delete().eq("id",d.dataset.aprdel); }catch(_){}; openApr(); toast(t("apr_deleted")); });
 $("#chCancel").addEventListener("click",()=>$("#chModal").classList.remove("show"));
 $("#chModal").addEventListener("click",e=>{if(e.target.id==="chModal"){$("#chModal").classList.remove("show");return;}const c=e.target.closest("[data-start]");if(!c)return;$("#chModal").classList.remove("show");const s=c.dataset.start;if(s==="upload"){$("#amidFile").click();return;}openEditor(null,s==="demo"?DEMO():s==="blank"?BLANK():SEED(),s==="demo");});
 $("#backBtn").addEventListener("click",showHist);
 function openEditor(p,starter,isDemo){
-  undoStack=[]; updateUndo();
+  undoStack=[]; updateUndo(); ORIGEN_IA=null; FEEDBACK_DONE=false;
   if(p){CURRENT={...p};const n=normDatos(p.datos);rows=JSON.parse(JSON.stringify(n.rows));HEADER=n.header||{};NOTES=n.notes||[];$("#coef").value=p.coef||1;}
   else{CURRENT={id:null,obra:"",coef:1,estado:"borrador",autor_id:ME.id,autor_nombre:ME.nombre};rows=starter?starter:SEED();HEADER=isDemo?{obra:"DEMO · Rehabilitació de façana — C/ Casanova 220, Barcelona",client:"Comunitat de Propietaris (exemple)",ref:"G26.DEMO"}:{};NOTES=[t("note1"),t("note2"),t("note3"),t("note4")];$("#coef").value=1.05;}
   $("#h_obra").value=HEADER.obra||CURRENT.obra||"";$("#h_client").value=HEADER.client||"";$("#h_ref").value=HEADER.ref||"";$("#h_coac").value=HEADER.coac||"";$("#h_tec").value=HEADER.tec||"";
@@ -741,7 +797,7 @@ function render(){
   if(_fi!=null&&_ff){const _el=document.querySelector(`#tb [data-i="${_fi}"][data-f="${_ff}"]`);if(_el){_el.focus();if(_cs!=null){try{_el.setSelectionRange(_cs,_cs);}catch(_){}}}}
   $("#sBase").textContent=eur(base);$("#sTotal").textContent=eur(total);$("#barTotal").textContent=eur(total);
   $("#sFlags").textContent=flags;$("#obraTag").textContent="● "+($("#h_obra").value||t("noname"));
-  renderResum();renderNotes();
+  renderResum();renderNotes();showFeedbackBar();
 }
 function renderResum(){
   const groups=summaryGroups(rows),total=computeTotal(rows);
