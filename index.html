@@ -524,6 +524,13 @@ const esc=s=>(s==null?"":String(s)).replace(/&/g,"&amp;").replace(/</g,"&lt;").r
 function coef(){const c=parseFloat($("#coef").value);return isFinite(c)&&c>0?c:1;}
 function toast(m,e){const x=$("#toast");$("#toastMsg").textContent=m;x.classList.toggle("err",!!e);x.classList.add("show");setTimeout(()=>x.classList.remove("show"),2800);}
 function locked(){return CURRENT&&CURRENT.estado==="firmado";}
+function histPush(){ try{ history.pushState({gta:1},""); }catch(e){} }
+window.addEventListener("popstate",()=>{
+  const m=[...document.querySelectorAll(".modal-bg.show")].pop();
+  if(m){ m.classList.remove("show"); histPush(); return; }
+  if($("#chatPanel") && $("#chatPanel").classList.contains("open")){ $("#chatPanel").classList.remove("open"); histPush(); return; }
+  if($("#vEdit") && !$("#vEdit").classList.contains("hidden")){ showHist(); histPush(); return; }
+});
 
 // ---------- AUTH ----------
 $("#loginBtn").addEventListener("click",doLogin);
@@ -654,12 +661,12 @@ function sanitizeRows(arr){
 
 // ---------- EDITOR ----------
 $("#newBtn").addEventListener("click",openChooser);
-function openChooser(){applyI18n();$("#chModal").classList.add("show");}
+function openChooser(){applyI18n();$("#chModal").classList.add("show");histPush();}
 $("#reglasBtn").addEventListener("click",openReglas);
 $("#reglasCancel").addEventListener("click",()=>$("#reglasModal").classList.remove("show"));
 async function openReglas(){ const ta=$("#reglasTxt"); const admin=ME&&ME.rol==="admin";
   ta.value="…"; ta.disabled=!admin; $("#reglasSave").style.display=admin?"inline-flex":"none";
-  $("#reglasModal").classList.add("show");
+  $("#reglasModal").classList.add("show"); histPush();
   try{ const {data}=await sb.from("reglas_ia").select("texto").eq("id",1).single(); ta.value=(data&&data.texto)||""; }catch(e){ ta.value=""; } }
 $("#reglasSave").addEventListener("click",async()=>{ const {error}=await sb.from("reglas_ia").update({texto:$("#reglasTxt").value,updated_at:new Date().toISOString()}).eq("id",1);
   if(error){ toast("✕ "+error.message,true); return; } $("#reglasModal").classList.remove("show"); toast(t("reglas_saved")); });
@@ -727,7 +734,7 @@ async function submitFeedback(valoracion,comentario){
 }
 $("#aprBtn").addEventListener("click",openApr);
 $("#aprClose").addEventListener("click",()=>$("#aprModal").classList.remove("show"));
-async function openApr(){ $("#aprModal").classList.add("show"); const box=$("#aprList"); box.innerHTML="…";
+async function openApr(){ $("#aprModal").classList.add("show"); histPush(); const box=$("#aprList"); box.innerHTML="…";
   let data=[]; try{ const r=await sb.from("aprendizaje").select("*").order("created_at",{ascending:false}); data=r.data||[]; }catch(e){}
   if(!data.length){ box.innerHTML=`<div class="empty" style="padding:30px"><p>${t("apr_empty")}</p></div>`; return; }
   box.innerHTML=data.map(l=>`<div class="aprrow"><div class="aprtx"><b>${esc(l.leccion)}</b>${l.contexto?`<span>${esc(l.contexto)}</span>`:""}<small>${esc(l.usuario_nombre||"")}</small></div><button class="mini del" data-aprdel="${l.id}" title="Eliminar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button></div>`).join("");
@@ -742,7 +749,7 @@ function openEditor(p,starter,isDemo){
   else{CURRENT={id:null,obra:"",coef:1,estado:"borrador",autor_id:ME.id,autor_nombre:ME.nombre};rows=starter?starter:SEED();HEADER=isDemo?{obra:"DEMO · Rehabilitació de façana — C/ Casanova 220, Barcelona",client:"Comunitat de Propietaris (exemple)",ref:"G26.DEMO"}:{};NOTES=[t("note1"),t("note2"),t("note3"),t("note4")];$("#coef").value=1.05;}
   $("#h_obra").value=HEADER.obra||CURRENT.obra||"";$("#h_client").value=HEADER.client||"";$("#h_ref").value=HEADER.ref||"";$("#h_coac").value=HEADER.coac||"";$("#h_tec").value=HEADER.tec||"";
   $("#vHist").classList.add("hidden");$("#vEdit").classList.remove("hidden");$("#chatBody").innerHTML="";
-  applyLockUI();render();window.scrollTo({top:0});
+  applyLockUI();render();window.scrollTo({top:0});histPush();
 }
 function applyLockUI(){
   const lock=locked();
@@ -869,7 +876,7 @@ $("#expCsv").addEventListener("click",()=>{
 
 // ---------- CHAT IA ----------
 const panel=$("#chatPanel");
-$("#chatFab").addEventListener("click",()=>{panel.classList.add("open");$("#chatInput").focus();});
+$("#chatFab").addEventListener("click",()=>{panel.classList.add("open");$("#chatInput").focus();histPush();});
 $("#chatClose").addEventListener("click",()=>panel.classList.remove("open"));
 function renderSuggest(){$("#chatSuggest").innerHTML=["sug1","sug2","sug3"].map(k=>`<span class="chip" data-sug="${t(k)}">${t(k)}</span>`).join("");}
 $("#chatSuggest").addEventListener("click",e=>{const c=e.target.closest("[data-sug]");if(c){$("#chatInput").value=c.dataset.sug;$("#chatInput").focus();}});
@@ -910,7 +917,7 @@ function sEnd(){drawing=false;}
 ["mousedown","touchstart"].forEach(ev=>pad.addEventListener(ev,sStart));["mousemove","touchmove"].forEach(ev=>pad.addEventListener(ev,sMove));["mouseup","mouseleave","touchend"].forEach(ev=>pad.addEventListener(ev,sEnd));
 $("#sigClear").addEventListener("click",()=>{pctx.clearRect(0,0,pad.width,pad.height);hasInk=false;});
 $("#sigCancel").addEventListener("click",()=>$("#sigModal").classList.remove("show"));
-$("#signBtn").addEventListener("click",()=>{pctx.clearRect(0,0,pad.width,pad.height);hasInk=false;$("#sigModal").classList.add("show");});
+$("#signBtn").addEventListener("click",()=>{pctx.clearRect(0,0,pad.width,pad.height);hasInk=false;$("#sigModal").classList.add("show");histPush();});
 $("#sigConfirm").addEventListener("click",async()=>{
   const pid=await saveCurrent(true);if(!pid)return;
   const firma=hasInk?pad.toDataURL("image/png"):null;
