@@ -200,6 +200,19 @@
   footer{text-align:center;margin-top:30px;font-size:12.5px;color:#94a3b8}
   @media(max-width:980px){.summary{grid-template-columns:repeat(2,1fr)}.hdrcard .grid,.hdrcard .row3{grid-template-columns:1fr}.twocol{grid-template-columns:1fr}main{padding:20px 12px 90px}}
   @media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+  td .dtx{font-family:inherit;font-size:13.5px;color:var(--fg);background:transparent;border:1px solid transparent;border-radius:7px;padding:6px 7px;width:100%;resize:none;overflow:hidden;line-height:1.45;min-height:32px;transition:.12s}
+  td .dtx:hover{background:#f6f9fc;border-color:#e6edf4}
+  td .dtx:focus{outline:none;background:#fff;border-color:var(--accent);box-shadow:0 0 0 2px rgba(3,105,161,.14)}
+  tr.part .desc .dtx{font-weight:600;color:var(--primary)}
+  tr.sub .desc .dtx{color:var(--secondary);font-size:13px}
+  tr.cap td .dtx,tr.sec td .dtx{color:#fff;font-weight:800}tr.cap td .dtx:hover,tr.sec td .dtx:hover{background:rgba(255,255,255,.08);border-color:rgba(255,255,255,.2)}
+  td.desc{min-width:300px;max-width:560px}
+  .chooser{display:grid;grid-template-columns:1fr;gap:10px;margin-top:16px}
+  .ch-card{position:relative;text-align:left;border:1.5px solid var(--border);background:#fff;border-radius:13px;padding:14px 16px 13px;cursor:pointer;transition:.14s;display:flex;flex-direction:column;gap:3px;font-family:inherit}
+  .ch-card:hover{border-color:var(--accent);background:#f7fbff;transform:translateY(-1px)}
+  .ch-card b{font-size:15px;color:var(--primary);font-weight:800}.ch-card>span{font-size:13px;color:var(--secondary)}
+  .ch-card.rec{border-color:#cfe3f5;background:#f4faff}
+  .ch-card .rb{position:absolute;top:12px;right:12px;background:var(--accent);color:#fff;font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.4px;padding:3px 8px;border-radius:999px}
 </style>
 </head>
 <body>
@@ -299,6 +312,7 @@
         <button class="btn accent big" id="addCap"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg><span data-i18n="add_cap">Afegir capítol</span></button>
         <button class="btn accent big" id="addPart"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg><span data-i18n="add_part">Afegir partida</span></button>
         <div class="spacer"></div>
+        <button class="btn" id="toggleSub"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg><span data-i18n="hide_sub">Amagar composició</span></button>
         <button class="btn" id="expCsv"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg><span data-i18n="csv">CSV intranet</span></button>
       </div>
 
@@ -350,6 +364,16 @@
   </div>
 </div>
 
+<div class="modal-bg" id="chModal"><div class="modal" style="max-width:560px">
+  <h2 data-i18n="ch_title">Com vols començar?</h2>
+  <div class="chooser">
+    <button class="ch-card rec" data-start="tpl"><span class="rb" data-i18n="recommended">Recomanat</span><b data-i18n="ch_tpl">Plantilla façana</b><span data-i18n="ch_tpl_d">Estructura típica.</span></button>
+    <button class="ch-card" data-start="demo"><b data-i18n="ch_demo">Demo real</b><span data-i18n="ch_demo_d">Exemple complet.</span></button>
+    <button class="ch-card" data-start="blank"><b data-i18n="ch_blank">En blanc</b><span data-i18n="ch_blank_d">Des de zero.</span></button>
+  </div>
+  <div class="modal-actions"><button class="btn" id="chCancel" data-i18n="cancel">Cancel·lar</button></div>
+</div></div>
+
 <div class="modal-bg" id="sigModal"><div class="modal">
   <h2 data-i18n="sign_h">Signar pressupost</h2>
   <p data-i18n="sign_p">Dibuixa la teva firma. En signar, el pressupost queda bloquejat i es registra qui i quan.</p>
@@ -398,7 +422,7 @@ const I18N={
    note1:"EL PRESSUPOST S'HA REALITZAT TENINT EN COMPTE ELS AMIDAMENTS DE L'ARQUITECTE, ............., EN CAS DE MODIFICACIÓ DURANT L'EXECUCIÓ DE LES OBRES, ES FACTURARÀ LA DIFERÈNCIA.",
    note2:"EN EL CAS QUE QUALSEVOL ENTITAT PÚBLICA (AJUNTAMENT O CONSORCI DEL HABITATGE DE BARCELONA) CONSIDERI NECESSARI AFEGIR ALTRES PARTIDES NO INCLOSES EN EL PRESSUPOST ACCEPTAT PER LA COMUNITAT, ES VALORARAN EN UN PRESSUPOST ANNEX.",
    note3:"Nota GTA: Degut al gran increment als preus que s'està produint a les matèries primeres utilitzades per a la realització de les partides, el preu de les mateixes s'haurà de revisar abans de la seva acceptació.",
-   note4:"PREGUEM CONSULTI AMB ELS NOSTRES TÈCNICS PER ACLARIR QUALSEVOL DUBTE QUE ELS PUGUI SORGIR."},
+   note4:"PREGUEM CONSULTI AMB ELS NOSTRES TÈCNICS PER ACLARIR QUALSEVOL DUBTE QUE ELS PUGUI SORGIR.",hide_sub:"Amagar composició",show_sub:"Mostrar composició",ch_title:"Com vols començar?",ch_tpl:"Plantilla façana (catàleg)",ch_tpl_d:"Estructura típica de rehabilitació, llesta per omplir.",ch_demo:"Demo real · Casanova 220",ch_demo_d:"Pressupost real complet amb composició de preus.",ch_blank:"En blanc",ch_blank_d:"Comença de zero.",recommended:"Recomanat"},
  es:{login_title:"Presupuestos GTA",login_sub:"Inicia sesión para acceder a tus presupuestos",email:"Correo",pass:"Contraseña",enter:"Entrar",
    hist_sub:"Recupera, continúa o consulta cualquier presupuesto.",new_budget:"Nuevo presupuesto",search:"Busca por obra…",all_states:"Todos los estados",draft:"Borrador",signed:"Firmado",
    empty_h:"Aún no hay presupuestos",empty_p:"Crea el primero con el botón de arriba.",my_budgets:"Mis presupuestos",all_budgets:"Todos los presupuestos",
@@ -423,7 +447,7 @@ const I18N={
    note1:"EL PRESUPUESTO SE HA REALIZADO TENIENDO EN CUENTA LAS MEDICIONES DEL ARQUITECTO TÉCNICO, ............., EN CASO DE MODIFICACIÓN DURANTE LA EJECUCIÓN DE LAS OBRAS, SE FACTURARÁ LA DIFERENCIA.",
    note2:"EN EL CASO DE QUE CUALQUIER ENTIDAD PÚBLICA (AJUNTAMENT O CONSORCI DE L'HABITATGE DE BARCELONA) CONSIDERE NECESARIO AGREGAR OTRAS PARTIDAS NO INCLUIDAS EN EL PRESUPUESTO ACEPTADO POR LA COMUNIDAD, SE VALORARÁ EN UN PRESUPUESTO ANEXO.",
    note3:"Nota GTA: Debido al gran incremento en los precios que se está produciendo en las materias primas utilizadas para la realización de las partidas, el precio de las mismas se deberá revisar antes de su aceptación.",
-   note4:"ROGAMOS CONSULTEN CON NUESTROS TÉCNICOS PARA ACLARAR CUALQUIER DUDA QUE LES PUEDA SURGIR."}
+   note4:"ROGAMOS CONSULTEN CON NUESTROS TÉCNICOS PARA ACLARAR CUALQUIER DUDA QUE LES PUEDA SURGIR.",hide_sub:"Ocultar composición",show_sub:"Mostrar composición",ch_title:"¿Cómo quieres empezar?",ch_tpl:"Plantilla fachada (catálogo)",ch_tpl_d:"Estructura típica de rehabilitación, lista para rellenar.",ch_demo:"Demo real · Casanova 220",ch_demo_d:"Presupuesto real completo con composición de precios.",ch_blank:"En blanco",ch_blank_d:"Empieza de cero.",recommended:"Recomendado"}
 };
 const LS={get:k=>{try{return localStorage.getItem(k)}catch(e){return null}},set:(k,v)=>{try{localStorage.setItem(k,v)}catch(e){}}};
 let IDIOMA = LS.get("gta_lang")||"ca";
@@ -525,13 +549,71 @@ const SEED=()=>[
   {tipo:"part",num:"4.1",desc:"SEGURETAT I SALUT\nMesures de seguretat i salut segons l'Estudi Bàsic: EPIS, senyalització i proteccions col·lectives.",ut:"pa",amid:1,preu:0,flag:"Valorar segons % de l'obra"}
 ];
 
+const CAS_SEED=[
+{tipo:"cap",desc:"TREBALLS PREVIS INSTAL·LACIÓ"},
+{tipo:"part",num:"1.1.1",desc:"PROTECCIÓ PEATONAL - Lloguer i muntatge durant 15 dies de protecció de peatons a partir de bastida tubular multidireccional, amb dimensió aproximada de 9m de longitud 3 metres d'ample i 4 metres d'alçada. La superfície superior serà continua a partir de xapa grecada i l'estructura tindrà reforç exterior inclinat 45º cap a munt amb un vol de 1m i tota la longitud de 9m Servirà de suport per a l'emmallat total de la façana permeten una bossa de treball protegida i tancada per a la realització de les tasques Nota GTA: Per a la correcta realització dels nostres treballs, serà necessari, per part de la comunitat, el desmuntatge de màquines d'aire condicionat, estenedors, tendals, material d'aplec i qualsevol altre element sortint, etc. Aquest preu inclou el lloguer de la bastida durant 15 dies, en cas de necessitar ampliar els dies d'obra, aquest preu es veurà modificat en 15 €/dia.",ut:"m²",amid:36.0},
+{tipo:"sub",desc:"montaje/desmontaje y portes",ut:"pa",amid:1.0,preu:2400.0},
+{tipo:"sub",desc:"alquiler diario",ut:"d",amid:15.0,preu:15.0},
+{tipo:"sub",desc:"Lonas",ut:"ud",amid:11.0,preu:90.0},
+{tipo:"sub",desc:"tubo espuma",ut:"ud",amid:18.0,preu:9.6},
+{tipo:"part",num:"1.1.2",desc:"TREBALLS AMB PROTECCIONS INDIVIDUALS - Alternativament al sistema anterior, treball amb bosses penjades per tal d'evitar la instal·lació de bastida de protecció peatonal o altre alternativa presentada a DF i comunitat per part de la constructora",ut:"m²",amid:40.0},
+{tipo:"sub",desc:"VERTICALS",ut:"ut",amid:2.0,preu:735.0},
+{tipo:"part",num:"1.2",desc:"TREBALLS VERTICALS - Les feines s'executaran mitjançant treballs verticals amb tots els elements homologats i mesures de protecció necessàries, així mateix es podrà accedir als balcons des dels habitatges, però caldrà sempre anar lligats i protegits per a treballs verticals Nota GTA: S'ha de garantir l'accés a la propietat per part de la comunitat de propietaris. Per a la correcta realització dels nostres treballs, serà necessari, per part de la comunitat, el desmuntatge de màquines d'aire condicionat, estenedors, tendals, material d'aplec i qualsevol altre element sortint, etc.",ut:"pa",amid:1.0},
+{tipo:"sub",desc:"VERTICALS",ut:"ut",amid:13.0,preu:554.0},
+{tipo:"cap",desc:"ENDERROCS I PREPARACIÓ DE SUPORTS"},
+{tipo:"part",num:"2.1",desc:"SANEJAT DE CARA INFERIOR I CANTELL Repicat de llosana inferior de balcó, de morter, així com cantell de balcó, fins arribar al suport intern, amb mitjans manuals i càrrega manual de runa sobre saca o contenidor, de totes aquelles zones en les que el morter resti desadherit, fissures, esquerdes i bufes que a judici de la Direcció Facultativa, no siguin susceptibles de recuperació o aprofitament. S'intentarà sempre que sigui possible, mantenir i conservar el revestiment original de la façana així com els elements decoratius de les llosanes.",ut:"m²",amid:21.58},
+{tipo:"sub",desc:"CANTELLS",ut:"ml",amid:16.6,preu:21.0},
+{tipo:"sub",desc:"LLOSES",ut:"m²",amid:16.6,preu:21.0},
+{tipo:"cap",desc:"ESTRUCTURA - REPARACIÓ"},
+{tipo:"part",num:"3.1",desc:"COSIT D'ESQUERDES - Caldrà fer una regata de una longitud total de 20cm en parament de barana de obra prefabricada, amb mitjans manuals o amb radiant, i posterior grapat amb grapa de barra d'acer inoxidable de 8mm de diàmetre amb longitud total de 20cm 5+10+5 amb tac químic tipus HILTI HAS i posterior ratacat amb morter R4, tipus SIkaMonotop 612. (morter estructural sense retracció",ut:"ut",amid:15.0,preu:37.0},
+{tipo:"part",num:"3.2",desc:"PASSIVAT D'ARMADURES I BIGUETES - Passivat d'armadura i o bigues laminades amb dues capes de sika Monotop 910S, i aplicació a tota la zona de llosana inferior superior i frontal",ut:"m²",amid:21.58},
+{tipo:"sub",desc:"CANTELLS",ut:"ml",amid:16.6,preu:18.0},
+{tipo:"sub",desc:"LLOSES",ut:"m²",amid:16.6,preu:18.0},
+{tipo:"part",num:"3.3",desc:"REPARACIÓ DE LLOSANA - Reparació de llosana inferior i superior amb Sikamonotop 612 (morter R4 sense retracció) amb malla de PVC de 5mm",ut:"m²",amid:21.58},
+{tipo:"sub",desc:"LLOSES",ut:"m²",amid:21.58,preu:47.0},
+{tipo:"part",num:"3.4",desc:"RECONSTRUCCIÓ DE CANTELL - Reconstrucció de cantell de balcó inferior amb Sikamonotop 612 (morter R4 sense retracció) amb malla de PVC de 5mm",ut:"ml",amid:8.3,preu:60.0},
+{tipo:"part",num:"3.5",desc:"REPRODUCCIÓ DE CANTELLS - Encofrat de cantells de balcó amb formes per tal de restituir el cantell actual, caldrà prendre motlles si s'escau o buscar amb llistons la forma adequada a l'actual",ut:"ml",amid:8.3,preu:130.0},
+{tipo:"cap",desc:"PALETERIA ACABATS"},
+{tipo:"part",num:"4.1",desc:"ARREBOSSAT AMB MORTER DE CALÇ - Arrebossat de totes les zones intervingudes en balcons amb morter de calç natural, restituint les formes i acabats actuals.  aplicant un morter de calç amarat i sorres de diferents granulometries i formes, dosificació 1:3, amb addició de diferents pigments naturals i minerals segons el cromatisme actual de cada zona a recuperar, i formació de junts de carreus i especejaments idèntics als de l'acabat original. S'hauran de realitzar, prèviament, les proves de color i granulometria necessàries per poder confeccionar les paletes de color i sorres adequades al revestiment a integrar. Necessàriament, es tractarà d'un morter exclusiu pel parament concret a reintegrar. El nou morter s'haurà de preparar a l'obra. No s'admetran morters-predosificats (additivats). Si que es permetran morters naturals preparats amb o sense colorant",ut:"m²",amid:10.79},
+{tipo:"sub",desc:"CANTELLS",ut:"ml",amid:8.3,preu:77.0},
+{tipo:"sub",desc:"LLOSES",ut:"m²",amid:8.3,preu:77.0},
+{tipo:"part",num:"4.2",desc:"PINTAT AL SILICAT SOBRE MORTER - Pintat amb paletina, amb tècnica de veladura, de parament vertical i horitzontal exterior (Balcons) amb pintura al silicat de potassa i pigments, amb una capa de fons d'imprimació neutralitzadora, una d'imprimació fixadora i 2 capes d'acabat, de capes molts transparents en proporció 2 al 5% com a màxim de pintura d'origen mineral, al silicat potàssic en emulsió tipus lassur, sense modificar, de Keim, en colors a determinar. S'aplicaran diverses capes de diferents tonalitats segons es tracti d'una zona o altre del revestiment que es manté o si es tracta o nó de zones reintegrades per poder assolir un conjunt del tot homogeni.",ut:"m²",amid:13.79},
+{tipo:"sub",desc:"CANTELLS",ut:"ml",amid:8.3,preu:22.0},
+{tipo:"sub",desc:"LLOSES",ut:"m²",amid:8.3,preu:22.0},
+{tipo:"sub",desc:"BARANA",ut:"m²",amid:15.0,preu:22.0},
+{tipo:"cap",desc:"OPCIONALS PALETERIA - PAVIMENTS ENDERROC I NOU"},
+{tipo:"part",num:"5.1",desc:"REPICAT DE CARA SUPERIOR DE BALCONS Repicat de cara superior de balcó, DESADHERIT i/o ESQUERDAT, fins arribar al suport intern, inclou si algun balcó té paviment aquest. Amb mitjans manuals i càrrega manual de runa sobre saca o contenidor, de totes aquelles zones en les que el morter resti desadherit, fissures, esquerdes i bufes que a judici de la Direcció Facultativa, no siguin susceptibles de recuperació o aprofitament. S'intentarà sempre que sigui possible, mantenir i conservar el revestiment original de la façana així com els elements decoratius de les llosanes Nota GTA: En cas de trobar doble capa de paviment aquest preu no serà vàlid.",ut:"m²",amid:8.3,preu:21.0},
+{tipo:"part",num:"5.2",desc:"IMPERMEABILITZACIÓ Aplicació amb imprimació butílica prèvia de làmina butílica de 4kg/m2 tipus FP per a impermeabilització de balcó. Posterior execució insitu de capa de pendents amb morter CEM7.5 de 3cm de gruix mig. Aplicació de paviment ceràmic tipus rasilla tradicional, amb goteró a tot el perímetre de la llosana. En el casl del balcó del principal, la làmina remuntarà 5cm en tot el perímetre on hi hagi material d'obra. a la resta de plantes remuntarà 5cm en rasa picada en el acabat de façana",ut:"m²",amid:8.3,preu:102.5},
+{tipo:"cap",desc:"GESTIÓ DE RESIDUS"},
+{tipo:"part",num:"6.1",desc:"GESTIÓ DE RESIDUS - Gestió de residus amb transport a centre homologat a menys de 50km, amb contenidors a carrer a càrrega de la constructora, així com tramitació de la llicència a tal fi d'ocupació de calçada",ut:"m³",amid:3.0,preu:129.01},
+{tipo:"cap",desc:"SEGURETAT I SALUT"},
+{tipo:"part",num:"7.1",desc:"SEGURETAT I SALUT - Tots els equips de protecció, individual i col·lectiva així com tota la resta de materials i instal·lacions necessàries per al desenvolupament de l'obra, caseta d'obra, lavabo, etc.",ut:"ut",amid:1.0,preu:212.86}
+];
+
+const DEMO=()=>[{tipo:"sec",desc:"FAÇANA · C/ Casanova 220 (exemple real)"}].concat(JSON.parse(JSON.stringify(CAS_SEED)));
+const BLANK=()=>[{tipo:"sec",desc:t("sec_def")},{tipo:"cap",desc:t("cap_def")},{tipo:"part",num:"1.1",desc:"",ut:"m²",amid:"",preu:""}];
+function sanitizeRows(arr){
+  if(!Array.isArray(arr)||!arr.length)return null;const ALLOW=["sec","cap","part","sub"],out=[];
+  for(const r of arr){ if(!r||typeof r!=="object"||!ALLOW.includes(r.tipo))return null;
+    const o={tipo:r.tipo,desc:(r.desc==null?"":String(r.desc))};
+    if(r.tipo==="part"||r.tipo==="sub"){ o.num=r.num==null?"":String(r.num); o.ut=r.ut==null?"":String(r.ut);
+      o.amid=(r.amid===""||r.amid==null)?"":(isFinite(parseFloat(r.amid))?parseFloat(r.amid):0);
+      if(r.preu!=null&&r.preu!==""){o.preu=isFinite(parseFloat(r.preu))?parseFloat(r.preu):0;}else if(r.tipo==="sub"){o.preu=0;}
+      if(r.flag)o.flag=String(r.flag); }
+    out.push(o); }
+  return out;
+}
+
 // ---------- EDITOR ----------
-$("#newBtn").addEventListener("click",()=>openEditor(null));
+$("#newBtn").addEventListener("click",openChooser);
+function openChooser(){applyI18n();$("#chModal").classList.add("show");}
+$("#chCancel").addEventListener("click",()=>$("#chModal").classList.remove("show"));
+$("#chModal").addEventListener("click",e=>{if(e.target.id==="chModal"){$("#chModal").classList.remove("show");return;}const c=e.target.closest("[data-start]");if(!c)return;$("#chModal").classList.remove("show");const s=c.dataset.start;openEditor(null,s==="demo"?DEMO():s==="blank"?BLANK():SEED(),s==="demo");});
 $("#backBtn").addEventListener("click",showHist);
-function openEditor(p){
+function openEditor(p,starter,isDemo){
   undoStack=[]; updateUndo();
   if(p){CURRENT={...p};const n=normDatos(p.datos);rows=JSON.parse(JSON.stringify(n.rows));HEADER=n.header||{};NOTES=n.notes||[];$("#coef").value=p.coef||1;}
-  else{CURRENT={id:null,obra:"",coef:1,estado:"borrador",autor_id:ME.id,autor_nombre:ME.nombre};rows=SEED();HEADER={};NOTES=[t("note1"),t("note2"),t("note3"),t("note4")];$("#coef").value=1.05;}
+  else{CURRENT={id:null,obra:"",coef:1,estado:"borrador",autor_id:ME.id,autor_nombre:ME.nombre};rows=starter?starter:SEED();HEADER=isDemo?{obra:"DEMO · Rehabilitació de façana — C/ Casanova 220, Barcelona",client:"Comunitat de Propietaris (exemple)",ref:"G26.DEMO"}:{};NOTES=[t("note1"),t("note2"),t("note3"),t("note4")];$("#coef").value=1.05;}
   $("#h_obra").value=HEADER.obra||CURRENT.obra||"";$("#h_client").value=HEADER.client||"";$("#h_ref").value=HEADER.ref||"";$("#h_coac").value=HEADER.coac||"";$("#h_tec").value=HEADER.tec||"";
   $("#vHist").classList.add("hidden");$("#vEdit").classList.remove("hidden");$("#chatBody").innerHTML="";
   applyLockUI();render();window.scrollTo({top:0});
@@ -560,7 +642,10 @@ function summaryGroups(arr){const c=coef();const out=[];let curCap=null,curSec=n
     else if(r.tipo==="part"){const g=num2(num2(unitPrice(arr,i)*c)*(r.amid||0));if(curCap)curCap.sum+=g;if(curSec)curSec.sum+=g;}}
   closeSec();return out;}
 
+let SHOWSUBS=true;
+function autoGrow(){document.querySelectorAll("#tb textarea.dtx").forEach(tx=>{tx.style.height="auto";tx.style.height=(tx.scrollHeight)+"px";});}
 function render(){
+  const _af=document.activeElement,_fi=(_af&&_af.dataset)?_af.dataset.i:null,_ff=(_af&&_af.dataset)?_af.dataset.f:null;let _cs=null;try{_cs=_af?_af.selectionStart:null;}catch(_){}
   const c=coef(),lock=locked();let html="",base=0,total=0,flags=0;
   let chapBuf=null,chapSum=0,secBuf=null,secSum=0;const ro=lock?" disabled":"";
   const flushCap=()=>{if(chapBuf!==null&&chapSum>0)html+=`<tr class="subtotal"><td></td><td colspan="5">${t("subtotal")} — ${esc(chapBuf)}</td><td class="imp">${eur(chapSum)}</td><td></td></tr>`;chapBuf=null;chapSum=0;};
@@ -568,20 +653,22 @@ function render(){
   const trash=i=>`<button class="mini del" data-del="${i}"${ro}><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"/></svg></button>`;
   for(let i=0;i<rows.length;i++){const r=rows[i];
     if(r.tipo==="sec"){flushSec();secBuf=(r.desc||"").trim();
-      html+=`<tr class="sec"><td class="num"></td><td class="desc" colspan="6"><input value="${esc(r.desc)}" data-f="desc" data-i="${i}"${ro}></td><td class="act">${trash(i)}</td></tr>`;
+      html+=`<tr class="sec"><td class="num"></td><td class="desc" colspan="6"><textarea class="dtx" rows="1" data-f="desc" data-i="${i}"${ro}>${esc(r.desc)}</textarea></td><td class="act">${trash(i)}</td></tr>`;
     }else if(r.tipo==="cap"){flushCap();chapBuf=(r.desc||"").trim();
-      html+=`<tr class="cap"><td class="num"></td><td class="desc" colspan="6"><input value="${esc(r.desc)}" data-f="desc" data-i="${i}"${ro}></td><td class="act">${trash(i)}</td></tr>`;
+      html+=`<tr class="cap"><td class="num"></td><td class="desc" colspan="6"><textarea class="dtx" rows="1" data-f="desc" data-i="${i}"${ro}>${esc(r.desc)}</textarea></td><td class="act">${trash(i)}</td></tr>`;
     }else if(r.tipo==="part"){const E=unitPrice(rows,i),F=num2(E*c),G=num2(F*(r.amid||0));base+=num2(E*(r.amid||0));total+=G;chapSum+=G;secSum+=G;const composed=subsOf(rows,i).length>0;if(r.flag)flags++;
       const badge=r.flag?`<span class="flag-badge" title="${esc(r.flag)}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>!</span>`:"";
       const impCell=(G===0&&r.flag)?`<span style="color:var(--warn);font-weight:700;font-size:11.5px">${t("pendent")}</span>`:eur(G);
-      html+=`<tr class="part${r.flag?" flagged":""}"><td class="num"><input value="${esc(r.num||"")}" data-f="num" data-i="${i}"${ro}></td><td class="desc"><input value="${esc(r.desc)}" data-f="desc" data-i="${i}"${ro}>${badge}</td><td class="ut"><input value="${esc(unitDisp(r.ut))}" data-f="ut" data-i="${i}"${ro}></td><td class="amid"><input class="r" type="number" step="any" value="${r.amid??""}" data-f="amid" data-i="${i}"${ro}></td><td class="preu">${composed?`<span class="calc" style="display:block;padding:6px 7px">${eur(E).replace(" €","")}</span>`:`<input class="r" type="number" step="any" value="${r.preu??""}" data-f="preu" data-i="${i}"${ro}>`}</td><td class="calc fcol">${F.toLocaleString(IDIOMA==="es"?"es-ES":"ca-ES",{minimumFractionDigits:2,maximumFractionDigits:2})}</td><td class="imp">${impCell}</td><td class="act">${lock?"":`<button class="mini" data-addsub="${i}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>sub</button>`}${trash(i)}</td></tr>`;
+      html+=`<tr class="part${r.flag?" flagged":""}"><td class="num"><input value="${esc(r.num||"")}" data-f="num" data-i="${i}"${ro}></td><td class="desc"><textarea class="dtx" rows="1" data-f="desc" data-i="${i}"${ro}>${esc(r.desc)}</textarea>${badge}</td><td class="ut"><input value="${esc(unitDisp(r.ut))}" data-f="ut" data-i="${i}"${ro}></td><td class="amid"><input class="r" type="number" step="any" value="${r.amid??""}" data-f="amid" data-i="${i}"${ro}></td><td class="preu">${composed?`<span class="calc" style="display:block;padding:6px 7px">${eur(E).replace(" €","")}</span>`:`<input class="r" type="number" step="any" value="${r.preu??""}" data-f="preu" data-i="${i}"${ro}>`}</td><td class="calc fcol">${F.toLocaleString(IDIOMA==="es"?"es-ES":"ca-ES",{minimumFractionDigits:2,maximumFractionDigits:2})}</td><td class="imp">${impCell}</td><td class="act">${lock?"":`<button class="mini" data-addsub="${i}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>sub</button>`}${trash(i)}</td></tr>`;
     }else{const imp=num2((r.amid||0)*(r.preu||0));
-      html+=`<tr class="sub"><td class="num">·</td><td class="desc"><input value="${esc(r.desc)}" data-f="desc" data-i="${i}"${ro}></td><td class="ut"><input value="${esc(unitDisp(r.ut))}" data-f="ut" data-i="${i}"${ro}></td><td class="amid"><input class="r" type="number" step="any" value="${r.amid??""}" data-f="amid" data-i="${i}"${ro}></td><td class="preu"><input class="r" type="number" step="any" value="${r.preu??""}" data-f="preu" data-i="${i}"${ro}></td><td class="calc fcol"></td><td class="imp">${eur(imp)}</td><td class="act">${trash(i)}</td></tr>`;
+      if(SHOWSUBS)html+=`<tr class="sub"><td class="num">·</td><td class="desc"><textarea class="dtx" rows="1" data-f="desc" data-i="${i}"${ro}>${esc(r.desc)}</textarea></td><td class="ut"><input value="${esc(unitDisp(r.ut))}" data-f="ut" data-i="${i}"${ro}></td><td class="amid"><input class="r" type="number" step="any" value="${r.amid??""}" data-f="amid" data-i="${i}"${ro}></td><td class="preu"><input class="r" type="number" step="any" value="${r.preu??""}" data-f="preu" data-i="${i}"${ro}></td><td class="calc fcol"></td><td class="imp">${eur(imp)}</td><td class="act">${trash(i)}</td></tr>`;
     }
   }
   flushSec();
   if(rows.length) html+=`<tr class="grand"><td></td><td colspan="5">${t("total_doc")}</td><td class="imp">${eur(total)}</td><td></td></tr><tr class="iva"><td></td><td colspan="7">${t("iva")}</td></tr>`;
   $("#tb").innerHTML=html||`<tr><td colspan="8"><div class="empty" style="padding:40px"><h3>${t("empty_budget")}</h3><p>${t("empty_budget_p")}</p></div></td></tr>`;
+  autoGrow();
+  if(_fi!=null&&_ff){const _el=document.querySelector(`#tb [data-i="${_fi}"][data-f="${_ff}"]`);if(_el){_el.focus();if(_cs!=null){try{_el.setSelectionRange(_cs,_cs);}catch(_){}}}}
   $("#sBase").textContent=eur(base);$("#sTotal").textContent=eur(total);$("#barTotal").textContent=eur(total);
   $("#sFlags").textContent=flags;$("#obraTag").textContent="● "+($("#h_obra").value||t("noname"));
   renderResum();renderNotes();
@@ -602,8 +689,9 @@ $("#notesBox").addEventListener("input",e=>{if(e.target.dataset.note!==undefined
 $("#notesBox").addEventListener("click",e=>{const rm=e.target.closest("[data-noterm]");if(rm){NOTES.splice(+rm.dataset.noterm,1);renderNotes();}});
 $("#addNote").addEventListener("click",()=>{NOTES.push("");renderNotes();});
 
-$("#tb").addEventListener("input",e=>{const t2=e.target;if(t2.tagName!=="INPUT"||locked())return;const i=+t2.dataset.i,f=t2.dataset.f;if(f==="amid"||f==="preu")rows[i][f]=t2.value===""?"":parseFloat(t2.value);else rows[i][f]=t2.value;render();});
+$("#tb").addEventListener("input",e=>{const t2=e.target;if(!(t2.tagName==="INPUT"||t2.tagName==="TEXTAREA")||locked())return;const i=+t2.dataset.i,f=t2.dataset.f;if(f==="amid"||f==="preu")rows[i][f]=t2.value===""?"":parseFloat(t2.value);else rows[i][f]=t2.value;render();});
 $("#coef").addEventListener("input",render);
+$("#toggleSub").addEventListener("click",()=>{SHOWSUBS=!SHOWSUBS;$("#toggleSub").querySelector("span").textContent=SHOWSUBS?t("hide_sub"):t("show_sub");render();});
 $("#tb").addEventListener("click",e=>{if(locked())return;const del=e.target.closest("[data-del]"),add=e.target.closest("[data-addsub]");
   if(del){pushUndo();const i=+del.dataset.del,r=rows[i];if(r.tipo==="part")rows.splice(i,1+subsOf(rows,i).length);else rows.splice(i,1);render();}
   if(add){pushUndo();const i=+add.dataset.addsub,s=subsOf(rows,i),at=s.length?s[s.length-1]+1:i+1;rows.splice(at,0,{tipo:"sub",desc:t("sub_def"),ut:"ut",amid:1,preu:0});render();}});
@@ -671,12 +759,13 @@ async function chatSend(){
     const {data:{session}}=await sb.auth.getSession();
     const res=await fetch(CHAT_URL,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({token:(session&&session.access_token)||"",rows,instruccio:txt,idioma:IDIOMA})});
     const data=await res.json();typing.remove();
-    if(data.error||!Array.isArray(data.rows)){addMsg("a err",t("ai_err"));}
+    const clean=sanitizeRows(data.rows);
+    if(data.error||!clean){addMsg("a err",t("ai_err"));}
     else{
-      PENDING=data.rows;const oldT=computeTotal(rows),newT=computeTotal(data.rows);
-      const dn=data.rows.length-rows.length;const dtxt=dn===0?"":(dn>0?` · +${dn} ${t("rows_before")}`:` · ${dn} ${t("rows_before")}`);
+      PENDING=clean;const oldT=computeTotal(rows),newT=computeTotal(clean);
+      const dn=clean.length-rows.length;const dtxt=dn===0?"":(dn>0?` · +${dn} ${t("rows_before")}`:` · ${dn} ${t("rows_before")}`);
       const pv=document.createElement("div");pv.className="preview";
-      pv.innerHTML=`<div class="pt"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>${esc(data.resum||t("ai_change"))}</div><div class="delta">${rows.length} → <b>${data.rows.length}</b> ${t("rows_before")}${dtxt}</div><div class="totd"><span class="old">${eur(oldT)}</span><span class="new">${eur(newT)}</span></div><div class="pb"><button class="btn ok" id="pvApply">${t("apply")}</button><button class="btn" id="pvDiscard">${t("discard")}</button></div>`;
+      pv.innerHTML=`<div class="pt"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>${esc(data.resum||t("ai_change"))}</div><div class="delta">${rows.length} → <b>${clean.length}</b> ${t("rows_before")}${dtxt}</div><div class="totd"><span class="old">${eur(oldT)}</span><span class="new">${eur(newT)}</span></div><div class="pb"><button class="btn ok" id="pvApply">${t("apply")}</button><button class="btn" id="pvDiscard">${t("discard")}</button></div>`;
       $("#chatBody").appendChild(pv);$("#chatBody").scrollTop=$("#chatBody").scrollHeight;
       pv.querySelector("#pvApply").addEventListener("click",()=>{pushUndo();rows=PENDING;PENDING=null;render();pv.querySelector(".pb").innerHTML=`<span style="color:var(--ok);font-weight:700">✓ ${t("applied")}</span>`;toast(t("applied"));});
       pv.querySelector("#pvDiscard").addEventListener("click",()=>{PENDING=null;pv.querySelector(".pb").innerHTML=`<span style="color:var(--secondary)">✕</span>`;});
