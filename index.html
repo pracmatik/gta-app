@@ -249,6 +249,27 @@
   .aprrow{display:flex;align-items:flex-start;gap:10px;justify-content:space-between;padding:12px;border:1px solid var(--line);border-radius:11px;margin-bottom:8px;background:var(--surface);transition:.15s}.aprrow:hover{border-color:rgba(15,23,42,.14)}
   .aprrow .aprtx{display:flex;flex-direction:column;gap:2px}.aprrow .aprtx b{font-weight:600;color:var(--primary);font-size:13.5px;line-height:1.45}
   .aprrow .aprtx span{color:var(--muted-fg);font-size:12.5px}.aprrow .aprtx small{color:var(--faint);font-size:11px;margin-top:2px}
+  .profile-wrap{position:relative}
+  .userchip{cursor:pointer;transition:border-color .15s var(--ease),box-shadow .15s var(--ease)}.userchip:hover{border-color:rgba(15,23,42,.16)}
+  .userchip .pchev{width:15px;height:15px;color:var(--faint);margin-left:1px}
+  .pmenu{position:absolute;right:0;top:calc(100% + 8px);width:248px;background:var(--surface);border:1px solid var(--line);border-radius:14px;box-shadow:var(--sh-3);padding:7px;opacity:0;visibility:hidden;transform:translateY(-6px) scale(.98);transform-origin:top right;transition:opacity .16s var(--ease),transform .16s var(--eo),visibility .16s;z-index:80}
+  .pmenu.open{opacity:1;visibility:visible;transform:none}
+  .pmenu-head{display:flex;align-items:center;gap:10px;padding:9px 10px 11px}.pmenu-head .pmh-tx{min-width:0}.pmenu-head .pmnm{font-weight:600;font-size:13.5px;color:var(--primary);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.pmenu-head .pmem{font-size:12px;color:var(--muted-fg);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .pmenu-item{width:100%;display:flex;align-items:center;gap:10px;border:none;background:transparent;font-family:inherit;font-size:13.5px;font-weight:500;color:var(--secondary);padding:9px 10px;border-radius:9px;cursor:pointer;text-align:left;transition:background .12s}
+  .pmenu-item:hover{background:#F1F5F9;color:var(--primary)}.pmenu-item svg{width:17px;height:17px;color:var(--muted-fg)}.pmenu-item:hover svg{color:var(--accent)}
+  .pmenu-item.danger{color:var(--danger)}.pmenu-item.danger:hover{background:var(--danger-bg)}.pmenu-item.danger svg{color:var(--danger)}
+  .pmenu-sep{height:1px;background:var(--line);margin:6px 8px}
+  .fld{width:100%;font-family:inherit;font-size:14px;border:1px solid var(--line);border-radius:var(--r);padding:10px 12px;background:var(--surface);color:var(--fg);transition:border-color .15s,box-shadow .15s}
+  .fld:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 3px rgba(3,105,161,.12)}
+  .avatar.sm{width:30px;height:30px;font-size:12px;flex:0 0 30px}
+  .umrow{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:11px 12px;border:1px solid var(--line);border-radius:11px;margin-bottom:8px;background:var(--surface);flex-wrap:wrap}
+  .umrow.off{background:#FBFCFE;opacity:.72}
+  .umrow .umtx{display:flex;align-items:center;gap:10px;min-width:0}.umrow .umnm{font-weight:600;font-size:13.5px;color:var(--primary);display:flex;align-items:center;gap:6px}.umrow .umem{font-size:12.5px;color:var(--muted-fg)}
+  .youtag{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.4px;background:var(--accent-tint);color:var(--accent);padding:1px 6px;border-radius:999px}
+  .offtag{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.4px;background:var(--warn-bg);color:var(--warn);padding:1px 6px;border-radius:999px}
+  .umrow .umact{display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+  .umrow .umrole{font-size:12.5px;padding:6px 8px;border-radius:8px;width:auto;background:var(--surface)}
+  .umrow .mini{height:32px}
 </style>
 </head>
 <body>
@@ -276,7 +297,14 @@
     <img class="logo-gta" src="https://gtaeuropa.com/wp-content/uploads/2025/08/logo-gta-europa-empresa-rehabilitacion-fachadas-barcelona-300x118.webp" alt="GTA Europa">
     <div class="brand-right">
       <div class="langtog"><button id="langCa" class="on">CA</button><button id="langEs">ES</button></div>
-      <div class="userchip"><div><div class="nm" id="uName">—</div><div class="rl"><span class="badge-rol" id="uRol">—</span></div></div><div class="avatar" id="uAvatar">–</div></div>
+      <div class="profile-wrap"><div class="userchip" id="userchip" title="El meu perfil"><div><div class="nm" id="uName">—</div><div class="rl"><span class="badge-rol" id="uRol">—</span></div></div><div class="avatar" id="uAvatar">–</div><svg class="pchev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg></div>
+        <div class="pmenu" id="profileMenu">
+          <div class="pmenu-head"><div class="avatar" id="pmAvatar">–</div><div class="pmh-tx"><div class="pmnm" id="pmName">—</div><div class="pmem" id="pmEmail">—</div></div></div>
+          <button class="pmenu-item" id="pmPwd"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg><span data-i18n="pm_pwd">Canviar contrasenya</span></button>
+          <button class="pmenu-item" id="pmUsers" style="display:none"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg><span data-i18n="pm_users">Gestió d'usuaris</span></button>
+          <div class="pmenu-sep"></div>
+          <button class="pmenu-item danger" id="pmLogout"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg><span data-i18n="pm_logout">Tancar sessió</span></button>
+        </div></div>
       <button class="btn" id="aprBtn" title="Aprenentatge" style="display:none"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg><span data-i18n="apr_btn">Aprenentatge</span></button>
       <button class="btn" id="reglasBtn" title="Regles IA"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/></svg><span data-i18n="reglas_btn">Regles IA</span></button>
       <button class="btn" id="logoutBtn" title="Sortir"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg></button>
@@ -414,6 +442,29 @@
   </div>
 </div>
 
+<div class="modal-bg" id="pwdModal"><div class="modal" style="max-width:430px">
+  <h2 data-i18n="pwd_title">Canviar la meva contrasenya</h2>
+  <p data-i18n="pwd_sub">Mínim 6 caràcters. La nova contrasenya s'aplica immediatament.</p>
+  <input id="pwd1" type="password" class="fld" data-i18n-ph="pwd_ph1" placeholder="Nova contrasenya" autocomplete="new-password" style="margin-top:14px">
+  <input id="pwd2" type="password" class="fld" data-i18n-ph="pwd_ph2" placeholder="Repeteix la contrasenya" autocomplete="new-password" style="margin-top:10px">
+  <div class="modal-actions"><button class="btn" id="pwdCancel" data-i18n="cancel">Cancel·lar</button><button class="btn ok" id="pwdSave" data-i18n="pwd_save">Desar contrasenya</button></div>
+</div></div>
+<div class="modal-bg" id="usersModal"><div class="modal" style="max-width:720px">
+  <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:12px;flex-wrap:wrap">
+    <div><h2 data-i18n="um_title">Gestió d'usuaris</h2><p data-i18n="um_sub">Crea comptes, dóna o treu admin, activa/desactiva l'accés o reinicia contrasenyes.</p></div>
+    <button class="btn accent" id="umNew"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg><span data-i18n="um_new">Crear usuari</span></button>
+  </div>
+  <div id="umNewForm" style="display:none;margin-top:14px;padding:14px;border:1px solid var(--line);border-radius:12px;background:#FBFCFE">
+    <div style="display:grid;grid-template-columns:1.4fr 1fr .8fr;gap:10px">
+      <input id="umEmail" class="fld" data-i18n-ph="um_email" placeholder="correu@gtaeuropa.com">
+      <input id="umNombre" class="fld" data-i18n-ph="um_nombre" placeholder="Nom">
+      <select id="umRol" class="fld"><option value="tecnico" data-i18n="um_tec">Tècnic</option><option value="admin" data-i18n="um_adm">Admin</option></select>
+    </div>
+    <div style="display:flex;gap:8px;margin-top:10px;align-items:center"><button class="btn primary" id="umCreate" data-i18n="um_create">Crear</button><span id="umMsg" style="font-size:13px;color:var(--ok);font-weight:600"></span></div>
+  </div>
+  <div id="umList" style="margin-top:16px;max-height:46vh;overflow:auto"></div>
+  <div class="modal-actions"><button class="btn" id="umClose" data-i18n="cancel">Tancar</button></div>
+</div></div>
 <div class="modal-bg" id="aprModal"><div class="modal" style="max-width:620px">
   <h2 data-i18n="apr_title">Què ha après el sistema</h2>
   <p style="color:var(--secondary);font-size:13.5px;margin-top:4px" data-i18n="apr_sub">Lliçons apreses del feedback dels tècnics. La IA les aplica a cada nou pressupost. Pots eliminar les que no vulguis.</p>
@@ -464,6 +515,7 @@ const SUPA_ANON="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsIn
 const CHAT_URL="https://pracmatikadmin.app.n8n.cloud/webhook/gta-chat";
 const INGESTA_URL="https://pracmatikadmin.app.n8n.cloud/webhook/gta-ingesta";
 const APRENDE_URL="https://pracmatikadmin.app.n8n.cloud/webhook/gta-aprende";
+const ADMIN_URL="https://pracmatikadmin.app.n8n.cloud/webhook/gta-admin";
 let ORIGEN_IA=null,FEEDBACK_DONE=false,FB_VAL=null;
 const sb = window.supabase ? window.supabase.createClient(SUPA_URL,SUPA_ANON) : null;
 const $=s=>document.querySelector(s);
@@ -494,7 +546,7 @@ const I18N={
    note1:"EL PRESSUPOST S'HA REALITZAT TENINT EN COMPTE ELS AMIDAMENTS DE L'ARQUITECTE, ............., EN CAS DE MODIFICACIÓ DURANT L'EXECUCIÓ DE LES OBRES, ES FACTURARÀ LA DIFERÈNCIA.",
    note2:"EN EL CAS QUE QUALSEVOL ENTITAT PÚBLICA (AJUNTAMENT O CONSORCI DEL HABITATGE DE BARCELONA) CONSIDERI NECESSARI AFEGIR ALTRES PARTIDES NO INCLOSES EN EL PRESSUPOST ACCEPTAT PER LA COMUNITAT, ES VALORARAN EN UN PRESSUPOST ANNEX.",
    note3:"Nota GTA: Degut al gran increment als preus que s'està produint a les matèries primeres utilitzades per a la realització de les partides, el preu de les mateixes s'haurà de revisar abans de la seva acceptació.",
-   note4:"PREGUEM CONSULTI AMB ELS NOSTRES TÈCNICS PER ACLARIR QUALSEVOL DUBTE QUE ELS PUGUI SORGIR.",hide_sub:"Amagar composició",show_sub:"Mostrar composició",ch_title:"Com vols començar?",ch_tpl:"Plantilla façana (catàleg)",ch_tpl_d:"Estructura típica de rehabilitació, llesta per omplir.",ch_demo:"Demo real · Casanova 220",ch_demo_d:"Pressupost real complet amb composició de preus.",ch_blank:"En blanc",ch_blank_d:"Comença de zero.",recommended:"Recomanat",ch_upload:"Pujar amidament (IA)",ch_upload_d:"Puja el fitxer de l'arquitecte (Excel/PDF) i la IA proposa un esborrany valorat.",ing_reading:"Llegint el fitxer…",ing_ai:"La IA està valorant l'amidament…",ing_wait:"La IA llegeix l'amidament i prepara l'esborrany valorat. Pot trigar uns segons.",ing_error:"No s'ha pogut processar l'amidament. Revisa el fitxer o torna-ho a provar.",ing_empty:"No s'ha trobat text llegible (si és un PDF escanejat encara no el suportem).",ing_ok:"Esborrany generat",ing_avisos:"A revisar (proposat per IA, valida abans d'usar):",reglas_btn:"Regles IA",reglas_title:"Regles permanents de GTA",reglas_hint:"Regles que el sistema respectarà SEMPRE en cada pressupost que generi la IA (una per línia). Ex: \"El coeficient per defecte és 1,05\", \"El contenidor de runa sempre 5 m³\", \"La marca X mai és vàlida → preu a revisar\".",reglas_save:"Desar regles",reglas_saved:"Regles desades",reglas_ph:"Ex: El coeficient per defecte sempre és 1,05.\nEl contenidor de runa sempre és de 5 m³.\nLa marca «Sika» és vàlida; les marques premium no → preu a revisar.\nAfegeix sempre un capítol de Seguretat i Salut al final.\nTreballs en balcons en alçada → bastida penjant, no tubular.",fb_q:"L'esborrany de la IA, ha sortit bé?",fb_ok:"Perfecte",fb_casi:"Quasi",fb_no:"No",fb_ph:"En una frase: què corregiries?",fb_send:"Enviar",fb_thanks:"Gràcies pel teu feedback!",fb_learned:"Gràcies! El sistema ha après {n} lliçó/ons",apr_btn:"Aprenentatge",apr_title:"Què ha après el sistema",apr_sub:"Lliçons apreses del feedback dels tècnics. La IA les aplica a cada nou pressupost. Pots eliminar les que no vulguis.",apr_empty:"Encara no hi ha lliçons. S'aniran omplint amb el feedback dels tècnics.",apr_deleted:"Lliçó eliminada"},
+   note4:"PREGUEM CONSULTI AMB ELS NOSTRES TÈCNICS PER ACLARIR QUALSEVOL DUBTE QUE ELS PUGUI SORGIR.",hide_sub:"Amagar composició",show_sub:"Mostrar composició",ch_title:"Com vols començar?",ch_tpl:"Plantilla façana (catàleg)",ch_tpl_d:"Estructura típica de rehabilitació, llesta per omplir.",ch_demo:"Demo real · Casanova 220",ch_demo_d:"Pressupost real complet amb composició de preus.",ch_blank:"En blanc",ch_blank_d:"Comença de zero.",recommended:"Recomanat",ch_upload:"Pujar amidament (IA)",ch_upload_d:"Puja el fitxer de l'arquitecte (Excel/PDF) i la IA proposa un esborrany valorat.",ing_reading:"Llegint el fitxer…",ing_ai:"La IA està valorant l'amidament…",ing_wait:"La IA llegeix l'amidament i prepara l'esborrany valorat. Pot trigar uns segons.",ing_error:"No s'ha pogut processar l'amidament. Revisa el fitxer o torna-ho a provar.",ing_empty:"No s'ha trobat text llegible (si és un PDF escanejat encara no el suportem).",ing_ok:"Esborrany generat",ing_avisos:"A revisar (proposat per IA, valida abans d'usar):",reglas_btn:"Regles IA",reglas_title:"Regles permanents de GTA",reglas_hint:"Regles que el sistema respectarà SEMPRE en cada pressupost que generi la IA (una per línia). Ex: \"El coeficient per defecte és 1,05\", \"El contenidor de runa sempre 5 m³\", \"La marca X mai és vàlida → preu a revisar\".",reglas_save:"Desar regles",reglas_saved:"Regles desades",reglas_ph:"Ex: El coeficient per defecte sempre és 1,05.\nEl contenidor de runa sempre és de 5 m³.\nLa marca «Sika» és vàlida; les marques premium no → preu a revisar.\nAfegeix sempre un capítol de Seguretat i Salut al final.\nTreballs en balcons en alçada → bastida penjant, no tubular.",fb_q:"L'esborrany de la IA, ha sortit bé?",fb_ok:"Perfecte",fb_casi:"Quasi",fb_no:"No",fb_ph:"En una frase: què corregiries?",fb_send:"Enviar",fb_thanks:"Gràcies pel teu feedback!",fb_learned:"Gràcies! El sistema ha après {n} lliçó/ons",apr_btn:"Aprenentatge",apr_title:"Què ha après el sistema",apr_sub:"Lliçons apreses del feedback dels tècnics. La IA les aplica a cada nou pressupost. Pots eliminar les que no vulguis.",apr_empty:"Encara no hi ha lliçons. S'aniran omplint amb el feedback dels tècnics.",apr_deleted:"Lliçó eliminada",pm_pwd:"Canviar contrasenya",pm_users:"Gestió d'usuaris",pm_logout:"Tancar sessió",pwd_title:"Canviar la meva contrasenya",pwd_sub:"Mínim 6 caràcters. S'aplica immediatament.",pwd_ph1:"Nova contrasenya",pwd_ph2:"Repeteix la contrasenya",pwd_save:"Desar contrasenya",pwd_short:"La contrasenya ha de tenir 6 caràcters o més",pwd_mismatch:"Les contrasenyes no coincideixen",pwd_ok:"Contrasenya canviada",um_title:"Gestió d'usuaris",um_sub:"Crea comptes, dóna o treu admin, activa/desactiva l'accés o reinicia contrasenyes.",um_new:"Crear usuari",um_create:"Crear",um_email:"correu@gtaeuropa.com",um_nombre:"Nom",um_tec:"Tècnic",um_adm:"Admin",um_disable:"Desactivar",um_enable:"Activar",um_reset:"Nova contrasenya",um_reset_p:"Escriu la nova contrasenya per a aquest usuari (mín. 6):",um_reset_ok:"Contrasenya reiniciada:",um_del_confirm:"Eliminar aquest usuari? No es pot desfer.",um_created:"Usuari creat. Contrasenya temporal:",um_done:"Fet",um_you:"tu",um_off:"desactivat",um_err_forbidden:"Només els administradors poden gestionar usuaris.",um_err_domini:"Només es permeten correus @gtaeuropa.com o @pracmatik.com.",um_err_exists:"Aquest correu ja existeix.",um_err_self:"No pots fer aquesta acció sobre el teu propi compte.",um_err_last_admin:"Ha d'haver-hi com a mínim un administrador.",um_err_pw:"La contrasenya ha de tenir 6 caràcters o més."},
  es:{login_title:"Presupuestos GTA",login_sub:"Inicia sesión para acceder a tus presupuestos",email:"Correo",pass:"Contraseña",enter:"Entrar",
    hist_sub:"Recupera, continúa o consulta cualquier presupuesto.",new_budget:"Nuevo presupuesto",search:"Busca por obra…",all_states:"Todos los estados",draft:"Borrador",signed:"Firmado",
    empty_h:"Aún no hay presupuestos",empty_p:"Crea el primero con el botón de arriba.",my_budgets:"Mis presupuestos",all_budgets:"Todos los presupuestos",
@@ -519,7 +571,7 @@ const I18N={
    note1:"EL PRESUPUESTO SE HA REALIZADO TENIENDO EN CUENTA LAS MEDICIONES DEL ARQUITECTO TÉCNICO, ............., EN CASO DE MODIFICACIÓN DURANTE LA EJECUCIÓN DE LAS OBRAS, SE FACTURARÁ LA DIFERENCIA.",
    note2:"EN EL CASO DE QUE CUALQUIER ENTIDAD PÚBLICA (AJUNTAMENT O CONSORCI DE L'HABITATGE DE BARCELONA) CONSIDERE NECESARIO AGREGAR OTRAS PARTIDAS NO INCLUIDAS EN EL PRESUPUESTO ACEPTADO POR LA COMUNIDAD, SE VALORARÁ EN UN PRESUPUESTO ANEXO.",
    note3:"Nota GTA: Debido al gran incremento en los precios que se está produciendo en las materias primas utilizadas para la realización de las partidas, el precio de las mismas se deberá revisar antes de su aceptación.",
-   note4:"ROGAMOS CONSULTEN CON NUESTROS TÉCNICOS PARA ACLARAR CUALQUIER DUDA QUE LES PUEDA SURGIR.",hide_sub:"Ocultar composición",show_sub:"Mostrar composición",ch_title:"¿Cómo quieres empezar?",ch_tpl:"Plantilla fachada (catálogo)",ch_tpl_d:"Estructura típica de rehabilitación, lista para rellenar.",ch_demo:"Demo real · Casanova 220",ch_demo_d:"Presupuesto real completo con composición de precios.",ch_blank:"En blanco",ch_blank_d:"Empieza de cero.",recommended:"Recomendado",ch_upload:"Subir medición (IA)",ch_upload_d:"Sube el archivo del arquitecto (Excel/PDF) y la IA propone un borrador valorado.",ing_reading:"Leyendo el archivo…",ing_ai:"La IA está valorando la medición…",ing_wait:"La IA lee la medición y prepara el borrador valorado. Puede tardar unos segundos.",ing_error:"No se ha podido procesar la medición. Revisa el archivo o inténtalo de nuevo.",ing_empty:"No se ha encontrado texto legible (si es un PDF escaneado aún no lo soportamos).",ing_ok:"Borrador generado",ing_avisos:"A revisar (propuesto por IA, valida antes de usar):",reglas_btn:"Reglas IA",reglas_title:"Reglas permanentes de GTA",reglas_hint:"Reglas que el sistema respetará SIEMPRE en cada presupuesto que genere la IA (una por línea). Ej: \"El coeficiente por defecto es 1,05\", \"El contenedor de escombros siempre 5 m³\", \"La marca X nunca es válida → precio a revisar\".",reglas_save:"Guardar reglas",reglas_saved:"Reglas guardadas",reglas_ph:"Ej: El coeficiente por defecto siempre es 1,05.\nEl contenedor de escombros siempre 5 m³.\nLa marca «Sika» es válida; las marcas premium no → precio a revisar.\nAñade siempre un capítulo de Seguridad y Salud al final.\nTrabajos en balcones en altura → andamio colgante, no tubular.",fb_q:"El borrador de la IA, ¿ha salido bien?",fb_ok:"Perfecto",fb_casi:"Casi",fb_no:"No",fb_ph:"En una frase: ¿qué corregirías?",fb_send:"Enviar",fb_thanks:"¡Gracias por tu feedback!",fb_learned:"¡Gracias! El sistema ha aprendido {n} lección/es",apr_btn:"Aprendizaje",apr_title:"Qué ha aprendido el sistema",apr_sub:"Lecciones aprendidas del feedback de los técnicos. La IA las aplica a cada nuevo presupuesto. Puedes eliminar las que no quieras.",apr_empty:"Aún no hay lecciones. Se irán llenando con el feedback de los técnicos.",apr_deleted:"Lección eliminada"}
+   note4:"ROGAMOS CONSULTEN CON NUESTROS TÉCNICOS PARA ACLARAR CUALQUIER DUDA QUE LES PUEDA SURGIR.",hide_sub:"Ocultar composición",show_sub:"Mostrar composición",ch_title:"¿Cómo quieres empezar?",ch_tpl:"Plantilla fachada (catálogo)",ch_tpl_d:"Estructura típica de rehabilitación, lista para rellenar.",ch_demo:"Demo real · Casanova 220",ch_demo_d:"Presupuesto real completo con composición de precios.",ch_blank:"En blanco",ch_blank_d:"Empieza de cero.",recommended:"Recomendado",ch_upload:"Subir medición (IA)",ch_upload_d:"Sube el archivo del arquitecto (Excel/PDF) y la IA propone un borrador valorado.",ing_reading:"Leyendo el archivo…",ing_ai:"La IA está valorando la medición…",ing_wait:"La IA lee la medición y prepara el borrador valorado. Puede tardar unos segundos.",ing_error:"No se ha podido procesar la medición. Revisa el archivo o inténtalo de nuevo.",ing_empty:"No se ha encontrado texto legible (si es un PDF escaneado aún no lo soportamos).",ing_ok:"Borrador generado",ing_avisos:"A revisar (propuesto por IA, valida antes de usar):",reglas_btn:"Reglas IA",reglas_title:"Reglas permanentes de GTA",reglas_hint:"Reglas que el sistema respetará SIEMPRE en cada presupuesto que genere la IA (una por línea). Ej: \"El coeficiente por defecto es 1,05\", \"El contenedor de escombros siempre 5 m³\", \"La marca X nunca es válida → precio a revisar\".",reglas_save:"Guardar reglas",reglas_saved:"Reglas guardadas",reglas_ph:"Ej: El coeficiente por defecto siempre es 1,05.\nEl contenedor de escombros siempre 5 m³.\nLa marca «Sika» es válida; las marcas premium no → precio a revisar.\nAñade siempre un capítulo de Seguridad y Salud al final.\nTrabajos en balcones en altura → andamio colgante, no tubular.",fb_q:"El borrador de la IA, ¿ha salido bien?",fb_ok:"Perfecto",fb_casi:"Casi",fb_no:"No",fb_ph:"En una frase: ¿qué corregirías?",fb_send:"Enviar",fb_thanks:"¡Gracias por tu feedback!",fb_learned:"¡Gracias! El sistema ha aprendido {n} lección/es",apr_btn:"Aprendizaje",apr_title:"Qué ha aprendido el sistema",apr_sub:"Lecciones aprendidas del feedback de los técnicos. La IA las aplica a cada nuevo presupuesto. Puedes eliminar las que no quieras.",apr_empty:"Aún no hay lecciones. Se irán llenando con el feedback de los técnicos.",apr_deleted:"Lección eliminada",pm_pwd:"Cambiar contraseña",pm_users:"Gestión de usuarios",pm_logout:"Cerrar sesión",pwd_title:"Cambiar mi contraseña",pwd_sub:"Mínimo 6 caracteres. Se aplica al instante.",pwd_ph1:"Nueva contraseña",pwd_ph2:"Repite la contraseña",pwd_save:"Guardar contraseña",pwd_short:"La contraseña debe tener 6 caracteres o más",pwd_mismatch:"Las contraseñas no coinciden",pwd_ok:"Contraseña cambiada",um_title:"Gestión de usuarios",um_sub:"Crea cuentas, da o quita admin, activa/desactiva el acceso o reinicia contraseñas.",um_new:"Crear usuario",um_create:"Crear",um_email:"correo@gtaeuropa.com",um_nombre:"Nombre",um_tec:"Técnico",um_adm:"Admin",um_disable:"Desactivar",um_enable:"Activar",um_reset:"Nueva contraseña",um_reset_p:"Escribe la nueva contraseña para este usuario (mín. 6):",um_reset_ok:"Contraseña reiniciada:",um_del_confirm:"¿Eliminar este usuario? No se puede deshacer.",um_created:"Usuario creado. Contraseña temporal:",um_done:"Hecho",um_you:"tú",um_off:"desactivado",um_err_forbidden:"Solo los administradores pueden gestionar usuarios.",um_err_domini:"Solo se permiten correos @gtaeuropa.com o @pracmatik.com.",um_err_exists:"Este correo ya existe.",um_err_self:"No puedes hacer esta acción sobre tu propia cuenta.",um_err_last_admin:"Debe haber al menos un administrador.",um_err_pw:"La contraseña debe tener 6 caracteres o más."}
 };
 const LS={get:k=>{try{return localStorage.getItem(k)}catch(e){return null}},set:(k,v)=>{try{localStorage.setItem(k,v)}catch(e){}}};
 let IDIOMA = LS.get("gta_lang")||"ca";
@@ -572,6 +624,46 @@ async function doLogin(){
   await boot();
 }
 $("#logoutBtn").addEventListener("click",async()=>{await sb.auth.signOut();location.reload();});
+// --- menú perfil ---
+$("#userchip").addEventListener("click",e=>{e.stopPropagation();$("#profileMenu").classList.toggle("open");});
+document.addEventListener("click",e=>{ if(!e.target.closest(".profile-wrap")) $("#profileMenu").classList.remove("open"); });
+$("#pmLogout").addEventListener("click",async()=>{await sb.auth.signOut();location.reload();});
+$("#pmPwd").addEventListener("click",()=>{$("#profileMenu").classList.remove("open");$("#pwd1").value="";$("#pwd2").value="";$("#pwdModal").classList.add("show");$("#pwd1").focus();});
+$("#pwdCancel").addEventListener("click",()=>$("#pwdModal").classList.remove("show"));
+$("#pwdSave").addEventListener("click",async()=>{ const a=$("#pwd1").value,b=$("#pwd2").value;
+  if(a.length<6){toast(t("pwd_short"),true);return;} if(a!==b){toast(t("pwd_mismatch"),true);return;}
+  const {error}=await sb.auth.updateUser({password:a}); if(error){toast("✕ "+error.message,true);return;}
+  $("#pwdModal").classList.remove("show");toast(t("pwd_ok")); });
+// --- gestión usuarios (admin) ---
+async function admincall(action,payload){ const {data:{session}}=await sb.auth.getSession();
+  const res=await fetch(ADMIN_URL,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({token:(session&&session.access_token)||"",action,payload:payload||{}})}); return res.json(); }
+$("#pmUsers").addEventListener("click",()=>{$("#profileMenu").classList.remove("open");openUsers();});
+$("#umClose").addEventListener("click",()=>$("#usersModal").classList.remove("show"));
+$("#umNew").addEventListener("click",()=>{const f=$("#umNewForm");f.style.display=f.style.display==="none"?"block":"none";$("#umMsg").textContent="";});
+$("#umCreate").addEventListener("click",async()=>{ const email=$("#umEmail").value.trim(),nombre=$("#umNombre").value.trim(),rol=$("#umRol").value;
+  if(!email){toast(t("um_email"),true);return;} $("#umCreate").disabled=true;
+  const r=await admincall("create_user",{email,nombre,rol}); $("#umCreate").disabled=false;
+  if(r.error){toast(t("um_err_"+r.error)||("✕ "+r.error),true);return;}
+  $("#umMsg").textContent=t("um_created")+" · "+r.password; $("#umEmail").value="";$("#umNombre").value=""; openUsers(true); });
+async function openUsers(keepForm){ if(!keepForm)$("#umNewForm").style.display="none"; $("#usersModal").classList.add("show");
+  const box=$("#umList"); box.innerHTML="…"; const r=await admincall("list_users");
+  if(r.error){box.innerHTML=`<div class="empty" style="padding:24px"><p>${t("um_err_"+r.error)||r.error}</p></div>`;return;}
+  const me=ME.id;
+  box.innerHTML=(r.users||[]).map(u=>`<div class="umrow${u.activo?"":" off"}">
+    <div class="umtx"><div class="avatar sm">${esc((u.nombre||u.email||"?").trim().slice(0,1).toUpperCase())}</div><div><div class="umnm">${esc(u.nombre||"—")}${u.id===me?` <span class="youtag">${t("um_you")}</span>`:""}${u.activo?"":` <span class="offtag">${t("um_off")}</span>`}</div><div class="umem">${esc(u.email||"")}</div></div></div>
+    <div class="umact">
+      <select class="umrole fld" data-id="${u.id}"${u.id===me?" disabled":""}><option value="tecnico"${u.rol==="tecnico"?" selected":""}>${t("um_tec")}</option><option value="admin"${u.rol==="admin"?" selected":""}>${t("um_adm")}</option></select>
+      <button class="mini" data-act="active" data-id="${u.id}" data-v="${u.activo?0:1}">${u.activo?t("um_disable"):t("um_enable")}</button>
+      <button class="mini" data-act="reset" data-id="${u.id}">${t("um_reset")}</button>
+      <button class="mini del" data-act="delete" data-id="${u.id}"${u.id===me?" disabled":""}><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"/></svg></button>
+    </div></div>`).join("");
+}
+$("#umList").addEventListener("change",async e=>{ const s=e.target.closest(".umrole"); if(!s)return;
+  const r=await admincall("set_role",{id:s.dataset.id,rol:s.value}); if(r.error){toast(t("um_err_"+r.error)||r.error,true);openUsers(true);return;} toast(t("um_done")); });
+$("#umList").addEventListener("click",async e=>{ const b=e.target.closest("[data-act]"); if(!b)return; const id=b.dataset.id,act=b.dataset.act;
+  if(act==="active"){ const r=await admincall("set_active",{id,activo:b.dataset.v==="1"}); if(r.error){toast(t("um_err_"+r.error)||r.error,true);return;} toast(t("um_done")); openUsers(true); }
+  else if(act==="reset"){ const pw=prompt(t("um_reset_p")); if(!pw)return; const r=await admincall("reset_password",{id,password:pw}); if(r.error){toast(t("um_err_"+r.error)||r.error,true);return;} toast(t("um_reset_ok")+" "+pw); }
+  else if(act==="delete"){ if(!confirm(t("um_del_confirm")))return; const r=await admincall("delete_user",{id}); if(r.error){toast(t("um_err_"+r.error)||r.error,true);return;} toast(t("um_done")); openUsers(true); } });
 async function boot(){
   const {data:{session}}=await sb.auth.getSession();
   if(!session){$("#vLogin").classList.remove("hidden");$("#vApp").classList.add("hidden");return;}
@@ -580,7 +672,8 @@ async function boot(){
   $("#vLogin").classList.add("hidden");$("#vApp").classList.remove("hidden");
   $("#uName").textContent=ME.nombre;$("#uAvatar").textContent=(ME.nombre||"?").trim().slice(0,1).toUpperCase();
   $("#uRol").className="badge-rol "+(ME.rol==="admin"?"admin":"tecnico");
-  if(ME.rol==="admin"){$("#qAutor").classList.remove("hidden");$("#aprBtn").style.display="inline-flex";} else $("#aprBtn").style.display="none";
+  if(ME.rol==="admin"){$("#qAutor").classList.remove("hidden");$("#aprBtn").style.display="inline-flex";$("#pmUsers").style.display="flex";} else {$("#aprBtn").style.display="none";$("#pmUsers").style.display="none";}
+  $("#pmName").textContent=ME.nombre;$("#pmEmail").textContent=ME.email;$("#pmAvatar").textContent=(ME.nombre||"?").trim().slice(0,1).toUpperCase();
   applyI18n(); showHist();
 }
 
