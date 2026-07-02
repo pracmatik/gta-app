@@ -805,14 +805,25 @@ async function extractAmidament(file){
       const arr=XLSX.utils.sheet_to_json(ws,{header:1,blankrows:false});
       const lines=arr.map(row=>(row||[]).filter(c=>c!==null&&c!=="").map(c=>String(c).replace(/\s+/g," ").slice(0,300)).join(" | ")).filter(l=>l.trim());
       if(lines.length) parts.push("### ZONA: "+sh+"\n"+lines.join("\n")); });
-    return parts.join("\n\n").slice(0,55000);
+    return parts.join("\n\n").slice(0,160000);
   }
   if(nm.endsWith(".pdf")){
     const buf=await file.arrayBuffer(); const pdf=await pdfjsLib.getDocument({data:buf}).promise; let txt="";
-    for(let p=1;p<=Math.min(pdf.numPages,60);p++){ const pg=await pdf.getPage(p); const tc=await pg.getTextContent(); txt+="\n"+tc.items.map(i=>i.str).join(" "); }
-    return txt.replace(/\s+/g," ").slice(0,55000);
+    for(let p=1;p<=Math.min(pdf.numPages,120);p++){ const pg=await pdf.getPage(p); const tc=await pg.getTextContent(); txt+="\n"+tc.items.map(i=>i.str).join(" "); }
+    return txt.split("\n").map(l=>l.replace(/[ \t]+/g," ").trim()).filter(Boolean).join("\n").slice(0,160000);
   }
   throw new Error("format");
+}
+function chunkText(txt,max){ if(txt.length<=max) return [txt];
+  const lines=txt.split("\n"); const out=[]; let cur="";
+  for(const ln of lines){
+    if(ln.length>max){ if(cur){out.push(cur);cur="";} for(let i=0;i<ln.length;i+=max) out.push(ln.slice(i,i+max)); continue; }
+    if(cur.length+ln.length+1>max){ out.push(cur); cur=ln; } else cur+=(cur?"\n":"")+ln;
+  }
+  if(cur)out.push(cur); return out.slice(0,8);
+}
+function renumberRows(rs){ let cap=0,pn=0;
+  for(const r of rs){ if(r.tipo==="cap"){cap++;pn=0;} else if(r.tipo==="part"){pn++;r.num=(cap||1)+"."+pn;} }
 }
 async function doUpload(file){
   if(!file)return; const ov=$("#ingOverlay");
@@ -821,17 +832,33 @@ async function doUpload(file){
     await ensureLibs();
     const amidament=await extractAmidament(file);
     if(!amidament||amidament.trim().length<20){ ov.classList.remove("show"); toast(t("ing_empty"),true); return; }
-    $("#ingMsg").textContent=t("ing_ai");
     const {data:{session}}=await sb.auth.getSession();
-    const res=await tfetch(INGESTA_URL,{token:(session&&session.access_token)||"",amidament,filename:file.name,idioma:IDIOMA},120000);
-    const data=await res.json(); ov.classList.remove("show");
-    if(data.error||!data.rows){ toast(t("ing_error"),true); return; }
-    const clean=sanitizeRows(data.rows); if(!clean){ toast(t("ing_error"),true); return; }
-    openEditor(null,clean,false);
+    const tok=(session&&session.access_token)||"";
+    const chunks=chunkText(amidament,14000);
+    let allRows=[],allAvisos=[],resum="";
+    for(let ci=0;ci<chunks.length;ci++){
+      $("#ingMsg").textContent=t("ing_ai")+(chunks.length>1?" ("+(ci+1)+"/"+chunks.length+")":"");
+      const frag=chunks.length>1?chunks[ci]+"\n\n[FRAGMENT "+(ci+1)+" de "+chunks.length+" del MATEIX amidament — processa aquest fragment SENCER]":chunks[ci];
+      let data=null;
+      try{ const res=await tfetch(INGESTA_URL,{token:tok,amidament:frag,filename:file.name,idioma:IDIOMA},120000); data=await res.json(); }catch(e){ data=null; }
+      if(!data||data.error||!data.rows){
+        if(chunks.length===1){ ov.classList.remove("show"); toast(t("ing_error"),true); return; }
+        allAvisos.push((IDIOMA==="es"?"Parte ":"Part ")+(ci+1)+"/"+chunks.length+(IDIOMA==="es"?" no procesada — vuelve a subir el archivo si falta contenido":" no processada — torna a pujar el fitxer si falta contingut"));
+        continue;
+      }
+      const clean=sanitizeRows(data.rows)||[];
+      allRows=allRows.concat(clean);
+      if(Array.isArray(data.avisos)) allAvisos=allAvisos.concat(data.avisos);
+      if(!resum&&data.resum) resum=data.resum;
+    }
+    ov.classList.remove("show");
+    if(!allRows.length){ toast(t("ing_error"),true); return; }
+    renumberRows(allRows);
+    openEditor(null,allRows,false);
     HEADER.obra=file.name.replace(/\.[^.]+$/,""); $("#h_obra").value=HEADER.obra;
-    if(Array.isArray(data.avisos)&&data.avisos.length){ NOTES=["⚠ "+t("ing_avisos")].concat(data.avisos.map(a=>"• "+a)).concat(NOTES); }
-    ORIGEN_IA=JSON.parse(JSON.stringify(clean)); FEEDBACK_DONE=false;
-    render(); toast(data.resum||t("ing_ok"));
+    if(allAvisos.length){ NOTES=["⚠ "+t("ing_avisos")].concat(allAvisos.map(a=>"• "+a)).concat(NOTES); }
+    ORIGEN_IA=JSON.parse(JSON.stringify(allRows)); FEEDBACK_DONE=false;
+    render(); toast(resum||t("ing_ok"));
   }catch(e){ ov.classList.remove("show"); toast(t("ing_error"),true); }
 }
 document.addEventListener("change",e=>{ if(e.target&&e.target.id==="amidFile"){ const f=e.target.files[0]; e.target.value=""; doUpload(f); } });
