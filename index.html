@@ -286,7 +286,6 @@
     <input id="lpass" type="password" autocomplete="current-password" placeholder="••••••••">
     <button class="btn primary" id="loginBtn" data-i18n="enter">Entrar</button>
     <div class="login-err" id="loginErr"></div>
-    <div class="demo-hint"><b>Demo:</b> marc@gta-demo.cat · yolanda@gta-demo.cat · contrasenya <b>pracmatik2026</b></div>
     <div class="login-foot">Sistema de <span class="pracmatik">pracmatik<span class="dot">.</span></span> per a GTA Europa</div>
   </div>
 </div>
@@ -515,6 +514,7 @@ const SUPA_ANON="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsIn
 const CHAT_URL="https://pracmatikadmin.app.n8n.cloud/webhook/gta-chat";
 const INGESTA_URL="https://pracmatikadmin.app.n8n.cloud/webhook/gta-ingesta";
 const APRENDE_URL="https://pracmatikadmin.app.n8n.cloud/webhook/gta-aprende";
+async function tfetch(url,body,ms){const ctl=new AbortController();const to=setTimeout(()=>ctl.abort(),ms);try{return await fetch(url,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(body),signal:ctl.signal});}finally{clearTimeout(to);}}
 const ADMIN_URL="https://pracmatikadmin.app.n8n.cloud/webhook/gta-admin";
 let ORIGEN_IA=null,FEEDBACK_DONE=false,FB_VAL=null;
 const sb = window.supabase ? window.supabase.createClient(SUPA_URL,SUPA_ANON) : null;
@@ -528,7 +528,7 @@ const I18N={
    sup_sub:"Supervisa els pressupostos de tot l'equip.",by_all:"Tots els autors",
    back:"Historial",editor_title:"Editor de pressupost",editor_sub:"Revisa, ajusta l'estructura, parla amb l'IA i signa.",
    signed_b:"Pressupost signat",reopen:"Reobrir (admin)",
-   h_obra:"Títol de l'obra",h_client:"Comunitat / Client",h_ref:"Referència",h_coac:"Núm. col·legiat COAC",h_tec:"Tècnics",
+   h_obra:"Títol de l'obra",h_client:"Comunitat / Client",h_ref:"Codi obra (G26.xxx)",h_coac:"Núm. col·legiat COAC",h_tec:"Tècnics",
    edit_hint:"Edita qualsevol cel·la. Afegeix <b>capítols</b>, <b>partides</b> i <b>subelements</b> (sumen i marquen el preu de la partida). O obre l'<b>assistent IA</b> (botó blau) i digues què vols canviar. Quan estigui a gust → <b>Desa</b> i <b>Signa</b>.",
    s_base:"Base (sense coef)",s_coef:"Coef. regulador",s_rev:"A revisar",s_total:"Total pressupost",
    structure:"Estructura:",add_sec:"Afegir secció",add_cap:"Afegir capítol",add_part:"Afegir partida",csv:"CSV intranet",
@@ -546,14 +546,14 @@ const I18N={
    note1:"EL PRESSUPOST S'HA REALITZAT TENINT EN COMPTE ELS AMIDAMENTS DE L'ARQUITECTE, ............., EN CAS DE MODIFICACIÓ DURANT L'EXECUCIÓ DE LES OBRES, ES FACTURARÀ LA DIFERÈNCIA.",
    note2:"EN EL CAS QUE QUALSEVOL ENTITAT PÚBLICA (AJUNTAMENT O CONSORCI DEL HABITATGE DE BARCELONA) CONSIDERI NECESSARI AFEGIR ALTRES PARTIDES NO INCLOSES EN EL PRESSUPOST ACCEPTAT PER LA COMUNITAT, ES VALORARAN EN UN PRESSUPOST ANNEX.",
    note3:"Nota GTA: Degut al gran increment als preus que s'està produint a les matèries primeres utilitzades per a la realització de les partides, el preu de les mateixes s'haurà de revisar abans de la seva acceptació.",
-   note4:"PREGUEM CONSULTI AMB ELS NOSTRES TÈCNICS PER ACLARIR QUALSEVOL DUBTE QUE ELS PUGUI SORGIR.",hide_sub:"Amagar composició",show_sub:"Mostrar composició",ch_title:"Com vols començar?",ch_tpl:"Plantilla façana (catàleg)",ch_tpl_d:"Estructura típica de rehabilitació, llesta per omplir.",ch_demo:"Demo real · Casanova 220",ch_demo_d:"Pressupost real complet amb composició de preus.",ch_blank:"En blanc",ch_blank_d:"Comença de zero.",recommended:"Recomanat",ch_upload:"Pujar amidament (IA)",ch_upload_d:"Puja el fitxer de l'arquitecte (Excel/PDF) i la IA proposa un esborrany valorat.",ing_reading:"Llegint el fitxer…",ing_ai:"La IA està valorant l'amidament…",ing_wait:"La IA llegeix l'amidament i prepara l'esborrany valorat. Pot trigar uns segons.",ing_error:"No s'ha pogut processar l'amidament. Revisa el fitxer o torna-ho a provar.",ing_empty:"No s'ha trobat text llegible (si és un PDF escanejat encara no el suportem).",ing_ok:"Esborrany generat",ing_avisos:"A revisar (proposat per IA, valida abans d'usar):",reglas_btn:"Regles IA",reglas_title:"Regles permanents de GTA",reglas_hint:"Regles que el sistema respectarà SEMPRE en cada pressupost que generi la IA (una per línia). Ex: \"El coeficient per defecte és 1,05\", \"El contenidor de runa sempre 5 m³\", \"La marca X mai és vàlida → preu a revisar\".",reglas_save:"Desar regles",reglas_saved:"Regles desades",reglas_ph:"Ex: El coeficient per defecte sempre és 1,05.\nEl contenidor de runa sempre és de 5 m³.\nLa marca «Sika» és vàlida; les marques premium no → preu a revisar.\nAfegeix sempre un capítol de Seguretat i Salut al final.\nTreballs en balcons en alçada → bastida penjant, no tubular.",fb_q:"L'esborrany de la IA, ha sortit bé?",fb_ok:"Perfecte",fb_casi:"Quasi",fb_no:"No",fb_ph:"En una frase: què corregiries?",fb_send:"Enviar",fb_thanks:"Gràcies pel teu feedback!",fb_learned:"Gràcies! El sistema ha après {n} lliçó/ons",apr_btn:"Aprenentatge",apr_title:"Què ha après el sistema",apr_sub:"Lliçons apreses del feedback dels tècnics. La IA les aplica a cada nou pressupost. Pots eliminar les que no vulguis.",apr_empty:"Encara no hi ha lliçons. S'aniran omplint amb el feedback dels tècnics.",apr_deleted:"Lliçó eliminada",pm_pwd:"Canviar contrasenya",pm_users:"Gestió d'usuaris",pm_logout:"Tancar sessió",pwd_title:"Canviar la meva contrasenya",pwd_sub:"Mínim 6 caràcters. S'aplica immediatament.",pwd_ph1:"Nova contrasenya",pwd_ph2:"Repeteix la contrasenya",pwd_save:"Desar contrasenya",pwd_short:"La contrasenya ha de tenir 6 caràcters o més",pwd_mismatch:"Les contrasenyes no coincideixen",pwd_ok:"Contrasenya canviada",um_title:"Gestió d'usuaris",um_sub:"Crea comptes, dóna o treu admin, activa/desactiva l'accés o reinicia contrasenyes.",um_new:"Crear usuari",um_create:"Crear",um_email:"correu@gtaeuropa.com",um_nombre:"Nom",um_tec:"Tècnic",um_adm:"Admin",um_disable:"Desactivar",um_enable:"Activar",um_reset:"Nova contrasenya",um_reset_p:"Escriu la nova contrasenya per a aquest usuari (mín. 6):",um_reset_ok:"Contrasenya reiniciada:",um_del_confirm:"Eliminar aquest usuari? No es pot desfer.",um_created:"Usuari creat. Contrasenya temporal:",um_done:"Fet",um_you:"tu",um_off:"desactivat",um_err_forbidden:"Només els administradors poden gestionar usuaris.",um_err_domini:"Només es permeten correus @gtaeuropa.com o @pracmatik.com.",um_err_exists:"Aquest correu ja existeix.",um_err_self:"No pots fer aquesta acció sobre el teu propi compte.",um_err_last_admin:"Ha d'haver-hi com a mínim un administrador.",um_err_pw:"La contrasenya ha de tenir 6 caràcters o més."},
+   note4:"PREGUEM CONSULTI AMB ELS NOSTRES TÈCNICS PER ACLARIR QUALSEVOL DUBTE QUE ELS PUGUI SORGIR.",hide_sub:"Amagar composició",show_sub:"Mostrar composició",ch_title:"Com vols començar?",ch_tpl:"Plantilla façana (catàleg)",ch_tpl_d:"Estructura típica de rehabilitació, llesta per omplir.",ch_demo:"Demo real · Casanova 220",ch_demo_d:"Pressupost real complet amb composició de preus.",ch_blank:"En blanc",ch_blank_d:"Comença de zero.",recommended:"Recomanat",ch_upload:"Pujar amidament (IA)",ch_upload_d:"Puja el fitxer de l'arquitecte (Excel/PDF) i la IA proposa un esborrany valorat.",ing_reading:"Llegint el fitxer…",ing_ai:"La IA està valorant l'amidament…",ing_wait:"La IA llegeix l'amidament i prepara l'esborrany valorat. Pot trigar uns segons.",ing_error:"No s'ha pogut processar l'amidament. Revisa el fitxer o torna-ho a provar.",ing_empty:"No s'ha trobat text llegible (si és un PDF escanejat encara no el suportem).",ing_ok:"Esborrany generat",ing_avisos:"A revisar (proposat per IA, valida abans d'usar):",reglas_btn:"Regles IA",reglas_title:"Regles permanents de GTA",reglas_hint:"Regles que el sistema respectarà SEMPRE en cada pressupost que generi la IA (una per línia). Ex: \"El coeficient per defecte és 1,05\", \"El contenidor de runa sempre 5 m³\", \"La marca X mai és vàlida → preu a revisar\".",reglas_save:"Desar regles",reglas_saved:"Regles desades",reglas_ph:"Ex: El coeficient per defecte sempre és 1,05.\nEl contenidor de runa sempre és de 5 m³.\nLa marca «Sika» és vàlida; les marques premium no → preu a revisar.\nAfegeix sempre un capítol de Seguretat i Salut al final.\nTreballs en balcons en alçada → bastida penjant, no tubular.",fb_q:"L'esborrany de la IA, ha sortit bé?",fb_ok:"Perfecte",fb_casi:"Quasi",fb_no:"No",fb_ph:"En una frase: què corregiries?",fb_send:"Enviar",fb_thanks:"Gràcies pel teu feedback!",fb_learned:"Gràcies! El sistema ha après {n} lliçó/ons",apr_btn:"Aprenentatge",apr_title:"Què ha après el sistema",apr_sub:"Lliçons apreses del feedback dels tècnics. La IA les aplica a cada nou pressupost. Pots eliminar les que no vulguis.",apr_empty:"Encara no hi ha lliçons. S'aniran omplint amb el feedback dels tècnics.",apr_deleted:"Lliçó eliminada",pm_pwd:"Canviar contrasenya",pm_users:"Gestió d'usuaris",pm_logout:"Tancar sessió",pwd_title:"Canviar la meva contrasenya",pwd_sub:"Mínim 6 caràcters. S'aplica immediatament.",pwd_ph1:"Nova contrasenya",pwd_ph2:"Repeteix la contrasenya",pwd_save:"Desar contrasenya",pwd_short:"La contrasenya ha de tenir 6 caràcters o més",pwd_mismatch:"Les contrasenyes no coincideixen",pwd_ok:"Contrasenya canviada",um_title:"Gestió d'usuaris",um_sub:"Crea comptes, dóna o treu admin, activa/desactiva l'accés o reinicia contrasenyes.",um_new:"Crear usuari",um_create:"Crear",um_email:"correu@gtaeuropa.com",um_nombre:"Nom",um_tec:"Tècnic",um_adm:"Admin",um_disable:"Desactivar",um_enable:"Activar",um_reset:"Nova contrasenya",um_reset_p:"Escriu la nova contrasenya per a aquest usuari (mín. 6):",um_reset_ok:"Contrasenya reiniciada:",um_del_confirm:"Eliminar aquest usuari? No es pot desfer.",um_created:"Usuari creat. Contrasenya temporal:",um_done:"Fet",um_you:"tu",um_off:"desactivat",um_err_forbidden:"Només els administradors poden gestionar usuaris.",um_err_domini:"Només es permeten correus @gtaeuropa.com o @pracmatik.com.",um_err_exists:"Aquest correu ja existeix.",um_err_self:"No pots fer aquesta acció sobre el teu propi compte.",um_err_last_admin:"Ha d'haver-hi com a mínim un administrador.",um_err_pw:"La contrasenya ha de tenir 6 caràcters o més.",um_err_network:"No hi ha connexió. Torna-ho a provar.",um_err_auth_delete:"No s'ha pogut eliminar l'usuari. Torna-ho a provar.",sign_need_ink:"Dibuixa la firma abans de signar",need_gcode:"Falta el codi d'obra (G26.xxx) — és obligatori per a la intranet",hist_err:"No s'ha pogut carregar l'historial. Torna-ho a provar.",del_err:"No s'ha pogut eliminar. Torna-ho a provar.",csv_flags:"Hi ha {n} partida/es pendents de valorar: al CSV quedaran EN BLANC perquè el tècnic hi posi l'import. Continuar?"},
  es:{login_title:"Presupuestos GTA",login_sub:"Inicia sesión para acceder a tus presupuestos",email:"Correo",pass:"Contraseña",enter:"Entrar",
    hist_sub:"Recupera, continúa o consulta cualquier presupuesto.",new_budget:"Nuevo presupuesto",search:"Busca por obra…",all_states:"Todos los estados",draft:"Borrador",signed:"Firmado",
    empty_h:"Aún no hay presupuestos",empty_p:"Crea el primero con el botón de arriba.",my_budgets:"Mis presupuestos",all_budgets:"Todos los presupuestos",
    sup_sub:"Supervisa los presupuestos de todo el equipo.",by_all:"Todos los autores",
    back:"Historial",editor_title:"Editor de presupuesto",editor_sub:"Revisa, ajusta la estructura, habla con la IA y firma.",
    signed_b:"Presupuesto firmado",reopen:"Reabrir (admin)",
-   h_obra:"Título de la obra",h_client:"Comunidad / Cliente",h_ref:"Referencia",h_coac:"Nº colegiado COAC",h_tec:"Técnicos",
+   h_obra:"Título de la obra",h_client:"Comunidad / Cliente",h_ref:"Código de obra (G26.xxx)",h_coac:"Nº colegiado COAC",h_tec:"Técnicos",
    edit_hint:"Edita cualquier celda. Añade <b>capítulos</b>, <b>partidas</b> y <b>subelementos</b> (suman y marcan el precio de la partida). O abre el <b>asistente IA</b> (botón azul) y di qué quieres cambiar. Cuando esté a gusto → <b>Guarda</b> y <b>Firma</b>.",
    s_base:"Base (sin coef)",s_coef:"Coef. regulador",s_rev:"A revisar",s_total:"Total presupuesto",
    structure:"Estructura:",add_sec:"Añadir sección",add_cap:"Añadir capítulo",add_part:"Añadir partida",csv:"CSV intranet",
@@ -571,7 +571,7 @@ const I18N={
    note1:"EL PRESUPUESTO SE HA REALIZADO TENIENDO EN CUENTA LAS MEDICIONES DEL ARQUITECTO TÉCNICO, ............., EN CASO DE MODIFICACIÓN DURANTE LA EJECUCIÓN DE LAS OBRAS, SE FACTURARÁ LA DIFERENCIA.",
    note2:"EN EL CASO DE QUE CUALQUIER ENTIDAD PÚBLICA (AJUNTAMENT O CONSORCI DE L'HABITATGE DE BARCELONA) CONSIDERE NECESARIO AGREGAR OTRAS PARTIDAS NO INCLUIDAS EN EL PRESUPUESTO ACEPTADO POR LA COMUNIDAD, SE VALORARÁ EN UN PRESUPUESTO ANEXO.",
    note3:"Nota GTA: Debido al gran incremento en los precios que se está produciendo en las materias primas utilizadas para la realización de las partidas, el precio de las mismas se deberá revisar antes de su aceptación.",
-   note4:"ROGAMOS CONSULTEN CON NUESTROS TÉCNICOS PARA ACLARAR CUALQUIER DUDA QUE LES PUEDA SURGIR.",hide_sub:"Ocultar composición",show_sub:"Mostrar composición",ch_title:"¿Cómo quieres empezar?",ch_tpl:"Plantilla fachada (catálogo)",ch_tpl_d:"Estructura típica de rehabilitación, lista para rellenar.",ch_demo:"Demo real · Casanova 220",ch_demo_d:"Presupuesto real completo con composición de precios.",ch_blank:"En blanco",ch_blank_d:"Empieza de cero.",recommended:"Recomendado",ch_upload:"Subir medición (IA)",ch_upload_d:"Sube el archivo del arquitecto (Excel/PDF) y la IA propone un borrador valorado.",ing_reading:"Leyendo el archivo…",ing_ai:"La IA está valorando la medición…",ing_wait:"La IA lee la medición y prepara el borrador valorado. Puede tardar unos segundos.",ing_error:"No se ha podido procesar la medición. Revisa el archivo o inténtalo de nuevo.",ing_empty:"No se ha encontrado texto legible (si es un PDF escaneado aún no lo soportamos).",ing_ok:"Borrador generado",ing_avisos:"A revisar (propuesto por IA, valida antes de usar):",reglas_btn:"Reglas IA",reglas_title:"Reglas permanentes de GTA",reglas_hint:"Reglas que el sistema respetará SIEMPRE en cada presupuesto que genere la IA (una por línea). Ej: \"El coeficiente por defecto es 1,05\", \"El contenedor de escombros siempre 5 m³\", \"La marca X nunca es válida → precio a revisar\".",reglas_save:"Guardar reglas",reglas_saved:"Reglas guardadas",reglas_ph:"Ej: El coeficiente por defecto siempre es 1,05.\nEl contenedor de escombros siempre 5 m³.\nLa marca «Sika» es válida; las marcas premium no → precio a revisar.\nAñade siempre un capítulo de Seguridad y Salud al final.\nTrabajos en balcones en altura → andamio colgante, no tubular.",fb_q:"El borrador de la IA, ¿ha salido bien?",fb_ok:"Perfecto",fb_casi:"Casi",fb_no:"No",fb_ph:"En una frase: ¿qué corregirías?",fb_send:"Enviar",fb_thanks:"¡Gracias por tu feedback!",fb_learned:"¡Gracias! El sistema ha aprendido {n} lección/es",apr_btn:"Aprendizaje",apr_title:"Qué ha aprendido el sistema",apr_sub:"Lecciones aprendidas del feedback de los técnicos. La IA las aplica a cada nuevo presupuesto. Puedes eliminar las que no quieras.",apr_empty:"Aún no hay lecciones. Se irán llenando con el feedback de los técnicos.",apr_deleted:"Lección eliminada",pm_pwd:"Cambiar contraseña",pm_users:"Gestión de usuarios",pm_logout:"Cerrar sesión",pwd_title:"Cambiar mi contraseña",pwd_sub:"Mínimo 6 caracteres. Se aplica al instante.",pwd_ph1:"Nueva contraseña",pwd_ph2:"Repite la contraseña",pwd_save:"Guardar contraseña",pwd_short:"La contraseña debe tener 6 caracteres o más",pwd_mismatch:"Las contraseñas no coinciden",pwd_ok:"Contraseña cambiada",um_title:"Gestión de usuarios",um_sub:"Crea cuentas, da o quita admin, activa/desactiva el acceso o reinicia contraseñas.",um_new:"Crear usuario",um_create:"Crear",um_email:"correo@gtaeuropa.com",um_nombre:"Nombre",um_tec:"Técnico",um_adm:"Admin",um_disable:"Desactivar",um_enable:"Activar",um_reset:"Nueva contraseña",um_reset_p:"Escribe la nueva contraseña para este usuario (mín. 6):",um_reset_ok:"Contraseña reiniciada:",um_del_confirm:"¿Eliminar este usuario? No se puede deshacer.",um_created:"Usuario creado. Contraseña temporal:",um_done:"Hecho",um_you:"tú",um_off:"desactivado",um_err_forbidden:"Solo los administradores pueden gestionar usuarios.",um_err_domini:"Solo se permiten correos @gtaeuropa.com o @pracmatik.com.",um_err_exists:"Este correo ya existe.",um_err_self:"No puedes hacer esta acción sobre tu propia cuenta.",um_err_last_admin:"Debe haber al menos un administrador.",um_err_pw:"La contraseña debe tener 6 caracteres o más."}
+   note4:"ROGAMOS CONSULTEN CON NUESTROS TÉCNICOS PARA ACLARAR CUALQUIER DUDA QUE LES PUEDA SURGIR.",hide_sub:"Ocultar composición",show_sub:"Mostrar composición",ch_title:"¿Cómo quieres empezar?",ch_tpl:"Plantilla fachada (catálogo)",ch_tpl_d:"Estructura típica de rehabilitación, lista para rellenar.",ch_demo:"Demo real · Casanova 220",ch_demo_d:"Presupuesto real completo con composición de precios.",ch_blank:"En blanco",ch_blank_d:"Empieza de cero.",recommended:"Recomendado",ch_upload:"Subir medición (IA)",ch_upload_d:"Sube el archivo del arquitecto (Excel/PDF) y la IA propone un borrador valorado.",ing_reading:"Leyendo el archivo…",ing_ai:"La IA está valorando la medición…",ing_wait:"La IA lee la medición y prepara el borrador valorado. Puede tardar unos segundos.",ing_error:"No se ha podido procesar la medición. Revisa el archivo o inténtalo de nuevo.",ing_empty:"No se ha encontrado texto legible (si es un PDF escaneado aún no lo soportamos).",ing_ok:"Borrador generado",ing_avisos:"A revisar (propuesto por IA, valida antes de usar):",reglas_btn:"Reglas IA",reglas_title:"Reglas permanentes de GTA",reglas_hint:"Reglas que el sistema respetará SIEMPRE en cada presupuesto que genere la IA (una por línea). Ej: \"El coeficiente por defecto es 1,05\", \"El contenedor de escombros siempre 5 m³\", \"La marca X nunca es válida → precio a revisar\".",reglas_save:"Guardar reglas",reglas_saved:"Reglas guardadas",reglas_ph:"Ej: El coeficiente por defecto siempre es 1,05.\nEl contenedor de escombros siempre 5 m³.\nLa marca «Sika» es válida; las marcas premium no → precio a revisar.\nAñade siempre un capítulo de Seguridad y Salud al final.\nTrabajos en balcones en altura → andamio colgante, no tubular.",fb_q:"El borrador de la IA, ¿ha salido bien?",fb_ok:"Perfecto",fb_casi:"Casi",fb_no:"No",fb_ph:"En una frase: ¿qué corregirías?",fb_send:"Enviar",fb_thanks:"¡Gracias por tu feedback!",fb_learned:"¡Gracias! El sistema ha aprendido {n} lección/es",apr_btn:"Aprendizaje",apr_title:"Qué ha aprendido el sistema",apr_sub:"Lecciones aprendidas del feedback de los técnicos. La IA las aplica a cada nuevo presupuesto. Puedes eliminar las que no quieras.",apr_empty:"Aún no hay lecciones. Se irán llenando con el feedback de los técnicos.",apr_deleted:"Lección eliminada",pm_pwd:"Cambiar contraseña",pm_users:"Gestión de usuarios",pm_logout:"Cerrar sesión",pwd_title:"Cambiar mi contraseña",pwd_sub:"Mínimo 6 caracteres. Se aplica al instante.",pwd_ph1:"Nueva contraseña",pwd_ph2:"Repite la contraseña",pwd_save:"Guardar contraseña",pwd_short:"La contraseña debe tener 6 caracteres o más",pwd_mismatch:"Las contraseñas no coinciden",pwd_ok:"Contraseña cambiada",um_title:"Gestión de usuarios",um_sub:"Crea cuentas, da o quita admin, activa/desactiva el acceso o reinicia contraseñas.",um_new:"Crear usuario",um_create:"Crear",um_email:"correo@gtaeuropa.com",um_nombre:"Nombre",um_tec:"Técnico",um_adm:"Admin",um_disable:"Desactivar",um_enable:"Activar",um_reset:"Nueva contraseña",um_reset_p:"Escribe la nueva contraseña para este usuario (mín. 6):",um_reset_ok:"Contraseña reiniciada:",um_del_confirm:"¿Eliminar este usuario? No se puede deshacer.",um_created:"Usuario creado. Contraseña temporal:",um_done:"Hecho",um_you:"tú",um_off:"desactivado",um_err_forbidden:"Solo los administradores pueden gestionar usuarios.",um_err_domini:"Solo se permiten correos @gtaeuropa.com o @pracmatik.com.",um_err_exists:"Este correo ya existe.",um_err_self:"No puedes hacer esta acción sobre tu propia cuenta.",um_err_last_admin:"Debe haber al menos un administrador.",um_err_pw:"La contraseña debe tener 6 caracteres o más.",um_err_network:"No hay conexión. Inténtalo de nuevo.",um_err_auth_delete:"No se ha podido eliminar el usuario. Inténtalo de nuevo.",sign_need_ink:"Dibuja la firma antes de firmar",need_gcode:"Falta el código de obra (G26.xxx) — es obligatorio para la intranet",hist_err:"No se ha podido cargar el historial. Inténtalo de nuevo.",del_err:"No se ha podido eliminar. Inténtalo de nuevo.",csv_flags:"Hay {n} partida/s pendientes de valorar: en el CSV quedarán EN BLANCO para que el técnico ponga el importe. ¿Continuar?"}
 };
 const LS={get:k=>{try{return localStorage.getItem(k)}catch(e){return null}},set:(k,v)=>{try{localStorage.setItem(k,v)}catch(e){}}};
 let IDIOMA = LS.get("gta_lang")||"ca";
@@ -636,7 +636,9 @@ $("#pwdSave").addEventListener("click",async()=>{ const a=$("#pwd1").value,b=$("
   $("#pwdModal").classList.remove("show");toast(t("pwd_ok")); });
 // --- gestión usuarios (admin) ---
 async function admincall(action,payload){ const {data:{session}}=await sb.auth.getSession();
-  const res=await fetch(ADMIN_URL,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({token:(session&&session.access_token)||"",action,payload:payload||{}})}); return res.json(); }
+  try{ const res=await tfetch(ADMIN_URL,{token:(session&&session.access_token)||"",action,payload:payload||{}},20000);
+    if(!res.ok) return {error:"network"}; return await res.json();
+  }catch(e){ return {error:"network"}; } }
 $("#pmUsers").addEventListener("click",()=>{$("#profileMenu").classList.remove("open");openUsers();});
 $("#umClose").addEventListener("click",()=>$("#usersModal").classList.remove("show"));
 $("#umNew").addEventListener("click",()=>{const f=$("#umNewForm");f.style.display=f.style.display==="none"?"block":"none";$("#umMsg").textContent="";});
@@ -682,7 +684,7 @@ let ALL=[];
 async function showHist(){
   $("#vHist").classList.remove("hidden");$("#vEdit").classList.add("hidden");$("#chatPanel").classList.remove("open");
   const {data,error}=await sb.from("presupuestos_app").select("*").order("actualizado_at",{ascending:false});
-  if(error){toast("Error",true);return;}
+  if(error){toast(t("hist_err"),true);return;}
   ALL=data||[];
   if(ME.rol==="admin"){const a=[...new Set(ALL.map(p=>p.autor_nombre).filter(Boolean))];$("#qAutor").innerHTML=`<option value="">${t("by_all")}</option>`+a.map(x=>`<option>${esc(x)}</option>`).join("");}
   renderHist();
@@ -702,7 +704,7 @@ function renderHist(){
 }
 $("#histGrid").addEventListener("click",async e=>{
   const del=e.target.closest("[data-del]"),open=e.target.closest("[data-open]");
-  if(del){e.stopPropagation();if(!confirm(t("confirm_del")))return;const {error}=await sb.from("presupuestos_app").delete().eq("id",del.dataset.del);if(error){toast("✕",true);return;}toast(t("deleted"));showHist();return;}
+  if(del){e.stopPropagation();if(!confirm(t("confirm_del")))return;const {error}=await sb.from("presupuestos_app").delete().eq("id",del.dataset.del);if(error){toast(t("del_err"),true);return;}toast(t("deleted"));showHist();return;}
   if(open){const p=ALL.find(x=>x.id===open.dataset.open);if(p)openEditor(p);}
 });
 
@@ -784,7 +786,8 @@ $("#reglasCancel").addEventListener("click",()=>$("#reglasModal").classList.remo
 async function openReglas(){ const ta=$("#reglasTxt"); const admin=ME&&ME.rol==="admin";
   ta.value="…"; ta.disabled=!admin; $("#reglasSave").style.display=admin?"inline-flex":"none";
   $("#reglasModal").classList.add("show"); histPush();
-  try{ const {data}=await sb.from("reglas_ia").select("texto").eq("id",1).single(); ta.value=(data&&data.texto)||""; }catch(e){ ta.value=""; } }
+  try{ const {data,error}=await sb.from("reglas_ia").select("texto").eq("id",1).single();
+  if(error){ta.value="";ta.disabled=true;$("#reglasSave").style.display="none";toast(t("hist_err"),true);return;} ta.value=(data&&data.texto)||""; }catch(e){ ta.value=""; } }
 $("#reglasSave").addEventListener("click",async()=>{ const {error}=await sb.from("reglas_ia").update({texto:$("#reglasTxt").value,updated_at:new Date().toISOString()}).eq("id",1);
   if(error){ toast("✕ "+error.message,true); return; } $("#reglasModal").classList.remove("show"); toast(t("reglas_saved")); });
 let _libsLoaded=false;
@@ -800,7 +803,7 @@ async function extractAmidament(file){
     const buf=await file.arrayBuffer(); const wb=XLSX.read(buf,{type:"array"}); const parts=[];
     wb.SheetNames.forEach(sh=>{ const ws=wb.Sheets[sh]; if(!ws)return;
       const arr=XLSX.utils.sheet_to_json(ws,{header:1,blankrows:false});
-      const lines=arr.map(row=>(row||[]).filter(c=>c!==null&&c!=="").map(c=>String(c).replace(/\s+/g," ").slice(0,40)).join(" | ")).filter(l=>l.trim());
+      const lines=arr.map(row=>(row||[]).filter(c=>c!==null&&c!=="").map(c=>String(c).replace(/\s+/g," ").slice(0,300)).join(" | ")).filter(l=>l.trim());
       if(lines.length) parts.push("### ZONA: "+sh+"\n"+lines.join("\n")); });
     return parts.join("\n\n").slice(0,55000);
   }
@@ -820,7 +823,7 @@ async function doUpload(file){
     if(!amidament||amidament.trim().length<20){ ov.classList.remove("show"); toast(t("ing_empty"),true); return; }
     $("#ingMsg").textContent=t("ing_ai");
     const {data:{session}}=await sb.auth.getSession();
-    const res=await fetch(INGESTA_URL,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({token:(session&&session.access_token)||"",amidament,filename:file.name,idioma:IDIOMA})});
+    const res=await tfetch(INGESTA_URL,{token:(session&&session.access_token)||"",amidament,filename:file.name,idioma:IDIOMA},120000);
     const data=await res.json(); ov.classList.remove("show");
     if(data.error||!data.rows){ toast(t("ing_error"),true); return; }
     const clean=sanitizeRows(data.rows); if(!clean){ toast(t("ing_error"),true); return; }
@@ -842,7 +845,7 @@ async function submitFeedback(valoracion,comentario){
     await sb.from("feedback_ia").insert({presupuesto_id:CURRENT.id||null,usuario_id:ME.id,usuario_nombre:ME.nombre,valoracion,comentario,draft_ia:ORIGEN_IA,final_rows:rows});
     if(valoracion!=="perfecto" && comentario){
       const {data:{session}}=await sb.auth.getSession();
-      const res=await fetch(APRENDE_URL,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({token:(session&&session.access_token)||"",valoracion,comentario,draft_ia:ORIGEN_IA,final_rows:rows})});
+      const res=await tfetch(APRENDE_URL,{token:(session&&session.access_token)||"",valoracion,comentario,draft_ia:ORIGEN_IA,final_rows:rows},60000);
       const data=await res.json(); const lls=(data&&data.llicons)||[];
       if(lls.length){ await sb.from("aprendizaje").insert(lls.map(l=>({leccion:l.leccion,contexto:l.contexto||"",presupuesto_id:CURRENT.id||null,usuario_nombre:ME.nombre}))); toast(t("fb_learned").replace("{n}",lls.length)); }
       else toast(t("fb_thanks"));
@@ -862,7 +865,7 @@ $("#chModal").addEventListener("click",e=>{if(e.target.id==="chModal"){$("#chMod
 $("#backBtn").addEventListener("click",showHist);
 function openEditor(p,starter,isDemo){
   undoStack=[]; updateUndo(); ORIGEN_IA=null; FEEDBACK_DONE=false;
-  if(p){CURRENT={...p};const n=normDatos(p.datos);rows=JSON.parse(JSON.stringify(n.rows));HEADER=n.header||{};NOTES=n.notes||[];$("#coef").value=p.coef||1;}
+  if(p){CURRENT={...p};const n=normDatos(p.datos);rows=sanitizeRows(JSON.parse(JSON.stringify(n.rows)))||[];HEADER=n.header||{};NOTES=n.notes||[];$("#coef").value=p.coef||1;}
   else{CURRENT={id:null,obra:"",coef:1,estado:"borrador",autor_id:ME.id,autor_nombre:ME.nombre};rows=starter?starter:SEED();HEADER=isDemo?{obra:"DEMO · Rehabilitació de façana — C/ Casanova 220, Barcelona",client:"Comunitat de Propietaris (exemple)",ref:"G26.DEMO"}:{};NOTES=[t("note1"),t("note2"),t("note3"),t("note4")];$("#coef").value=1.05;}
   $("#h_obra").value=HEADER.obra||CURRENT.obra||"";$("#h_client").value=HEADER.client||"";$("#h_ref").value=HEADER.ref||"";$("#h_coac").value=HEADER.coac||"";$("#h_tec").value=HEADER.tec||"";
   $("#vHist").classList.add("hidden");$("#vEdit").classList.remove("hidden");$("#chatBody").innerHTML="";
@@ -870,14 +873,15 @@ function openEditor(p,starter,isDemo){
 }
 function applyLockUI(){
   const lock=locked();
-  ["structBar","editHint","hdrCard"].forEach(id=>$("#"+id).style.display=lock?"none":(id==="structBar"?"flex":"block"));
+  ["structBar","editHint"].forEach(id=>$("#"+id).style.display=lock?"none":(id==="structBar"?"flex":"block"));
+  ["h_obra","h_client","h_ref","h_coac","h_tec"].forEach(id=>{const el=$("#"+id);if(el)el.disabled=lock;});
   $("#saveBtn").style.display=lock?"none":"inline-flex";$("#signBtn").style.display=lock?"none":"inline-flex";$("#undoBtn").style.display=lock?"none":"inline-flex";
   $("#chatFab").style.display=lock?"none":"flex";$("#coef").disabled=lock;$("#addNote").style.display=lock?"none":"inline-flex";
   const b=$("#signedBanner");
   if(lock){b.style.display="flex";const d=CURRENT.firmado_at?new Date(CURRENT.firmado_at).toLocaleString(IDIOMA==="es"?"es-ES":"ca-ES"):"";$("#signedMeta").textContent=`${CURRENT.firmado_nombre||"—"} · ${d}`;if(CURRENT.firma_img){$("#signedImg").src=CURRENT.firma_img;$("#signedImg").classList.remove("hidden");}else $("#signedImg").classList.add("hidden");$("#reopenBtn").style.display=ME.rol==="admin"?"inline-flex":"none";}
   else b.style.display="none";
 }
-$("#reopenBtn").addEventListener("click",async()=>{if(ME.rol!=="admin")return;const {error}=await sb.from("presupuestos_app").update({estado:"borrador"}).eq("id",CURRENT.id);if(error){toast("✕",true);return;}CURRENT.estado="borrador";await logHist(CURRENT.id,"reobert");applyLockUI();render();toast(t("reopened"));});
+$("#reopenBtn").addEventListener("click",async()=>{if(ME.rol!=="admin")return;const {error}=await sb.from("presupuestos_app").update({estado:"borrador"}).eq("id",CURRENT.id);if(error){toast(t("del_err"),true);return;}CURRENT.estado="borrador";await logHist(CURRENT.id,"reobert");applyLockUI();render();toast(t("reopened"));});
 ["h_obra","h_client","h_ref","h_coac","h_tec"].forEach(id=>$("#"+id).addEventListener("input",e=>{HEADER[id.slice(2)]=e.target.value;if(id==="h_obra")$("#obraTag").textContent="● "+(e.target.value||t("noname"));}));
 
 function subsOf(arr,i){const o=[];for(let j=i+1;j<arr.length;j++){if(arr[j].tipo!=="sub")break;o.push(j);}return o;}
@@ -909,9 +913,9 @@ function render(){
     }else if(r.tipo==="part"){const E=unitPrice(rows,i),F=num2(E*c),G=num2(F*(r.amid||0));base+=num2(E*(r.amid||0));total+=G;chapSum+=G;secSum+=G;const composed=subsOf(rows,i).length>0;if(r.flag)flags++;
       const badge=r.flag?`<span class="flag-badge" title="${esc(r.flag)}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>!</span>`:"";
       const impCell=(G===0&&r.flag)?`<span style="color:var(--warn);font-weight:700;font-size:11.5px">${t("pendent")}</span>`:eur(G);
-      html+=`<tr class="part${r.flag?" flagged":""}"><td class="num"><input value="${esc(r.num||"")}" data-f="num" data-i="${i}"${ro}></td><td class="desc"><textarea class="dtx" rows="1" data-f="desc" data-i="${i}"${ro}>${esc(r.desc)}</textarea>${badge}</td><td class="ut"><input value="${esc(unitDisp(r.ut))}" data-f="ut" data-i="${i}"${ro}></td><td class="amid"><input class="r" type="number" step="any" value="${r.amid??""}" data-f="amid" data-i="${i}"${ro}></td><td class="preu">${composed?`<span class="calc" style="display:block;padding:6px 7px">${eur(E).replace(" €","")}</span>`:`<input class="r" type="number" step="any" value="${r.preu??""}" data-f="preu" data-i="${i}"${ro}>`}</td><td class="calc fcol">${F.toLocaleString(IDIOMA==="es"?"es-ES":"ca-ES",{minimumFractionDigits:2,maximumFractionDigits:2})}</td><td class="imp">${impCell}</td><td class="act">${lock?"":`<button class="mini" data-addsub="${i}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>sub</button>`}${trash(i)}</td></tr>`;
+      html+=`<tr class="part${r.flag?" flagged":""}"><td class="num"><input value="${esc(r.num||"")}" data-f="num" data-i="${i}"${ro}></td><td class="desc"><textarea class="dtx" rows="1" data-f="desc" data-i="${i}"${ro}>${esc(r.desc)}</textarea>${badge}</td><td class="ut"><input value="${esc(unitDisp(r.ut))}" data-f="ut" data-i="${i}"${ro}></td><td class="amid"><input class="r" type="number" step="any" value="${esc(r.amid??"")}" data-f="amid" data-i="${i}"${ro}></td><td class="preu">${composed?`<span class="calc" style="display:block;padding:6px 7px">${eur(E).replace(" €","")}</span>`:`<input class="r" type="number" step="any" value="${esc(r.preu??"")}" data-f="preu" data-i="${i}"${ro}>`}</td><td class="calc fcol">${F.toLocaleString(IDIOMA==="es"?"es-ES":"ca-ES",{minimumFractionDigits:2,maximumFractionDigits:2})}</td><td class="imp">${impCell}</td><td class="act">${lock?"":`<button class="mini" data-addsub="${i}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>sub</button>`}${trash(i)}</td></tr>`;
     }else{const imp=num2((r.amid||0)*(r.preu||0));
-      if(SHOWSUBS)html+=`<tr class="sub"><td class="num">·</td><td class="desc"><textarea class="dtx" rows="1" data-f="desc" data-i="${i}"${ro}>${esc(r.desc)}</textarea></td><td class="ut"><input value="${esc(unitDisp(r.ut))}" data-f="ut" data-i="${i}"${ro}></td><td class="amid"><input class="r" type="number" step="any" value="${r.amid??""}" data-f="amid" data-i="${i}"${ro}></td><td class="preu"><input class="r" type="number" step="any" value="${r.preu??""}" data-f="preu" data-i="${i}"${ro}></td><td class="calc fcol"></td><td class="imp">${eur(imp)}</td><td class="act">${trash(i)}</td></tr>`;
+      if(SHOWSUBS)html+=`<tr class="sub"><td class="num">·</td><td class="desc"><textarea class="dtx" rows="1" data-f="desc" data-i="${i}"${ro}>${esc(r.desc)}</textarea></td><td class="ut"><input value="${esc(unitDisp(r.ut))}" data-f="ut" data-i="${i}"${ro}></td><td class="amid"><input class="r" type="number" step="any" value="${esc(r.amid??"")}" data-f="amid" data-i="${i}"${ro}></td><td class="preu"><input class="r" type="number" step="any" value="${esc(r.preu??"")}" data-f="preu" data-i="${i}"${ro}></td><td class="calc fcol"></td><td class="imp">${eur(imp)}</td><td class="act">${trash(i)}</td></tr>`;
     }
   }
   flushSec();
@@ -956,13 +960,16 @@ $("#undoBtn").addEventListener("click",()=>{if(!undoStack.length)return;rows=JSO
 
 // ---------- DESAR ----------
 async function logHist(pid,accion){try{await sb.from("presupuestos_historial").insert({presupuesto_id:pid,accion,usuario_id:ME.id,usuario_nombre:ME.nombre,snapshot:{rows,header:HEADER,coef:coef(),total:computeTotal(rows)}});}catch(_){}}
+let _saving=false;
 async function saveCurrent(silent){
+  if(_saving)return null; _saving=true; try{
   const obra=$("#h_obra").value.trim();if(!obra){toast(t("need_obra"),true);$("#h_obra").focus();return null;}
   const payload={obra,idioma:IDIOMA,coef:coef(),datos:{header:HEADER,rows,notes:NOTES},total:computeTotal(rows)};
   let pid=CURRENT.id;
   if(!pid){payload.autor_id=ME.id;payload.autor_nombre=ME.nombre;const {data,error}=await sb.from("presupuestos_app").insert(payload).select().single();if(error){toast("✕ "+error.message,true);return null;}CURRENT=data;pid=data.id;await logHist(pid,"creat");}
   else{const {data,error}=await sb.from("presupuestos_app").update(payload).eq("id",pid).select().single();if(error){toast("✕ "+error.message,true);return null;}CURRENT={...CURRENT,...data};await logHist(pid,"desat");}
   if(!silent)toast(t("saved"));return pid;
+  }finally{_saving=false;}
 }
 $("#saveBtn").addEventListener("click",()=>saveCurrent(false));
 
@@ -971,22 +978,27 @@ function comma(n){n=Math.round((isFinite(n)?n:0)*100)/100;const neg=n<0;n=Math.a
 function csvUnit(u){const k=(u==null?"":String(u)).trim().toLowerCase();return(k==="ut"||k==="u"||k==="ud")?"ud":k==="m2"?"m²":k==="m3"?"m³":(u==null?"":String(u));}
 $("#expCsv").addEventListener("click",()=>{
   const c=coef();
+  const gref=($("#h_ref").value||"").trim();
+  if(!/^G\d{2}\.\d{2,5}$/i.test(gref)){toast(t("need_gcode"),true);$("#h_ref").focus();return;}
+  const nflags=rows.filter(r=>r.tipo==="part"&&r.flag).length;
+  if(nflags>0&&!confirm(t("csv_flags").replace("{n}",nflags)))return;
+  const CSVL={noname:"PRESUPUESTO",subtotal:"SUBTOTAL",total_sec:"TOTAL",total_doc:"TOTAL PRESUPUESTO",iva:"IVA NO INCLUIDO"};
   const q=s=>{s=(s==null?"":String(s));return /[;"\n\r]/.test(s)?'"'+s.replace(/"/g,'""')+'"':s;};
   const L=[],push=a=>L.push(a.map(q).join(";")+";");
   push(["ID1","ID2","TITULO","UNIDAD","MEDIDA","PRECIOUNITARIO","TOTAL"]);
-  const obra=$("#h_obra").value||t("noname"); push(["TP","",obra,"","","",""]);
-  if(HEADER.ref) push(["IDOBRA","",HEADER.ref,"","","",""]);
+  const obra=$("#h_obra").value||CSVL.noname; push(["TP","",obra,"","","",""]);
+  push(["IDOBRA","",gref,"","","",""]);
   let secName=null,secSum=0,capName=null,capSum=0,total=0,capN=0;
-  const flushCap=()=>{if(capName!==null){push(["","",t("subtotal")+" "+capName,"","","",comma(capSum)]);capName=null;capSum=0;}};
-  const flushSec=()=>{flushCap();if(secName!==null){push(["","",t("total_sec")+" "+secName,"","","",comma(secSum)]);secName=null;secSum=0;}};
+  const flushCap=()=>{if(capName!==null){push(["","",CSVL.subtotal+" "+capName,"","","",comma(capSum)]);capName=null;capSum=0;}};
+  const flushSec=()=>{flushCap();if(secName!==null){push(["","",CSVL.total_sec+" "+secName,"","","",comma(secSum)]);secName=null;secSum=0;}};
   for(let i=0;i<rows.length;i++){const r=rows[i];
     if(r.tipo==="sec"){flushSec();secName=(r.desc||"").trim();capN=0;push(["T","",r.desc,"","","",""]);}
     else if(r.tipo==="cap"){flushCap();capN++;const n=((r.desc.match(/^\s*(\d+)/)||[])[1])||String(capN);capName=((r.desc||"").trim());push([n,n,r.desc,"","","",""]);}
-    else if(r.tipo==="part"){const E=unitPrice(rows,i),F=num2(E*c),G=num2(F*(r.amid||0));total+=G;capSum+=G;secSum+=G;push(["",r.num||"",r.desc,csvUnit(r.ut),comma(r.amid||0),comma(F),comma(G)]);}
+    else if(r.tipo==="part"){const E=unitPrice(rows,i),F=num2(E*c),G=num2(F*(r.amid||0));const pa=!!r.flag&&G===0;total+=G;capSum+=G;secSum+=G;push(["",r.num||"",r.desc,csvUnit(r.ut),comma(r.amid||0),pa?"":comma(F),pa?"":comma(G)]);}
   }
   flushSec();
-  push(["","",t("total_doc"),"","","",comma(total)]);
-  push(["","",t("iva"),"","","",""]);
+  push(["","",CSVL.total_doc,"","","",comma(total)]);
+  push(["","",CSVL.iva,"","","",""]);
   const b=new Blob(["﻿"+L.join("\r\n")+"\r\n"],{type:"text/csv;charset=utf-8"});
   const a=document.createElement("a");a.href=URL.createObjectURL(b);a.download=(obra.replace(/[^\w]+/g,"_"))+"_intranet.csv";a.click();toast(t("csv_ok"));
 });
@@ -1001,24 +1013,25 @@ $("#chatInput").addEventListener("keydown",e=>{if(e.key==="Enter"&&!e.shiftKey){
 function addMsg(cls,html){const d=document.createElement("div");d.className="msg "+cls;d.innerHTML=html;$("#chatBody").appendChild(d);$("#chatBody").scrollTop=$("#chatBody").scrollHeight;return d;}
 let PENDING=null;
 async function chatSend(){
+  if($("#chatSend").disabled)return;
   const txt=$("#chatInput").value.trim();if(!txt||locked())return;
   $("#chatInput").value="";addMsg("u",esc(txt));
   const typing=document.createElement("div");typing.className="typing";typing.innerHTML=`<span class="d"></span><span class="d"></span><span class="d"></span> ${t("thinking")}`;$("#chatBody").appendChild(typing);$("#chatBody").scrollTop=$("#chatBody").scrollHeight;
   $("#chatSend").disabled=true;
   try{
     const {data:{session}}=await sb.auth.getSession();
-    const res=await fetch(CHAT_URL,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({token:(session&&session.access_token)||"",rows,instruccio:txt,idioma:IDIOMA})});
+    const res=await tfetch(CHAT_URL,{token:(session&&session.access_token)||"",rows,instruccio:txt,idioma:IDIOMA},120000);
     const data=await res.json();typing.remove();
     const clean=sanitizeRows(data.rows);
     if(data.error||!clean){addMsg("a err",t("ai_err"));}
     else{
-      PENDING=clean;const oldT=computeTotal(rows),newT=computeTotal(clean);
+      PENDING=clean;const mine=clean;const oldT=computeTotal(rows),newT=computeTotal(clean);
       const dn=clean.length-rows.length;const dtxt=dn===0?"":(dn>0?` · +${dn} ${t("rows_before")}`:` · ${dn} ${t("rows_before")}`);
       const pv=document.createElement("div");pv.className="preview";
       pv.innerHTML=`<div class="pt"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>${esc(data.resum||t("ai_change"))}</div><div class="delta">${rows.length} → <b>${clean.length}</b> ${t("rows_before")}${dtxt}</div><div class="totd"><span class="old">${eur(oldT)}</span><span class="new">${eur(newT)}</span></div><div class="pb"><button class="btn ok" id="pvApply">${t("apply")}</button><button class="btn" id="pvDiscard">${t("discard")}</button></div>`;
       $("#chatBody").appendChild(pv);$("#chatBody").scrollTop=$("#chatBody").scrollHeight;
-      pv.querySelector("#pvApply").addEventListener("click",()=>{pushUndo();rows=PENDING;PENDING=null;render();pv.querySelector(".pb").innerHTML=`<span style="color:var(--ok);font-weight:700">✓ ${t("applied")}</span>`;toast(t("applied"));});
-      pv.querySelector("#pvDiscard").addEventListener("click",()=>{PENDING=null;pv.querySelector(".pb").innerHTML=`<span style="color:var(--secondary)">✕</span>`;});
+      pv.querySelector("#pvApply").addEventListener("click",()=>{if(pv.dataset.done)return;pv.dataset.done=1;pushUndo();rows=JSON.parse(JSON.stringify(mine));PENDING=null;render();pv.querySelector(".pb").innerHTML=`<span style="color:var(--ok);font-weight:700">✓ ${t("applied")}</span>`;toast(t("applied"));});
+      pv.querySelector("#pvDiscard").addEventListener("click",()=>{if(pv.dataset.done)return;pv.dataset.done=1;PENDING=null;pv.querySelector(".pb").innerHTML=`<span style="color:var(--secondary)">✕</span>`;});
     }
   }catch(e){typing.remove();addMsg("a err",t("ai_err"));}
   $("#chatSend").disabled=false;
@@ -1036,11 +1049,18 @@ $("#sigClear").addEventListener("click",()=>{pctx.clearRect(0,0,pad.width,pad.he
 $("#sigCancel").addEventListener("click",()=>$("#sigModal").classList.remove("show"));
 $("#signBtn").addEventListener("click",()=>{pctx.clearRect(0,0,pad.width,pad.height);hasInk=false;$("#sigModal").classList.add("show");histPush();});
 $("#sigConfirm").addEventListener("click",async()=>{
+  const sbtn=$("#sigConfirm");if(sbtn.disabled)return;
+  if(!hasInk){toast(t("sign_need_ink"),true);return;}
+  const gref=($("#h_ref").value||"").trim();
+  if(!/^G\d{2}\.\d{2,5}$/i.test(gref)){$("#sigModal").classList.remove("show");toast(t("need_gcode"),true);$("#h_ref").focus();return;}
+  sbtn.disabled=true;
+  try{
   const pid=await saveCurrent(true);if(!pid)return;
-  const firma=hasInk?pad.toDataURL("image/png"):null;
+  const firma=pad.toDataURL("image/png");
   const {data,error}=await sb.from("presupuestos_app").update({estado:"firmado",firmado_por:ME.id,firmado_nombre:ME.nombre,firmado_at:new Date().toISOString(),firma_img:firma}).eq("id",pid).select().single();
   if(error){toast("✕ "+error.message,true);return;}
   CURRENT={...CURRENT,...data};await logHist(pid,"signat");$("#sigModal").classList.remove("show");applyLockUI();render();toast(t("signed_ok"));
+  }finally{sbtn.disabled=false;}
 });
 
 // arrencada
