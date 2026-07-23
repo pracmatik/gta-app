@@ -1,0 +1,38 @@
+{
+ "coef": 1.05,
+ "expectedTotal": 1512,
+ "rows": [
+  {
+   "tipo": "part",
+   "num": "3.1",
+   "desc": "Reparació de mostra",
+   "ut": "ut",
+   "amid": 3,
+   "preu": 220
+  },
+  {
+   "tipo": "part",
+   "num": "",
+   "desc": "Balcó de prova",
+   "ut": "m²",
+   "amid": 12,
+   "preu": 65
+  },
+  {
+   "tipo": "sub",
+   "desc": "materials",
+   "amid": 1,
+   "preu": 400
+  },
+  {
+   "tipo": "sub",
+   "desc": "mà d'obra",
+   "amid": 4,
+   "preu": 50
+  }
+ ],
+ "nPart": 2,
+ "nSub": 2,
+ "obra": "ObraTest_Gamma",
+ "sourceFile": "FICTICIO - datos inventados para CI, no corresponden a ninguna obra real"
+}

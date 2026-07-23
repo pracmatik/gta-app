@@ -1,0 +1,40 @@
+{
+ "coef": 1,
+ "expectedTotal": 1710,
+ "rows": [
+  {
+   "tipo": "part",
+   "num": "5.1",
+   "desc": "Control de qualitat de prova",
+   "ut": "m³",
+   "amid": 6,
+   "preu": 70
+  },
+  {
+   "tipo": "part",
+   "num": "",
+   "desc": "Sotabalcons de prova",
+   "ut": "m²",
+   "amid": 22,
+   "preu": 30
+  },
+  {
+   "tipo": "part",
+   "num": "",
+   "desc": "Rafecs de prova",
+   "ut": "m²",
+   "amid": 14,
+   "preu": 45
+  },
+  {
+   "tipo": "sub",
+   "desc": "grapat",
+   "amid": 22,
+   "preu": 6
+  }
+ ],
+ "nPart": 3,
+ "nSub": 1,
+ "obra": "ObraTest_Epsilon",
+ "sourceFile": "FICTICIO - datos inventados para CI, no corresponden a ninguna obra real"
+}

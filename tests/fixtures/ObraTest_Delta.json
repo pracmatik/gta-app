@@ -1,0 +1,46 @@
+{
+ "coef": 1,
+ "expectedTotal": 2159,
+ "rows": [
+  {
+   "tipo": "part",
+   "num": "4.1",
+   "desc": "Substitució de mostra",
+   "ut": "ml",
+   "amid": 18,
+   "preu": 75.5
+  },
+  {
+   "tipo": "part",
+   "num": "4.2",
+   "desc": "Gestió de residus de prova",
+   "ut": "pa",
+   "amid": 1,
+   "preu": 300
+  },
+  {
+   "tipo": "part",
+   "num": "4.3",
+   "desc": "Seguretat i salut de prova",
+   "ut": "pa",
+   "amid": 1,
+   "preu": 500
+  },
+  {
+   "tipo": "sub",
+   "desc": "enderroc",
+   "amid": 18,
+   "preu": 15
+  },
+  {
+   "tipo": "sub",
+   "desc": "reconstrucció",
+   "amid": 18,
+   "preu": 22
+  }
+ ],
+ "nPart": 3,
+ "nSub": 2,
+ "obra": "ObraTest_Delta",
+ "sourceFile": "FICTICIO - datos inventados para CI, no corresponden a ninguna obra real"
+}

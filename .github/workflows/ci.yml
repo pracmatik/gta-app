@@ -1,0 +1,82 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  regresion:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - name: Regresión motor de cálculo + sintaxis de index.html
+        run: node tests/regres.js
+      - name: CSV intranet (candado + convención padres compuestos)
+        run: node tests/csv_intranet.js
+      - name: Transcripción determinista (4 modos de fallo IA)
+        run: node tests/transcripcio.js
+      - name: Guardián isNoSuma (la regla «no suma» idéntica en pantalla, Excel y PDF)
+        run: node tests/isnosuma_coherent.js
+      - name: Detector de decisiones al firmar (aprendizaje v2)
+        run: node tests/decisiones.js
+      - name: Guardián es-ES números/totales (auditoría 19/07 · amid/preu es-ES + total sin miles)
+        run: node tests/esES_numeros_totals.js
+      - name: Guardián mensajes honestos + guardias de reentrada (consejo 19/07)
+        run: node tests/consejo_19jul_fixes.js
+      - name: Guardián red de seguridad anti-precios-envenenados (parseNum es-ES + total disparado)
+        run: node tests/xarxa_seguretat.js
+      - name: Guardián correcciones de la técnica 21/07 (subtotal 0 € + la decisión del técnico manda)
+        run: node tests/marina_21jul.js
+      - name: Guardián B11 (el % se cuenta con la opción A/B más cara, nunca con la suma)
+        run: node tests/b11_pct_opcions.js
+      - name: Guardián de recuperación de contraseña (no revela quién tiene acceso · fuerza cambiarla)
+        run: node tests/recuperar_contrasenya.js
+      - name: Guardián total de sección por opción A/B + precios vinculados
+        run: node tests/seccio_ab_i_preus_lligats.js
+      - name: Dependencias de la paridad (exceljs+jszip)
+        run: npm install --no-package-lock --no-save exceljs jszip
+      - name: Paridad de ficheros reales (Excel/PDF impresos = pantalla)
+        run: node tests/paritat.js
+      - name: Guardián del candado de paridad (funciones reales del HTML)
+        run: node tests/paritat_candau.js
+      - name: Guardián del libro de decisiones del aprendizaje (quién aprueba o para cada regla, y cuándo)
+        run: node tests/registre_decisions.js
+      - name: Guardián editor LOT 1 (los 4 puntos de Marina del 20/07)
+        run: node tests/editor_lot1.js
+      - name: Guardián partir partida con varias medidas/unidades
+        run: node tests/partir_mesures.js
+      - name: Guardián imprevistos/reserva exentos de coeficiente
+        run: node tests/sensecoef_coherent.js
+      - name: Guardián historial de versiones + restaurar (#86)
+        run: node tests/versions.js
+      - name: Guardián reconciliación por capítulos
+        run: node tests/reconciliacio.js
+      - name: Guardián de avisos honestos (el candado avisa de verdad, no miente)
+        run: node tests/avisos_honestos.js
+      - name: Guardián coeficiente de reserva (no pinta 1,485 como si fuera bueno)
+        run: node tests/coef_reserva.js
+      - name: Guardián de persistencia de la edición manual (reabrir NO borra desglossos)
+        run: node tests/persist_edicio_manual.js
+      - name: Guardián del comparador de lecciones (antes → después por partida, no solo el nombre)
+        run: node tests/comparador_exemples.js
+      - name: Guardián de la cabecera fija de la tabla (sigue la barra real, no tapa la 1a fila)
+        run: node tests/capcalera_fixa.js
+      - name: Guardián del lector BC3 (partidas reales, no la mano de obra interna)
+        run: node tests/bc3_partides.js
+      - name: Guardián de la lectura de PDF (capítulos por posición+tamaño, no texto aplanado)
+        run: node tests/pdf_capitols.js
+      - name: Guardián de la captura exhaustiva del criterio (opcional/alternativa/texto/medición + sin tope de 3)
+        run: node tests/criteri_exhaustiu.js
+      - name: Guardián de títulos en mayúsculas por defecto (convención GTA)
+        run: node tests/titols_majuscules.js
+      - name: Guardián del desglose de medición por zona (BC3 ~M · dónde se actúa)
+        run: node tests/amidament_desglos.js
+      - name: Guardián del desglose de medición desde texto (PDF/Excel · dónde se actúa, sin atribuir mal)
+        run: node tests/desglos_pdf.js
+      - name: Guardián de legibilidad del panel de aprendizaje (sin jerga para Marina)
+        run: node tests/panel_llegible.js
