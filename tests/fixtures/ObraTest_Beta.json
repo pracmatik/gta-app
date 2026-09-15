@@ -1,0 +1,46 @@
+{
+ "coef": 1,
+ "expectedTotal": 1470,
+ "rows": [
+  {
+   "tipo": "part",
+   "num": "2.1",
+   "desc": "Pintura de mostra",
+   "ut": "m²",
+   "amid": 40,
+   "preu": 12.5
+  },
+  {
+   "tipo": "part",
+   "num": "2.2",
+   "desc": "Neteja de mostra",
+   "ut": "ut",
+   "amid": 1,
+   "preu": 250
+  },
+  {
+   "tipo": "part",
+   "num": "",
+   "desc": "Pati de prova",
+   "ut": "ml",
+   "amid": 8,
+   "preu": 90
+  },
+  {
+   "tipo": "sub",
+   "desc": "lloguer diari",
+   "amid": 15,
+   "preu": 20
+  },
+  {
+   "tipo": "sub",
+   "desc": "portes",
+   "amid": 1,
+   "preu": 150
+  }
+ ],
+ "nPart": 3,
+ "nSub": 2,
+ "obra": "ObraTest_Beta",
+ "sourceFile": "FICTICIO - datos inventados para CI, no corresponden a ninguna obra real"
+}
