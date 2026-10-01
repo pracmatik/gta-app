@@ -1,0 +1,35 @@
+{
+  "coef": 1.1,
+  "expectedTotal": 1410,
+  "rows": [
+    {
+      "tipo": "part",
+      "num": "1.1",
+      "desc": "Partida normal de mostra",
+      "ut": "m²",
+      "amid": 10,
+      "preu": 100
+    },
+    {
+      "tipo": "part",
+      "num": "1.2",
+      "desc": "IMPREVISTOS\n- Reserva de pressupost per a imprevistos d'obra (quantitat REAL sobre el total: el coeficient regulador NO s'hi aplica)",
+      "ut": "pa",
+      "amid": 1,
+      "preu": 200
+    },
+    {
+      "tipo": "part",
+      "num": "1.3",
+      "desc": "IMPREVISTOS DEL LOT B (el tècnic ha tret l'exempció: scoef=off, el coeficient SÍ s'aplica)",
+      "ut": "pa",
+      "amid": 1,
+      "preu": 100,
+      "scoef": "off"
+    }
+  ],
+  "nPart": 3,
+  "nSub": 0,
+  "obra": "ObraTest_Zeta",
+  "sourceFile": "FICTICIO - datos inventados para CI (cura imprevistos/reserva sense coeficient, 17/07/2026), no corresponden a ninguna obra real"
+}
