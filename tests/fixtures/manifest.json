@@ -1,0 +1,29 @@
+{
+  "generated": "2026-07-15T13:48:58.016Z",
+  "fixtures": [
+    {
+      "obra": "ObraTest_Alfa",
+      "expectedTotal": 900
+    },
+    {
+      "obra": "ObraTest_Beta",
+      "expectedTotal": 1470
+    },
+    {
+      "obra": "ObraTest_Gamma",
+      "expectedTotal": 1512
+    },
+    {
+      "obra": "ObraTest_Delta",
+      "expectedTotal": 2159
+    },
+    {
+      "obra": "ObraTest_Epsilon",
+      "expectedTotal": 1710
+    },
+    {
+      "obra": "ObraTest_Zeta",
+      "expectedTotal": 1410
+    }
+  ]
+}
