@@ -1,0 +1,46 @@
+{
+  "coef": 1,
+  "expectedTotal": 900,
+  "rows": [
+    {
+      "tipo": "part",
+      "num": "1.1",
+      "desc": "Desmuntatge de mostra A",
+      "ut": "ut",
+      "amid": 2,
+      "preu": 100
+    },
+    {
+      "tipo": "part",
+      "num": "1.2",
+      "desc": "Protecció de mostra B",
+      "ut": "ut",
+      "amid": 5,
+      "preu": 40
+    },
+    {
+      "tipo": "part",
+      "num": "",
+      "desc": "Façana de prova",
+      "ut": "m²",
+      "amid": 10,
+      "preu": 50
+    },
+    {
+      "tipo": "sub",
+      "desc": "muntatge",
+      "amid": 1,
+      "preu": 300
+    },
+    {
+      "tipo": "sub",
+      "desc": "transport",
+      "amid": 2,
+      "preu": 100
+    }
+  ],
+  "nPart": 3,
+  "nSub": 2,
+  "obra": "ObraTest_Alfa",
+  "sourceFile": "FICTICIO - datos inventados para CI, no corresponden a ninguna obra real"
+}
